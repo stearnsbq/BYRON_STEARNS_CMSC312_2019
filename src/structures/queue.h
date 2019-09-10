@@ -8,7 +8,7 @@ typedef struct Heap
 } Heap;
 
 void addProcess(Heap **heap, ProcessBlock *data); // adds a process to the priority queue
-void removeProcess(Heap *heap);                 // removes the highest priority process
+ProcessBlock  removeProcess(Heap **heap);                 // removes the highest priority process and returns it
 ProcessBlock *highest(Heap *heap);              // returns a pointer to highest priority process
 ProcessBlock *lowest(Heap *heap);               // returns a pointer to the lowest priority process
 void heapify(Heap **heap); // make sure the heap doesn't violate min heap property
