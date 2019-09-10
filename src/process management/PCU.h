@@ -1,3 +1,5 @@
+#ifndef PCU
+#define PCU
 typedef enum PROCESS_STATE
 {
     NEW,
@@ -13,3 +15,5 @@ typedef struct ProcessBlock
     PROCESS_STATE state;
     unsigned int priority;
 } ProcessBlock;
+
+#endif
