@@ -14,6 +14,10 @@ typedef struct ProcessBlock
     unsigned int pid;
     PROCESS_STATE state;
     unsigned int priority;
+    int memory;
+    int *pc;
+    int **registers;
+    int inOut[];
 } ProcessBlock;
 
 #endif
