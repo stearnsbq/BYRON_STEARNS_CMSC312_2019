@@ -6,7 +6,6 @@ void enqueueProcess(Queue **queue, ProcessBlock *data)
 {
     if (!(*queue)->head) // empty
     {
-
         (*queue)->head = (Node *)malloc(sizeof(Node));
         (*queue)->tail = NULL;
         (*queue)->head->next = NULL;
@@ -15,7 +14,6 @@ void enqueueProcess(Queue **queue, ProcessBlock *data)
     }
     else if (!(*queue)->tail) // length 1
     {
-
         (*queue)->tail = (Node *)malloc(sizeof(Node));
         (*queue)->tail->data = data;
         (*queue)->tail->next = NULL;
@@ -24,7 +22,6 @@ void enqueueProcess(Queue **queue, ProcessBlock *data)
     }
     else // whatever
     {
-
         Node *newNode = (Node *)malloc(sizeof(Node));
         newNode->data = data;
         (*queue)->tail->next = newNode;

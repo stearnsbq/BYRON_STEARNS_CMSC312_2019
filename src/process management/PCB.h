@@ -1,5 +1,5 @@
-#ifndef PCU
-#define PCU
+#ifndef PCB
+#define PCB
 typedef enum PROCESS_STATE
 {
     NEW,
