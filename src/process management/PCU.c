@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "../structures/queue.h"
+#include "../structures/priorityqueue.h"
 #include "PCU.h"
 
 void main(int argc, char **argv)
@@ -62,5 +62,5 @@ void main(int argc, char **argv)
     //print(heap);
     ProcessBlock t = removeProcess(&heap);
     ProcessBlock t2 = removeProcess(&heap);
-    print(heap);
+    printPQueue(heap);
 }

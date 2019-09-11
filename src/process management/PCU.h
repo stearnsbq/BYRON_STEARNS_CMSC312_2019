@@ -16,8 +16,6 @@ typedef struct ProcessBlock
     unsigned int priority;
     int memory;
     int *pc;
-    int **registers;
-    int inOut[];
 } ProcessBlock;
 
 #endif
