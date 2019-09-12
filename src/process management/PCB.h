@@ -15,7 +15,10 @@ typedef struct ProcessBlock
     PROCESS_STATE state;
     unsigned int priority;
     int memory;
-    int *pc;
+    int cycles;
+    char *pc;
 } ProcessBlock;
 
+ProcessBlock *buildProcess(char buffer[20][14], int size);
+void printProcess(ProcessBlock *p);
 #endif
