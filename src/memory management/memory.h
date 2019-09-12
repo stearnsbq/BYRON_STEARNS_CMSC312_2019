@@ -11,4 +11,5 @@ typedef struct Block
 void *alloc(size_t size);
 void free(void *ptr);
 Block *findBestFit(size_t size);
-Block *split(Block **block);
+Block *split(Block **block, size_t size);
+void mergeFreeBlocks();
