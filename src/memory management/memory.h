@@ -3,13 +3,13 @@
 typedef struct Block
 {
     size_t size;
-    // void *data;
+    size_t sizeOfData;
     int free;
     struct Block *next;
 } Block;
 
-void *alloc(size_t size);
+void *alloc(size_t size, size_t sizeOfData);
 void free(void *ptr);
 Block *findBestFit(size_t size);
-Block *split(Block **block, size_t size);
+Block *split(Block **block, size_t size, size_t sizeofdata);
 void mergeFreeBlocks();
