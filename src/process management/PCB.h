@@ -1,3 +1,4 @@
+#include <string>
 #ifndef PCB
 #define PCB
 typedef enum PROCESS_STATE
@@ -16,9 +17,7 @@ typedef struct ProcessBlock
     unsigned int priority;
     int memory;
     int cycles;
-    char *pc;
+    int *pc;
 } ProcessBlock;
 
-ProcessBlock *buildProcess(char buffer[20][14], int size);
-void printProcess(ProcessBlock *p);
 #endif
