@@ -157,7 +157,7 @@ FILE *page_out(Block **block)
 
 int main(int argc, char **argv)
 {
-    char *test1 = (char *)alloc(100, 1);
+    char *test1 = (char *)alloc(8, 1);
     test1[0] = 'b';
     test1[1] = 'o';
     test1[2] = 'b';

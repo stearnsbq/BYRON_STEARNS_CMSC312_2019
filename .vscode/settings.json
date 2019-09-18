@@ -2,6 +2,7 @@
     "files.associations": {
         "queue.h": "c",
         "priorityqueue.h": "c",
-        "pcu.h": "c"
+        "pcu.h": "c",
+        "CPU.C": "cpp"
     }
 }
