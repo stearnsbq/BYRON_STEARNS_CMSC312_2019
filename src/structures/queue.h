@@ -2,22 +2,35 @@
 #ifndef QUEUE
 #define QUEUE
 
+class Queue
+{
+public:
+    Queue();
+    ~Queue();
+    void enqueueProcess(ProcessBlock *data);
+    ProcessBlock *dequeueProcess();
+    void
+    printList();
 
+private:
+    class Node
+    {
+    public:
+        Node();
+        Node(ProcessBlock *data);
+        Node *getNext();
+        ProcessBlock *getData();
+        void setNext(Node *next);
+        void setData(ProcessBlock *data);
+        ~Node();
 
-// typedef struct Node
-// {
-//     ProcessBlock *data;
-//     struct Node *next;
-// } Node;
+    private:
+        Node *next;
+        ProcessBlock *data;
+    };
+    Node *head;
+    Node *tail;
+    int count;
+};
 
-// typedef struct Queue
-// {
-//     Node *head;
-//     Node *tail;
-//     int count;
-// } Queue;
-
-// void enqueueProcess(Queue **queue, ProcessBlock *data);
-// ProcessBlock *dequeueProcess(Queue **queue);
-// void printList(Queue **queue);
 #endif

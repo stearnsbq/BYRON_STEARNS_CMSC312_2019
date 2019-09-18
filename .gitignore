@@ -4,3 +4,4 @@ src/memory management/memtest.exe
 src/memory management/memtest.exe
 src/bigquad.exe
 *.exe
+*.json

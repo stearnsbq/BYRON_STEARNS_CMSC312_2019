@@ -3,6 +3,10 @@
         "queue.h": "c",
         "priorityqueue.h": "c",
         "pcu.h": "c",
-        "CPU.C": "cpp"
+        "CPU.C": "cpp",
+        "array": "cpp",
+        "initializer_list": "cpp",
+        "utility": "cpp",
+        "random": "cpp"
     }
 }
