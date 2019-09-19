@@ -12,22 +12,18 @@ public:
     void printBlocks();
 
 private:
-    class Block
-    {
+typedef struct Block{
 
-    public:
-        Block();
-        Block(size_t size);
-        ~Block();
-        void *start;
-        void *end;
         size_t size;
         int free;
         struct Block *next;
-    };
+        struct Block *prev;
+}Block;
+
     unsigned int used;
     size_t maxMemory;
     Block *head;
+    Block * tail;
     Block *findBestFit(size_t size);
     Block *split(Block **block, size_t size);
     void mergeFreeBlocks();

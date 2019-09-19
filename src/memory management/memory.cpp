@@ -1,30 +1,20 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+#include <cstring>
 #include "memory.h"
 #define ALIGN(a) a + 7 - (a - 1) % 8
 
-Memory::Block::Block()
-{
-}
-Memory::Block::~Block()
-{
-    delete this;
-}
-Memory::Block::Block(size_t size)
-{
-    this->size = size;
-    this->free = 1;
-    this->end = NULL;
-    this->next = NULL;
-    this->start = NULL;
-}
+using namespace std;
+
 
 Memory::Memory()
 {
 }
+
 Memory::Memory(size_t size)
 {
     this->used = 0;
+    this->head = NULL;
+    this->tail = NULL;
     this->maxMemory = ALIGN(size);
 }
 
@@ -34,76 +24,95 @@ Memory::~Memory()
 
 void *Memory::alloc(size_t size)
 {
-    if (size > this->maxMemory)
+    size = ALIGN(size);
+    if ((size + this->used) > this->maxMemory || size > this->maxMemory)
     {
-        printf("Unable to allocate %d not enough memory on the device. Device has %d", size, this->maxMemory);
+        printf("NOT ENOUGH MEMORY");
         return NULL;
     }
-
-    if (!head)
+    if (!this->head)
     {
-        this->head = new Block(this->maxMemory);
+        this->head = (Block *)malloc(sizeof(Block) + size);
+        this->head->next = NULL;
+        this->head->size = size;
+        this->head->prev = NULL;
+        this->head->free = 0;
+        return this->head +1;
+    }else{
+        Block * selected = findBestFit(size);
+
+        if (!selected)
+        {
+            selected = (Block *)malloc(sizeof(Block) + size);
+            selected->free = 0;
+            selected->size = size;
+            selected->prev = NULL;
+            selected->next = NULL;
+        }
+
+        if (!tail)
+        {
+            this->tail = selected;
+            this->head->next = this->tail;
+            this->tail->prev = this->head;
+        }else if (selected == this->tail)
+        {
+            selected->free = 0;
+        }else{
+            this->tail->next = selected;
+            selected->prev = this->tail;
+            this->tail = selected;
+        }
+
+        return split(&selected, size)+1;   
     }
 
-    if (this->used + ALIGN(size) > this->maxMemory)
-    {
-        double percentage = ((double)this->used / (double)this->maxMemory) * 100.0;
-        printf("Not enough memory! Trying to allocate %d when there is %d used of %d left (%.2f%% used) \n", ALIGN(size), this->used, this->maxMemory, percentage);
-        return NULL;
-    }
-    else
-    {
-        this->used += ALIGN(size);
-        Block *selected = findBestFit(size);
-
-        return (split(&selected, size) + 1);
-    }
 }
 
 Memory::Block *Memory::findBestFit(size_t size)
 {
-
-    size_t alignedSize = ALIGN(size);
-    Block *cursor = this->head;
-    Block *selected = this->head;
-    while (cursor != NULL)
-    {
-        if (cursor->free && (cursor->size >= alignedSize && cursor->size < selected->size))
-        {
-            selected = cursor;
-        }
-        cursor = cursor->next;
-    }
-    return selected;
+    Block * cursor = this->head;
+   while (cursor && !(cursor->free && cursor->size >= size)) {
+    cursor = cursor->next;
+  }
+    return cursor;
 }
 
 Memory::Block *Memory::split(Block **block, size_t size)
 {
-    size_t alignedSize = ALIGN(size);
-    if (alignedSize >= (*block)->size)
+    if ((*block)->size == size)
     {
-        (*block)->free = 0;
         return (*block);
     }
-    Block *next = (*block)->next;
-    if (!next)
-    {
-        Block *newBlock = new Block(sizeof(Block) + alignedSize);
-        (*block)->size -= alignedSize;
-        (*block)->next = newBlock;
-        return newBlock;
-    }
-    else
-    {
-        Block *newBlock = new Block(sizeof(Block) + alignedSize);
-        Block *next = (*block)->next;
-        (*block)->size -= alignedSize;
-        (*block)->next = newBlock;
-        newBlock->next = next;
+    
 
-        return newBlock;
+
+    if ((*block) == this->tail)
+    {
+    Block * newBlock = (Block *)malloc(sizeof(Block) + size);
+    newBlock->next = NULL;
+    newBlock->prev = this->tail;
+    newBlock->size = size;
+    this->tail->size -= size;
+    this->tail->next = newBlock; 
+    this->tail->free = 1;  
+    this->tail = newBlock;
+    newBlock->free = 0;
+    return newBlock;
+    }else{
+        Block * newBlock = (Block *)malloc(sizeof(Block) + size);
+        newBlock->next = (*block)->next;
+        newBlock->prev = (*block);
+        newBlock->size = size;
+        (*block)->size -= size;
+        (*block)->next = newBlock;
+        newBlock->free = 0;
+    return newBlock;
     }
 }
+
+
+
 
 void Memory::freeMemory(void *ptr)
 {
@@ -119,39 +128,15 @@ void Memory::freeMemory(void *ptr)
 
 void Memory::mergeFreeBlocks()
 {
-    Memory::Block *temp = this->head;
-    Memory::Block **cursor = &head;
-    while ((*cursor) != NULL)
-    {
-        if ((*cursor)->next && (*cursor)->free)
-        {
-            Memory::Block *next = (*cursor)->next->next;
-            if (next)
-            {
-                (*cursor)->size += (*cursor)->next->size;
-                Memory::Block *old = (*cursor)->next;
-                delete (old);
-                (*cursor)->next = next;
-            }
-            else
-            {
-                (*cursor)->size += (*cursor)->next->size;
-                Memory::Block *old = (*cursor)->next;
-                delete (old);
-                (*cursor)->next = NULL;
-            }
-        }
-        (*cursor) = (*cursor)->next;
-    }
-    head = temp;
+  
 }
 
 void Memory::printBlocks()
 {
-    Block *cursor = this->head;
+      Block *cursor = this->head;
     while (cursor != NULL)
     {
-        printf("===========\nSize %d\nFree %d\n\n===========\n", cursor->size, cursor->free);
+        printf("===========\nSize %d\nFree %d\n===========\n", cursor->size, cursor->free);
         cursor = cursor->next;
     }
 }
@@ -162,13 +147,17 @@ void Memory::page_in(FILE *page)
 
 FILE *Memory::page_out(Block **block)
 {
+    return NULL;
 }
 
 int main(int argc, char **argv)
 {
-    Memory *m = new Memory(10000000);
-    void *ptr = m->alloc(1000);
-    // void* ptr1 = m->alloc(1000);
-    // void* ptr2 = m->alloc(1000);
+    Memory *m = new Memory(4294967296);
+    char *ptr1 = (char*)m->alloc(100);
+   char *ptr3 = (char*)m->alloc(10000);
+    m->freeMemory(ptr3);
+    char *ptr4 = (char*)m->alloc(1000);
+    char *ptr5 = (char*)m->alloc(2009);
     m->printBlocks();
+
 }
