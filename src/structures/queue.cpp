@@ -8,7 +8,7 @@ Queue::Node::Node()
     this->next = NULL;
     this->data = NULL;
 }
-Queue::Node::Node(ProcessBlock *data)
+Queue::Node::Node(Process *data)
 {
     this->next = NULL;
     this->data = data;
@@ -17,7 +17,7 @@ Queue::Node *Queue::Node::getNext()
 {
     return this->next;
 }
-ProcessBlock *Queue::Node::getData()
+Process *Queue::Node::getData()
 {
     return this->data;
 }
@@ -25,7 +25,7 @@ void Queue::Node::setNext(Node *next)
 {
     this->next = next;
 }
-void Queue::Node::setData(ProcessBlock *data)
+void Queue::Node::setData(Process *data)
 {
     this->data = data;
 }
@@ -50,7 +50,7 @@ Queue::~Queue()
         this->head = this->head->getNext();
     }
 }
-void Queue::enqueueProcess(ProcessBlock *data)
+void Queue::enqueueProcess(Process *data)
 {
     if (!this->head) // empty
     {
@@ -76,7 +76,7 @@ void Queue::enqueueProcess(ProcessBlock *data)
         this->count++;
     }
 }
-ProcessBlock *Queue::dequeueProcess()
+Process *Queue::dequeueProcess()
 {
     if (!(this->head))
     {
@@ -84,7 +84,7 @@ ProcessBlock *Queue::dequeueProcess()
     }
     else if (!(this->tail))
     {
-        ProcessBlock *data = this->head->getData();
+        Process *data = this->head->getData();
         Node *old = this->head;
         delete old;
         this->count--;
@@ -92,7 +92,7 @@ ProcessBlock *Queue::dequeueProcess()
     }
     else
     {
-        ProcessBlock *data = this->head->getData();
+        Process *data = this->head->getData();
         Node *old = this->head;
         this->head = old->getNext();
         delete old;
@@ -105,7 +105,7 @@ void Queue::printList()
     Node *cursor = head;
     while (cursor != NULL)
     {
-        printf("DATA: %d\n", cursor->getData()->priority);
+        printf("DATA: %d\n", cursor->getData()->getPriority());
         cursor = cursor->getNext();
     }
 }

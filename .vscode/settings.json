@@ -11,6 +11,7 @@
         "limits": "cpp",
         "cstdlib": "cpp",
         "string_view": "cpp",
-        "new": "cpp"
+        "new": "cpp",
+        "cmath": "cpp"
     }
 }

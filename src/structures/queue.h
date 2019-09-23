@@ -1,4 +1,4 @@
-#include "../process management/PCB.h"
+#include "Process.hpp"
 #ifndef QUEUE
 #define QUEUE
 
@@ -7,8 +7,8 @@ class Queue
 public:
     Queue();
     ~Queue();
-    void enqueueProcess(ProcessBlock *data);
-    ProcessBlock *dequeueProcess();
+    void enqueueProcess(Process *data);
+    Process *dequeueProcess();
     void
     printList();
 
@@ -17,16 +17,16 @@ private:
     {
     public:
         Node();
-        Node(ProcessBlock *data);
+        Node(Process *data);
         Node *getNext();
-        ProcessBlock *getData();
+        Process *getData();
         void setNext(Node *next);
-        void setData(ProcessBlock *data);
+        void setData(Process *data);
         ~Node();
 
     private:
         Node *next;
-        ProcessBlock *data;
+        Process *data;
     };
     Node *head;
     Node *tail;

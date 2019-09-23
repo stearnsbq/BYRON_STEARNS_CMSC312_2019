@@ -9,17 +9,17 @@ typedef enum PROCESS_STATE
     EXIT
 } PROCESS_STATE;
 
-
-
-class Process{
-    private:
+class Process
+{
+private:
     unsigned int pid;
     PROCESS_STATE state;
     unsigned int priority;
     int memory;
     int cycles;
     int *pc;
-    public:
+
+public:
     Process();
     ~Process();
     unsigned int getPid();
@@ -27,14 +27,7 @@ class Process{
     unsigned int getPriority();
     int getMemoryReq();
     int getCycles();
-    int* getProgramCounter();
+    int *getProgramCounter();
 };
 
-
-
-
-
-#endif // !1
-
-
-
+#endif

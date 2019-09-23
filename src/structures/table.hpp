@@ -1,29 +1,25 @@
 #include <vector>
-#include "Process.h"
+#include "Process.hpp"
 #ifndef PROCESSTABLE
 #define PROCESSTABLE
-class ProcessTable {
-    private:
+class ProcessTable
+{
+private:
     std::vector<Process *> table;
     int hash(unsigned int pid);
-    int currSize;
+    void resize();
     int checkCollision(int index);
+    int currSize;
+
     double loadFactor;
     int storedItems;
-    public:
+
+public:
     ProcessTable();
     ~ProcessTable();
     void put(Process *Process);
-    Process * remove(unsigned int pid);
+    Process *remove(unsigned int pid);
     int size();
+};
 
-
-
-
-
-}
-
-#endif // DEBUG
-
-
-
+#endif

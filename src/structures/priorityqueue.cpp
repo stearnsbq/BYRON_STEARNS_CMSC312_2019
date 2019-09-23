@@ -1,5 +1,5 @@
 
-#include "priorityqueue.h"
+#include "priorityqueue.hpp"
 #include <iostream>
 using namespace std;
 
@@ -12,15 +12,15 @@ PriorityQueue::~PriorityQueue()
     this->heap.clear();
 }
 
-void PriorityQueue::addProcess(ProcessBlock *newProcess)
+void PriorityQueue::addProcess(Process *newProcess)
 {
 
-    this->heap.push_back(*newProcess);
+    this->heap.push_back(newProcess);
     int i = getSize() - 1;
 
-    while (i != 0 && this->heap[parent(i)].priority > this->heap[i].priority)
+    while (i != 0 && this->heap[parent(i)]->getPriority() > this->heap[i]->getPriority())
     {
-        swap(&(this->heap[i]), &(this->heap[parent(i)]));
+        swap((this->heap[i]), (this->heap[parent(i)]));
         i = parent(i);
     }
 }
@@ -30,18 +30,18 @@ int PriorityQueue::getSize()
     return this->heap.size();
 }
 
-ProcessBlock PriorityQueue::removeProcess()
+Process *PriorityQueue::removeProcess()
 {
-    ProcessBlock root = this->heap[0];
+    Process *root = this->heap[0];
     PriorityQueue::heap[0] = this->heap.back();
     this->heap.pop_back();
     heapify(0);
     return root;
 }
 
-void PriorityQueue::swap(ProcessBlock *x, ProcessBlock *y)
+void PriorityQueue::swap(Process *x, Process *y)
 {
-    ProcessBlock temp = *x;
+    Process temp = *x;
     *x = *y;
     *y = temp;
 }
@@ -50,7 +50,7 @@ void PriorityQueue::printPQueue()
 {
     for (size_t i = 0; i < this->getSize(); i++)
     {
-        printf("%d\n", this->heap.at(i).priority);
+        printf("%d\n", this->heap.at(i)->getPriority());
     }
 }
 
@@ -74,17 +74,17 @@ void PriorityQueue::heapify(int index)
     int l = left(index);
     int r = right(index);
     int i = index;
-    if (l < this->getSize() && this->heap.at(l).priority < this->heap.at(index).priority)
+    if (l < this->getSize() && this->heap.at(l)->getPriority() < this->heap.at(index)->getPriority())
     {
         i = l;
     }
-    if (r < this->getSize() && this->heap.at(r).priority < this->heap.at(i).priority)
+    if (r < this->getSize() && this->heap.at(r)->getPriority() < this->heap.at(i)->getPriority())
     {
         i = r;
     }
     if (i != index)
     {
-        swap(&(this->heap[index]), &(this->heap[i]));
+        swap((this->heap[index]), (this->heap[i]));
         heapify(i);
     }
 }
