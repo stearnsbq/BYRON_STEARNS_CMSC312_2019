@@ -24,91 +24,18 @@ Memory::~Memory()
 
 void *Memory::alloc(size_t size)
 {
-    size = ALIGN(size);
-    if ((size + this->used) > this->maxMemory || size > this->maxMemory)
-    {
-        printf("NOT ENOUGH MEMORY");
-        return NULL;
-    }
-    if (!this->head)
-    {
-        this->head = (Block *)malloc(sizeof(Block) + size);
-        this->head->next = NULL;
-        this->head->size = size;
-        this->head->prev = NULL;
-        this->head->free = 0;
-        return this->head +1;
-    }else{
-        Block * selected = findBestFit(size);
-
-        if (!selected)
-        {
-            selected = (Block *)malloc(sizeof(Block) + size);
-            selected->free = 0;
-            selected->size = size;
-            selected->prev = NULL;
-            selected->next = NULL;
-        }
-
-        if (!tail)
-        {
-            this->tail = selected;
-            this->head->next = this->tail;
-            this->tail->prev = this->head;
-        }else if (selected == this->tail)
-        {
-            selected->free = 0;
-        }else{
-            this->tail->next = selected;
-            selected->prev = this->tail;
-            this->tail = selected;
-        }
-
-        return split(&selected, size)+1;   
-    }
+  
 
 }
 
 Memory::Block *Memory::findBestFit(size_t size)
 {
-    Block * cursor = this->head;
-   while (cursor && !(cursor->free && cursor->size >= size)) {
-    cursor = cursor->next;
-  }
-    return cursor;
+   
 }
 
 Memory::Block *Memory::split(Block **block, size_t size)
 {
-    if ((*block)->size == size)
-    {
-        return (*block);
-    }
-    
-
-
-    if ((*block) == this->tail)
-    {
-    Block * newBlock = (Block *)malloc(sizeof(Block) + size);
-    newBlock->next = NULL;
-    newBlock->prev = this->tail;
-    newBlock->size = size;
-    this->tail->size -= size;
-    this->tail->next = newBlock; 
-    this->tail->free = 1;  
-    this->tail = newBlock;
-    newBlock->free = 0;
-    return newBlock;
-    }else{
-        Block * newBlock = (Block *)malloc(sizeof(Block) + size);
-        newBlock->next = (*block)->next;
-        newBlock->prev = (*block);
-        newBlock->size = size;
-        (*block)->size -= size;
-        (*block)->next = newBlock;
-        newBlock->free = 0;
-    return newBlock;
-    }
+  
 }
 
 
@@ -133,12 +60,6 @@ void Memory::mergeFreeBlocks()
 
 void Memory::printBlocks()
 {
-      Block *cursor = this->head;
-    while (cursor != NULL)
-    {
-        printf("===========\nSize %d\nFree %d\n===========\n", cursor->size, cursor->free);
-        cursor = cursor->next;
-    }
 }
 
 void Memory::page_in(FILE *page)
