@@ -35,7 +35,7 @@ void ProcessTable::resize()
 
 void ProcessTable::put(Process *Process)
 {
-    if (this->loadFactor >= 0.75)
+    if (this->loadFactor > 0.75)
     {
         this->resize();
     }
