@@ -17,17 +17,23 @@ private:
     unsigned int priority;
     int memory;
     int cycles;
-    int *pc;
+    int pc;
 
 public:
     Process();
     ~Process();
     unsigned int getPid();
+    void setPid(unsigned int pid);
+    void setPriority(int p);
+    void setMemoryReq(int size);
+    void setCycles(int cycles);
+    void setPC(int pc);
     PROCESS_STATE getState();
+    void setState(PROCESS_STATE state);
     unsigned int getPriority();
     int getMemoryReq();
     int getCycles();
-    int *getProgramCounter();
+    int getProgramCounter();
 };
 
 #endif

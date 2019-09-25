@@ -8,6 +8,10 @@
 
 using namespace std;
 
+bool init()
+{
+}
+
 void loadFileThread()
 {
     string buf;

@@ -13,6 +13,12 @@ Queue::Node::Node(Process *data)
     this->next = NULL;
     this->data = data;
 }
+
+bool Queue::isEmpty()
+{
+    return count <= 0;
+}
+
 Queue::Node *Queue::Node::getNext()
 {
     return this->next;
@@ -50,6 +56,12 @@ Queue::~Queue()
         this->head = this->head->getNext();
     }
 }
+
+Process *Queue::peek()
+{
+    return this->head->getData();
+}
+
 void Queue::enqueueProcess(Process *data)
 {
     if (!this->head) // empty

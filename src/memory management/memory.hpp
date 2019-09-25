@@ -1,6 +1,8 @@
 #define MAX_MEMORY 4096
 #ifndef MEMORY
 #define MEMORY
+#include <stdlib.h>
+#include <fstream>
 class Memory
 {
 public:
@@ -12,23 +14,23 @@ public:
     void printBlocks();
 
 private:
-typedef struct Block{
-
+    typedef struct Block
+    {
         size_t size;
         int free;
         struct Block *next;
         struct Block *prev;
-}Block;
+    } Block;
 
     unsigned int used;
     size_t maxMemory;
     Block *head;
-    Block * tail;
+    Block *tail;
     Block *findBestFit(size_t size);
     Block *split(Block **block, size_t size);
     void mergeFreeBlocks();
-    FILE *page_out(Block **block);
-    void page_in(FILE *page);
+    std::ifstream page_out(Block **block);
+    void page_in(std::ifstream page);
 };
 
 #endif

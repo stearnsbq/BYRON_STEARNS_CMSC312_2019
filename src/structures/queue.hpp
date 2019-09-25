@@ -1,7 +1,6 @@
-#include "../process management/PCB.hpp"
 #ifndef QUEUE
 #define QUEUE
-
+#include "../process management/PCB.hpp"
 class Queue
 {
 public:
@@ -9,8 +8,9 @@ public:
     ~Queue();
     void enqueueProcess(Process *data);
     Process *dequeueProcess();
-    void
-    printList();
+    void printList();
+    Process *peek();
+    bool isEmpty();
 
 private:
     class Node

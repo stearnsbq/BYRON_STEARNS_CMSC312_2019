@@ -1,8 +1,7 @@
-#include "../process management/PCB.hpp"
-#include <vector>
 #ifndef PRIORITYQUEUE
 #define PRIORITYQUEUE
-
+#include "../process management/PCB.hpp"
+#include <vector>
 class PriorityQueue
 {
 private:

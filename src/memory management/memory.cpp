@@ -1,10 +1,9 @@
 #include <iostream>
 #include <cstring>
-#include "memory.h"
+#include "memory.hpp"
 #define ALIGN(a) a + 7 - (a - 1) % 8
 
 using namespace std;
-
 
 Memory::Memory()
 {
@@ -24,22 +23,15 @@ Memory::~Memory()
 
 void *Memory::alloc(size_t size)
 {
-  
-
 }
 
 Memory::Block *Memory::findBestFit(size_t size)
 {
-   
 }
 
 Memory::Block *Memory::split(Block **block, size_t size)
 {
-  
 }
-
-
-
 
 void Memory::freeMemory(void *ptr)
 {
@@ -55,30 +47,16 @@ void Memory::freeMemory(void *ptr)
 
 void Memory::mergeFreeBlocks()
 {
-  
 }
 
 void Memory::printBlocks()
 {
 }
 
-void Memory::page_in(FILE *page)
+void Memory::page_in(ifstream page)
 {
 }
 
-FILE *Memory::page_out(Block **block)
+ifstream Memory::page_out(Block **block)
 {
-    return NULL;
-}
-
-int main(int argc, char **argv)
-{
-    Memory *m = new Memory(4294967296);
-    char *ptr1 = (char*)m->alloc(100);
-   char *ptr3 = (char*)m->alloc(10000);
-    m->freeMemory(ptr3);
-    char *ptr4 = (char*)m->alloc(1000);
-    char *ptr5 = (char*)m->alloc(2009);
-    m->printBlocks();
-
 }

@@ -9,11 +9,20 @@ enum ALGORITHM
 class Scheduler
 {
 public:
-    void addProcess(Process *Process);
+    Scheduler();
+    ~Scheduler();
+    void addNewProcess(Process *Process);
+    void addReadyProcess(Process *Process);
     Process *getNextReadyProcess();
 
 private:
+    void rotateProcess();
+    void processNewQueue();
+    void processReadyQueue();
+    void processWaitingQueue();
     int timeQuantum;
     ALGORITHM algorithmToUse;
-    Queue readyQueue;
+    Queue *readyQueue;
+    Queue *newQueue;
+    Queue *waitingQueue;
 };
