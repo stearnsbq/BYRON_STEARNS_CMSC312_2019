@@ -12,6 +12,7 @@
         "cstdlib": "cpp",
         "string_view": "cpp",
         "new": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "iostream": "cpp"
     }
 }

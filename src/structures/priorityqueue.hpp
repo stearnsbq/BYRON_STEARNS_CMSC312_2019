@@ -23,5 +23,5 @@ public:
     int getSize();
 };
 
-// prints out the heap
+
 #endif

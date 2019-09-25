@@ -1,0 +1,12 @@
+Name: Bobby wit dat tool
+Total runtime: 135 
+Memory: 120
+
+CALCULATE 10
+CALCULATE 25
+I/O 10
+CALCULATE 30
+CALCULATE 50
+I/O 20
+CALCULATE 20
+EXE
