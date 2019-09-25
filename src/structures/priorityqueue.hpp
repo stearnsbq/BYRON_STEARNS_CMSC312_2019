@@ -1,4 +1,4 @@
-#include "Process.hpp"
+#include "../process management/PCB.hpp"
 #include <vector>
 #ifndef PRIORITYQUEUE
 #define PRIORITYQUEUE
@@ -22,6 +22,5 @@ public:
     void printPQueue();
     int getSize();
 };
-
 
 #endif

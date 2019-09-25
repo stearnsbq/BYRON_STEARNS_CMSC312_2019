@@ -1,4 +1,4 @@
-#include "Process.hpp"
+#include "../process management/PCB.hpp"
 #ifndef QUEUE
 #define QUEUE
 
