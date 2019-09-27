@@ -13,6 +13,19 @@ unsigned int Process::getPid()
     return this->pid;
 }
 
+
+void Process::addInstruction(std::string instr){
+        Instruction newInstr;
+    if (instr.find("CALCULATE") != std::string::npos){
+        int burst = stoi(instr.substr(instr.find(" ")));
+        newInstr = Instruction("CALULATE", burst, CALCULATE);
+    }else if(instr.find("I/O") != std::string::npos){
+        int burst = stoi(instr.substr(instr.find(" ")));
+        newInstr = Instruction("I/O", burst, CALCULATE);
+    }
+    this->instructions.push_back(newInstr);
+}
+
 void Process::setCycles(int cycles)
 {
     this->cycles = cycles;

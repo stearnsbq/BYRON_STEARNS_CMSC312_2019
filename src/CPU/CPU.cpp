@@ -38,7 +38,7 @@ void CPU::clockThread(Function func)
         func();
         this_thread::sleep_for(chrono::seconds(this->clockTime));
     }
-    return 1;
+    return;
 }
 
 void CPU::setTimeQ(int time)

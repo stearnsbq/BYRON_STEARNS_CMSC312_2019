@@ -20,22 +20,38 @@ void createProcess(string instructions, int number)
         if (line.find("Name:") != string::npos)
         {
             string name = line.substr(line.find(":") + 1);
+            cout << "Name: " + name << endl;
             p->setName(name);
         }
         else if (line.find("Total runtime:") != string::npos)
         {
             string runtime = line.substr(line.find(":") + 1);
+            cout << "Runtime: " + runtime << endl;
             p->setCycles(stoi(runtime));
         }
         else if (line.find("Memory:") != string::npos)
         {
             string memory = line.substr(line.find(":") + 1);
+            cout << "Memory: " + memory << endl;
             p->setMemoryReq(stoi(memory));
         }
         else
         {
+            if (line.length > 0)
+            {
+              if (line == "EXE")
+              {
+                  break;
+              }
+                p->addInstruction(line);
+            }
         }
     }
+    // for (int i = 0; i < number; i++)
+    // {
+    //    test->addNewProcess(p);
+    // }
+    
 }
 
 void loadFileThread()

@@ -2,6 +2,8 @@
 #define PROCESS
 #include <string>
 #include <vector>
+
+#include "instruction.hpp"
 typedef enum PROCESS_STATE
 {
     NEW,
@@ -16,7 +18,7 @@ class Process
 private:
     unsigned int pid;
     std::string name;
-    std::vector<std::string> instructions[];
+    std::vector<Instruction> instructions;
     PROCESS_STATE state;
     unsigned int priority;
     int memory;
@@ -27,6 +29,7 @@ public:
     Process();
     ~Process();
     void operator++();
+    void addInstruction(std::string instr);
     unsigned int getPid();
     void setName(std::string name);
     std::string getName();
