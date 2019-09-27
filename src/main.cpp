@@ -4,12 +4,38 @@
 #include <string.h>
 #include <stdlib.h>
 #include <fstream>
+#include <sstream>
 #include <iostream>
 
 using namespace std;
 
-bool init()
+Scheduler *test = new Scheduler();
+
+void createProcess(string instructions, int number)
 {
+    Process *p = new Process();
+    istringstream f(instructions);
+    for (string line; getline(f, line);)
+    {
+        if (line.find("Name:") != string::npos)
+        {
+            string name = line.substr(line.find(":") + 1);
+            p->setName(name);
+        }
+        else if (line.find("Total runtime:") != string::npos)
+        {
+            string runtime = line.substr(line.find(":") + 1);
+            p->setCycles(stoi(runtime));
+        }
+        else if (line.find("Memory:") != string::npos)
+        {
+            string memory = line.substr(line.find(":") + 1);
+            p->setMemoryReq(stoi(memory));
+        }
+        else
+        {
+        }
+    }
 }
 
 void loadFileThread()
@@ -38,6 +64,7 @@ void loadFileThread()
     {
         printf("Please enter the number of processes you would like to create from this program: ");
         getline(cin, buf);
+        createProcess(programFileBuf, stoi(buf));
     }
     else
     {

@@ -1,16 +1,17 @@
 #include <vector>
-#include "Process.hpp"
+#include "../process management/PCB.hpp"
 #ifndef PROCESSTABLE
 #define PROCESSTABLE
 class ProcessTable
 {
 private:
+    int nextPrime(int n);
     std::vector<Process *> table;
     int hash(unsigned int pid);
     void resize();
     int checkCollision(int index);
     int currSize;
-
+    bool isPrime(int n);
     double loadFactor;
     int storedItems;
 

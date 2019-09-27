@@ -1,4 +1,7 @@
+#ifndef SCHEDULER_H
+#define SCHEDULER_H
 #include "../structures/queue.hpp"
+
 enum ALGORITHM
 {
     ROUND_ROBIN,
@@ -9,6 +12,7 @@ enum ALGORITHM
 class Scheduler
 {
 public:
+    Scheduler(int timeqc);
     Scheduler();
     ~Scheduler();
     void addNewProcess(Process *Process);
@@ -20,9 +24,13 @@ private:
     void processNewQueue();
     void processReadyQueue();
     void processWaitingQueue();
+    void round_robin();
+    void priority();
     int timeQuantum;
+    Process *runningProcess;
     ALGORITHM algorithmToUse;
     Queue *readyQueue;
     Queue *newQueue;
     Queue *waitingQueue;
 };
+#endif

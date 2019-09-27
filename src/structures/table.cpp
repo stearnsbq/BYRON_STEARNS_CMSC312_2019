@@ -29,10 +29,34 @@ int ProcessTable::checkCollision(int index)
 
 void ProcessTable::resize()
 {
-    this->table.resize((this->currSize * 2) + 1);
+    this->table.resize(this->nextPrime((this->currSize * 2)));
     this->currSize = this->table.size();
 }
 
+int ProcessTable::nextPrime(int n)
+{
+    bool found = false;
+    while (!found)
+    {
+        n++;
+        if (this->isPrime(n))
+        {
+            found = true;
+        }
+    }
+    return n;
+}
+
+bool isPrime(int n)
+{
+    for (size_t i = 2; i < n / 2; i++)
+    {
+        if (n % i == 0)
+        {
+            break;
+        }
+    }
+}
 void ProcessTable::put(Process *Process)
 {
     if (this->loadFactor > 0.75)
