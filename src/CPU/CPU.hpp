@@ -2,6 +2,7 @@
 #define CPU_H
 #include "../memory management/memory.hpp"
 #include <chrono>
+#include <iostream>
 #include <thread>
 #include <vector>
 
@@ -15,14 +16,13 @@ private:
     int timeQuantum;
     std::thread clock_thread;
     void handler(int sig);
-    template <typename Function>
-    void clockThread(Function func);
+
+    void clockThread(std::function<void ()> func);
 
 public:
     CPU();
     ~CPU();
-    template <typename Function>
-    void clock(Function func);
+    void clock(std::function<void ()> func);
     void setTimeQ(int time);
     int getTimeQ();
     int availableMemory();

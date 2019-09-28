@@ -15,19 +15,22 @@ public:
     Scheduler(int timeqc);
     Scheduler();
     ~Scheduler();
-    void addNewProcess(Process *Process);
-    void addReadyProcess(Process *Process);
-    Process *getNextReadyProcess();
+    void addNewProcess(Process Process);
+    void addReadyProcess(Process Process);
+    Process getNextReadyProcess();
+    void start();
+    void run();
 
 private:
     void rotateProcess();
+
     void processNewQueue();
     void processReadyQueue();
     void processWaitingQueue();
     void round_robin();
     void priority();
     int timeQuantum;
-    Process *runningProcess;
+    Process runningProcess;
     ALGORITHM algorithmToUse;
     Queue *readyQueue;
     Queue *newQueue;

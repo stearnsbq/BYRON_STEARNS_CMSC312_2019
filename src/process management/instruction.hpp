@@ -18,7 +18,7 @@ private:
     TYPE type;
 
 public:
-    void operator--();
+    void decBurst();
     Instruction(std::string instr, int burst, TYPE type);
     Instruction();
     ~Instruction();
