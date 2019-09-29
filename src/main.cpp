@@ -1,11 +1,16 @@
+#include "mainwindow.h"
 #include "main.hpp"
 #include <stdio.h>
 #include <thread>
 #include <string.h>
+#include <string>
 #include <stdlib.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <QApplication>
+#include "PCB.hpp"
+using namespace std;
 
 using namespace std;
 
@@ -59,7 +64,7 @@ void loadFileThread()
     string programFileBuf;
     printf("Please enter a Program file name\n");
     getline(cin, buf);
-    ifstream programFile(buf);
+    ifstream programFile("C:\\Users\\quinn\\Desktop\\dev\\BYRON_STEARNS_CMSC312_2019\\CMSC\\" + buf);
     if (!programFile)
     {
         printf("file error\n");
@@ -114,13 +119,27 @@ char *parseCommand(char *cmd)
     return out;
 }
 
-int main(int argc, char **argv)
+
+
+
+
+
+
+int main(int argc, char *argv[])
 {
+    QApplication a(argc, argv);
+  //  MainWindow w;
+   // w.show();
+
+
     char buf[256];
-    while (1)
-    {
-        printf("OS Simulator: ");
-        fgets(buf, 256, stdin);
-        printf("%s", parseCommand(buf));
-    }
+     while (1)
+
+     {
+         printf("OS Simulator: ");
+         fgets(buf, 256, stdin);
+         printf("%s", parseCommand(buf));
+     }
+
+    return a.exec();
 }
