@@ -1,15 +1,15 @@
 #ifndef QUEUE
 #define QUEUE
-#include "../process management/PCB.hpp"
+#include "PCB.hpp"
 class Queue
 {
 public:
     Queue();
     ~Queue();
-    void enqueueProcess(Process *data);
-    Process *dequeueProcess();
+    void enqueueProcess(Process data);
+    Process dequeueProcess();
     void printList();
-    Process *peek();
+    Process peek();
     bool isEmpty();
 
 private:
@@ -17,19 +17,20 @@ private:
     {
     public:
         Node();
-        Node(Process *data);
+        Node(Process data);
         Node *getNext();
-        Process *getData();
+        Process getData();
         void setNext(Node *next);
-        void setData(Process *data);
+        void setData(Process data);
         ~Node();
 
     private:
         Node *next;
-        Process *data;
+        Process data;
     };
     Node *head;
     Node *tail;
+    Node tmp;
     int count;
 };
 

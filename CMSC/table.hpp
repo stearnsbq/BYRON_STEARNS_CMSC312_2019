@@ -1,5 +1,5 @@
 #include <vector>
-#include "../process management/PCB.hpp"
+#include "PCB.hpp"
 #ifndef PROCESSTABLE
 #define PROCESSTABLE
 class ProcessTable

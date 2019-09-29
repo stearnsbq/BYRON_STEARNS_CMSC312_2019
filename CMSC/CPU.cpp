@@ -8,6 +8,7 @@ CPU::CPU()
 {
     this->memory = new Memory();
     this->isRunning = true;
+    //this->timeQuantum = 0;
     //signal(SIGINT, handler);
 }
 int CPU::getTimeQ()
@@ -30,13 +31,12 @@ int CPU::availableMemory()
     return 1000;
 }
 
-template <typename Function>
-void CPU::clockThread(Function func)
+void CPU::clockThread(std::function<void()> func)
 {
     while (this->isRunning)
     {
         func();
-        this_thread::sleep_for(chrono::seconds(this->clockTime));
+        std::this_thread::sleep_for(std::chrono::seconds(this->clockTime));
     }
     return;
 }
@@ -46,10 +46,9 @@ void CPU::setTimeQ(int time)
     this->timeQuantum = time;
 }
 
-template <typename Function>
-void CPU::clock(Function func)
+void CPU::clock(std::function<void()> func)
 {
-    this->clock_thread = thread(clockThread, func);
+    this->clock_thread = std::thread(&CPU::clockThread, this, func);
 }
 
 void CPU::allocateMemory(size_t amount)

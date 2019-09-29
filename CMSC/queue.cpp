@@ -6,9 +6,8 @@ using namespace std;
 Queue::Node::Node()
 {
     this->next = NULL;
-    this->data = NULL;
 }
-Queue::Node::Node(Process *data)
+Queue::Node::Node(Process data)
 {
     this->next = NULL;
     this->data = data;
@@ -23,7 +22,7 @@ Queue::Node *Queue::Node::getNext()
 {
     return this->next;
 }
-Process *Queue::Node::getData()
+Process Queue::Node::getData()
 {
     return this->data;
 }
@@ -31,14 +30,13 @@ void Queue::Node::setNext(Node *next)
 {
     this->next = next;
 }
-void Queue::Node::setData(Process *data)
+void Queue::Node::setData(Process data)
 {
     this->data = data;
 }
 Queue::Node::~Node()
 {
-    delete next;
-    delete data;
+    this->next = NULL;
 }
 
 Queue::Queue()
@@ -57,21 +55,21 @@ Queue::~Queue()
     }
 }
 
-Process *Queue::peek()
+Process Queue::peek()
 {
     return this->head->getData();
 }
 
-void Queue::enqueueProcess(Process *data)
+void Queue::enqueueProcess(Process data)
 {
-    if (!this->head) // empty
+    if (!(this->head)) // empty
     {
         this->head = new Node(data);
         this->tail = NULL;
         this->head->setNext(NULL);
         this->count++;
     }
-    else if (!this->tail) // length 1
+    else if (!(this->tail)) // length 1
     {
         this->tail = new Node(data);
         this->tail->setNext(NULL);
@@ -88,36 +86,33 @@ void Queue::enqueueProcess(Process *data)
         this->count++;
     }
 }
-Process *Queue::dequeueProcess()
+Process Queue::dequeueProcess()
 {
-    if (!(this->head))
+
+    if (!this->head)
     {
-        return NULL;
-    }
-    else if (!(this->tail))
-    {
-        Process *data = this->head->getData();
-        Node *old = this->head;
-        delete old;
-        this->count--;
-        return data;
+      
     }
     else
     {
-        Process *data = this->head->getData();
-        Node *old = this->head;
-        this->head = old->getNext();
-        delete old;
+        this->tmp = *this->head;
+        Process data = this->tmp.getData();
+        delete(this->head);
+        this->head = this->tmp.getNext();
+        if (this->head == NULL)
+        {
+            this->tail = NULL;
+        }
         this->count--;
         return data;
     }
 }
 void Queue::printList()
 {
-    Node *cursor = head;
+    Node *cursor = this->head;
     while (cursor != NULL)
     {
-        printf("DATA: %d\n", cursor->getData()->getPriority());
+        std::cout << "DATA: " + cursor->getData().getCurrentInstruction().getBurst() << std::endl;
         cursor = cursor->getNext();
     }
 }

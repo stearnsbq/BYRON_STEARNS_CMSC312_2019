@@ -47,7 +47,7 @@ int ProcessTable::nextPrime(int n)
     return n;
 }
 
-bool isPrime(int n)
+bool ProcessTable::isPrime(int n)
 {
     for (size_t i = 2; i < n / 2; i++)
     {
