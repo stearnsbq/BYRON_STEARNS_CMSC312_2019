@@ -55,10 +55,11 @@ Queue::~Queue()
     }
 }
 
-Process Queue::peek()
+Process *Queue::peek()
 {
-    return this->head->getData();
+    return &this->head->data;
 }
+
 
 void Queue::enqueueProcess(Process data)
 {

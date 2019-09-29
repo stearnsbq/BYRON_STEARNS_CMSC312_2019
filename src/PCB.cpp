@@ -24,6 +24,10 @@ unsigned int Process::getPid()
 void Process::incrementPC()
 {
     this->pc++;
+    if(!(this->pc > this->instructions.size() - 1)){
+         this->currInstr = this->instructions.at(this->pc);
+    }
+
 
 }
 
@@ -34,7 +38,7 @@ void Process::addInstruction(std::string instr)
     if (instr.find("CALCULATE") != std::string::npos)
     {
         int burst = stoi(instr.substr(instr.find(" ")));
-        newInstr = Instruction("CALULATE", burst, CALCULATE);
+        newInstr = Instruction("CALCULATE", burst, CALCULATE);
     }
     else if (instr.find("I/O") != std::string::npos)
     {

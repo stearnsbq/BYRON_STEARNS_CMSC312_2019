@@ -9,13 +9,14 @@ public:
     void enqueueProcess(Process data);
     Process dequeueProcess();
     void printList();
-    Process peek();
+    Process *peek();
     bool isEmpty();
 
 private:
     class Node
     {
     public:
+        Process data;
         Node();
         Node(Process data);
         Node *getNext();
@@ -26,7 +27,7 @@ private:
 
     private:
         Node *next;
-        Process data;
+
     };
     Node *head;
     Node *tail;

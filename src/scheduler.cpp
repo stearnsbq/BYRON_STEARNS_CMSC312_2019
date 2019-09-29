@@ -25,6 +25,7 @@ Scheduler::Scheduler()
     this->runningProcess.setCycles(-1);
     this->timeQuantum = 0;
     cpu = new CPU();
+    this->isRunning = false;
     gPid = 0;
     cpu->setTimeQ(20);
 }
@@ -39,6 +40,7 @@ Scheduler::~Scheduler()
 void Scheduler::addNewProcess(Process process)
 {
     process.setPid(gPid++);
+    this->totalProcesses++;
     this->newQueue->enqueueProcess(process);
 }
 
@@ -57,15 +59,16 @@ void Scheduler::rotateProcess()
 }
 
 void Scheduler::clock(){
-    while(1){
+    while(this->isRunning){
        run();
-       std::cout << "cpu tick" << std::endl;
+       //std::cout << "cpu tick" << std::endl;
      // std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 
 void Scheduler::start()
 {
+    this->isRunning = true;
     this->clockThread = std::thread(&Scheduler::clock, this);
 }
 
@@ -73,42 +76,52 @@ void Scheduler::run()
 {
     this->processNewQueue();
     this->processReadyQueue();
-    // this->processWaitingQueue();
+    this->processWaitingQueue();
 }
 
 void Scheduler::round_robin()
 {
 
-
-
-    if (this->runningProcess.getCycles() == -1)
+    if (this->runningProcess.getCycles() == -1 && !this->readyQueue->isEmpty())
     {
         this->timeQuantum = 0;
         this->runningProcess = this->readyQueue->dequeueProcess();
         this->runningProcess.setState(RUN);
-        //this->runningProcess.setCycles(-1);
+    }else if(this->processesRan == this->totalProcesses){
+    this->isRunning = false;
+       // system("cls");
+        std::cout << "Processes done running!" << std::endl;
     }
 
-    if (this->timeQuantum >= 20) // ran out of time for this process rotate it out
+    if (this->timeQuantum >= 20) // ran out of time for this process preempt it out
     {
-        std::cout << "switch out!!" << std::endl;
+        std::cout << "preempt out!!" << std::endl;
         Process rotate = this->runningProcess;
         this->runningProcess.setCycles(-1);
         rotate.setState(READY);
         this->readyQueue->enqueueProcess(rotate);
     }
-    else
-    {
+    else if(this->runningProcess.getCurrentInstruction().getType() == IO){
+        std::cout << "WAITING PREEMPT" << std::endl;
+        Process rotate = this->runningProcess;
+        this->runningProcess.setCycles(-1);
+        rotate.setState(WAIT);
+        this->waitingQueue->enqueueProcess(rotate);
+    }
+    else{
        
-        if (this->runningProcess.getCurrentBurst() > 0) // if instruction is not done run it
+        if (this->runningProcess.getCurrentBurst() >= 0) // if instruction is not done run it
         {
             std::cout << "RUNNING!! PID: " << this->runningProcess.getPid() << " " << this->runningProcess.getCurrentInstruction().getInstr() << " burst #" << this->runningProcess.getCurrentBurst() << std::endl;
             this->runningProcess.decrementBurst();
         }
-        else if (this->runningProcess.getInstructions().size() > this->runningProcess.getProgramCounter())
+        else if (this->runningProcess.getInstructions().size() - 1 > this->runningProcess.getProgramCounter()) // if instruction is done increment PC
         {
-            std::cout << "PC" << std::endl;
+            std::cout << "PC " << this->runningProcess.getInstructions().size() << " " << this->runningProcess.getProgramCounter() << std::endl;
             this->runningProcess.incrementPC(); // instruction is finished increment the PC
+        }else{ // process is done exit
+            this->runningProcess.setState(EXIT);
+            this->processesRan++;
         }
         this->timeQuantum++;
     }
@@ -123,7 +136,7 @@ void Scheduler::processNewQueue()
     if (!this->newQueue->isEmpty())
     {
 
-        if (cpu->availableMemory() >= this->newQueue->peek().getMemoryReq())
+        if (cpu->availableMemory() >= this->newQueue->peek()->getMemoryReq())
         {
 
             Process process = this->newQueue->dequeueProcess();
@@ -153,4 +166,14 @@ void Scheduler::processReadyQueue()
 
 void Scheduler::processWaitingQueue()
 {
+    if(!this->waitingQueue->isEmpty()){
+        if(this->waitingQueue->peek()->getCurrentBurst() > 0){
+            this->waitingQueue->peek()->decrementBurst();
+        }else{
+            Process rotate = this->waitingQueue->dequeueProcess();
+            rotate.setState(READY);
+            rotate.incrementPC();
+            this->readyQueue->enqueueProcess(rotate);
+        }
+    }
 }

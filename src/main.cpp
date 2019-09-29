@@ -64,7 +64,7 @@ void loadFileThread()
     string programFileBuf;
     printf("Please enter a Program file name\n");
     getline(cin, buf);
-    ifstream programFile("C:\\Users\\quinn\\Desktop\\dev\\BYRON_STEARNS_CMSC312_2019\\CMSC\\" + buf);
+    ifstream programFile("C:\\Users\\quinn\\Desktop\\dev\\BYRON_STEARNS_CMSC312_2019\\src\\" + buf);
     if (!programFile)
     {
         printf("file error\n");

@@ -32,6 +32,9 @@ private:
     void round_robin();
     void priority();
     int timeQuantum;
+    bool isRunning;
+    int processesRan;
+    int totalProcesses;
     std::thread clockThread;
     Process runningProcess;
     ALGORITHM algorithmToUse;
