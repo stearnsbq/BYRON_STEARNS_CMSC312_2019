@@ -13,45 +13,44 @@ Scheduler *test = new Scheduler();
 
 void createProcess(string instructions, int number)
 {
-    Process *p = new Process();
+    Process p = Process();
     istringstream f(instructions);
     for (string line; getline(f, line);)
     {
         if (line.find("Name:") != string::npos)
         {
-            string name = line.substr(line.find(":") + 1);
+            string name = line.substr(line.find(":") + 2);
             cout << "Name: " + name << endl;
-            p->setName(name);
+            p.setName(name);
         }
         else if (line.find("Total runtime:") != string::npos)
         {
-            string runtime = line.substr(line.find(":") + 1);
+            string runtime = line.substr(line.find(":") + 2);
             cout << "Runtime: " + runtime << endl;
-            p->setCycles(stoi(runtime));
+            p.setCycles(stoi(runtime));
         }
         else if (line.find("Memory:") != string::npos)
         {
-            string memory = line.substr(line.find(":") + 1);
+            string memory = line.substr(line.find(":") + 2);
             cout << "Memory: " + memory << endl;
-            p->setMemoryReq(stoi(memory));
+            p.setMemoryReq(stoi(memory));
         }
         else
         {
-            if (line.length > 0)
+            if (line.length() > 0)
             {
-              if (line == "EXE")
-              {
-                  break;
-              }
-                p->addInstruction(line);
+                if (line == "EXE")
+                {
+                    break;
+                }
+                p.addInstruction(line);
             }
         }
     }
-    // for (int i = 0; i < number; i++)
-    // {
-    //    test->addNewProcess(p);
-    // }
-    
+    for (int i = 0; i < number; i++)
+    {
+        test->addNewProcess(p);
+    }
 }
 
 void loadFileThread()
@@ -104,6 +103,11 @@ char *parseCommand(char *cmd)
     else if (!strcmp("clear\n", cmd))
     {
         system("cls");
+        return out;
+    }
+    else if (!strcmp("start\n", cmd))
+    {
+        test->start();
         return out;
     }
     strcpy(out, "Command Not Found \"Help\" to see all commands\n\0");

@@ -2,10 +2,18 @@
 
 Process::Process()
 {
+    this->pc = 0;
+    this->pid = 0;
+    this->priority = 0;
 }
 
 Process::~Process()
 {
+}
+
+Instruction Process::getCurrentInstruction()
+{
+    return this->currInstr;
 }
 
 unsigned int Process::getPid()
@@ -13,16 +21,27 @@ unsigned int Process::getPid()
     return this->pid;
 }
 
+void Process::incrementPC()
+{
+    this->pc++;
+    this->currInstr = this->instructions.at(this->pc);
+}
 
-void Process::addInstruction(std::string instr){
-        Instruction newInstr;
-    if (instr.find("CALCULATE") != std::string::npos){
+void Process::addInstruction(std::string instr)
+{
+
+    Instruction newInstr;
+    if (instr.find("CALCULATE") != std::string::npos)
+    {
         int burst = stoi(instr.substr(instr.find(" ")));
         newInstr = Instruction("CALULATE", burst, CALCULATE);
-    }else if(instr.find("I/O") != std::string::npos){
+    }
+    else if (instr.find("I/O") != std::string::npos)
+    {
         int burst = stoi(instr.substr(instr.find(" ")));
         newInstr = Instruction("I/O", burst, CALCULATE);
     }
+    std::cout << this->instructions.size() << std::endl;
     this->instructions.push_back(newInstr);
 }
 
@@ -31,14 +50,30 @@ void Process::setCycles(int cycles)
     this->cycles = cycles;
 }
 
+void Process::decrementBurst()
+{
+    this->instructions.at(this->pc).decBurst();
+}
+
 void Process::setMemoryReq(int size)
 {
     this->memory = size;
 }
 
+std::vector<Instruction> Process::getInstructions()
+{
+    return this->instructions;
+}
+
 void Process::setPriority(int p)
 {
     this->priority = p;
+}
+
+int Process::getCurrentBurst()
+{
+
+    return this->instructions.at(this->pc).getBurst();
 }
 
 void Process::setName(std::string name)

@@ -8,6 +8,8 @@ Instruction::Instruction(std::string instr, int burst, TYPE type)
 }
 Instruction::Instruction()
 {
+    this->instr = "";
+    this->burst = 0;
 }
 Instruction::~Instruction()
 {
@@ -27,7 +29,7 @@ TYPE Instruction::getType()
     return this->type;
 }
 
-void Instruction::operator--()
+void Instruction::decBurst()
 {
     this->burst--;
 }
