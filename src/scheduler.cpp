@@ -61,8 +61,7 @@ void Scheduler::rotateProcess()
 void Scheduler::clock(){
     while(this->isRunning){
        run();
-       //std::cout << "cpu tick" << std::endl;
-     // std::this_thread::sleep_for(std::chrono::seconds(1));
+     // std::this_thread::sleep_for(std::chrono::milliseconds(20));
     }
 }
 
@@ -82,16 +81,18 @@ void Scheduler::run()
 void Scheduler::round_robin()
 {
 
-    if (this->runningProcess.getCycles() == -1 && !this->readyQueue->isEmpty())
+    if (this->runningProcess.getCycles() == -1 || this->runningProcess.getState() == WAIT && !this->readyQueue->isEmpty())
     {
         this->timeQuantum = 0;
         this->runningProcess = this->readyQueue->dequeueProcess();
         this->runningProcess.setState(RUN);
     }else if(this->processesRan == this->totalProcesses){
-    this->isRunning = false;
-       // system("cls");
+        this->isRunning = false;
         std::cout << "Processes done running!" << std::endl;
+        return;
     }
+
+   if(this->runningProcess.getState() != WAIT){
 
     if (this->timeQuantum >= 20) // ran out of time for this process preempt it out
     {
@@ -103,14 +104,11 @@ void Scheduler::round_robin()
     }
     else if(this->runningProcess.getCurrentInstruction().getType() == IO){
         std::cout << "WAITING PREEMPT" << std::endl;
-        Process rotate = this->runningProcess;
-        this->runningProcess.setCycles(-1);
-        rotate.setState(WAIT);
-        this->waitingQueue->enqueueProcess(rotate);
-    }
-    else{
-       
-        if (this->runningProcess.getCurrentBurst() >= 0) // if instruction is not done run it
+        this->runningProcess.setState(WAIT);
+        this->waitingQueue->enqueueProcess(this->runningProcess);
+    }else{
+
+        if (this->runningProcess.getCurrentBurst() > 0) // if instruction is not done run it
         {
             std::cout << "RUNNING!! PID: " << this->runningProcess.getPid() << " " << this->runningProcess.getCurrentInstruction().getInstr() << " burst #" << this->runningProcess.getCurrentBurst() << std::endl;
             this->runningProcess.decrementBurst();
@@ -120,9 +118,12 @@ void Scheduler::round_robin()
             std::cout << "PC " << this->runningProcess.getInstructions().size() << " " << this->runningProcess.getProgramCounter() << std::endl;
             this->runningProcess.incrementPC(); // instruction is finished increment the PC
         }else{ // process is done exit
+
             this->runningProcess.setState(EXIT);
             this->processesRan++;
         }
+        }
+
         this->timeQuantum++;
     }
 }
@@ -170,6 +171,7 @@ void Scheduler::processWaitingQueue()
         if(this->waitingQueue->peek()->getCurrentBurst() > 0){
             this->waitingQueue->peek()->decrementBurst();
         }else{
+            std::cout << "WAITING DONE" << std::endl;
             Process rotate = this->waitingQueue->dequeueProcess();
             rotate.setState(READY);
             rotate.incrementPC();

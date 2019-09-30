@@ -7,7 +7,8 @@ enum TYPE
     CRITICAL_CALC,
     CRITICAL_IO,
     CALCULATE,
-    IO
+    IO,
+    NOP
 };
 
 class Instruction

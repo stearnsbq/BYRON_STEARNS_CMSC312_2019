@@ -17,8 +17,9 @@ class Process
 {
 private:
     unsigned int pid;
-    std::string name;
+    std::string name; // Would use just pointers, but provides a ton of abstraction and simple.
     std::vector<Instruction> instructions;
+    Process * parent;
     Instruction currInstr;
     PROCESS_STATE state;
     unsigned int priority;

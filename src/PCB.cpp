@@ -23,12 +23,13 @@ unsigned int Process::getPid()
 
 void Process::incrementPC()
 {
-    this->pc++;
-    if(!(this->pc > this->instructions.size() - 1)){
+
+    if(!(this->pc + 1 > this->instructions.size() - 1)){
+         this->pc++;
          this->currInstr = this->instructions.at(this->pc);
-    }
-
-
+    }else {
+        this->currInstr.setTYPE(NOP);
+}
 }
 
 void Process::addInstruction(std::string instr)
