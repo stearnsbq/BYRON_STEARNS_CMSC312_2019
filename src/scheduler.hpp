@@ -2,7 +2,7 @@
 #define SCHEDULER_H
 #include "queue.hpp"
 #include <thread>
-
+#include "mainwindow.h"
 enum ALGORITHM
 {
     ROUND_ROBIN,
@@ -19,7 +19,7 @@ public:
     void addNewProcess(Process Process);
     void addReadyProcess(Process Process);
     Process getNextReadyProcess();
-    void start();
+    void start(MainWindow * window);
 
     void run();
 

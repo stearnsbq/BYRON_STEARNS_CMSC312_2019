@@ -5,15 +5,15 @@
 class ProcessTable
 {
 private:
-    int nextPrime(int n);
+    unsigned int nextPrime(unsigned int n);
     std::vector<Process *> table;
-    int hash(unsigned int pid);
+    unsigned int hash(unsigned int pid);
     void resize();
-    int checkCollision(int index);
-    int currSize;
-    bool isPrime(int n);
+    bool checkCollision(unsigned int index);
+    unsigned int currSize;
+    bool isPrime(unsigned int n);
     double loadFactor;
-    int storedItems;
+    unsigned int storedItems;
 
 public:
     ProcessTable();

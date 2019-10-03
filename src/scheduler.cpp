@@ -1,8 +1,7 @@
 #include "scheduler.hpp"
 #include "CPU.hpp"
-
- int gPid;
-
+int gPid;
+MainWindow * m;
 
 Scheduler::Scheduler(int timeqc)
 {
@@ -61,13 +60,14 @@ void Scheduler::rotateProcess()
 void Scheduler::clock(){
     while(this->isRunning){
        run();
-     // std::this_thread::sleep_for(std::chrono::milliseconds(20));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
-void Scheduler::start()
+void Scheduler::start(MainWindow * window)
 {
     this->isRunning = true;
+    m = window;
     this->clockThread = std::thread(&Scheduler::clock, this);
 }
 
@@ -88,7 +88,8 @@ void Scheduler::round_robin()
         this->runningProcess.setState(RUN);
     }else if(this->processesRan == this->totalProcesses){
         this->isRunning = false;
-        std::cout << "Processes done running!" << std::endl;
+
+
         return;
     }
 
@@ -96,29 +97,32 @@ void Scheduler::round_robin()
 
     if (this->timeQuantum >= 20) // ran out of time for this process preempt it out
     {
-        std::cout << "preempt out!!" << std::endl;
+        emit m->print("preempt out!");
         Process rotate = this->runningProcess;
         this->runningProcess.setCycles(-1);
         rotate.setState(READY);
         this->readyQueue->enqueueProcess(rotate);
     }
     else if(this->runningProcess.getCurrentInstruction().getType() == IO){
-        std::cout << "WAITING PREEMPT" << std::endl;
+
+        //simUi->updateText("WAITING PREEMPT");
+         emit m->print("WAITING PREEMPT");
         this->runningProcess.setState(WAIT);
         this->waitingQueue->enqueueProcess(this->runningProcess);
     }else{
 
         if (this->runningProcess.getCurrentBurst() > 0) // if instruction is not done run it
         {
-            std::cout << "RUNNING!! PID: " << this->runningProcess.getPid() << " " << this->runningProcess.getCurrentInstruction().getInstr() << " burst #" << this->runningProcess.getCurrentBurst() << std::endl;
+            std::string str = "RUNNING!! PID: " + std::to_string(this->runningProcess.getPid()) + " " + this->runningProcess.getCurrentInstruction().getInstr() + " burst #" + std::to_string(this->runningProcess.getCurrentBurst());
+            emit m->print(str);
             this->runningProcess.decrementBurst();
         }
         else if (this->runningProcess.getInstructions().size() - 1 > this->runningProcess.getProgramCounter()) // if instruction is done increment PC
         {
-            std::cout << "PC " << this->runningProcess.getInstructions().size() << " " << this->runningProcess.getProgramCounter() << std::endl;
+            std::string out =   "PC " + std::to_string(this->runningProcess.getInstructions().size()) + " " + std::to_string(this->runningProcess.getProgramCounter());
+            emit m->print(out);
             this->runningProcess.incrementPC(); // instruction is finished increment the PC
         }else{ // process is done exit
-
             this->runningProcess.setState(EXIT);
             this->processesRan++;
         }
@@ -130,6 +134,7 @@ void Scheduler::round_robin()
 
 void Scheduler::priority()
 {
+
 }
 
 void Scheduler::processNewQueue()
@@ -137,15 +142,15 @@ void Scheduler::processNewQueue()
     if (!this->newQueue->isEmpty())
     {
 
-        if (cpu->availableMemory() >= this->newQueue->peek()->getMemoryReq())
-        {
+//        if (cpu->availableMemory() >= this->newQueue->peek()->getMemoryReq())
+//        {
 
             Process process = this->newQueue->dequeueProcess();
 
-            cpu->allocateMemory(process.getMemoryReq());
+            //cpu->allocateMemory(process.getMemoryReq());
             process.setState(READY);
             this->readyQueue->enqueueProcess(process);
-        }
+      //  }
     }
 }
 
@@ -171,7 +176,8 @@ void Scheduler::processWaitingQueue()
         if(this->waitingQueue->peek()->getCurrentBurst() > 0){
             this->waitingQueue->peek()->decrementBurst();
         }else{
-            std::cout << "WAITING DONE" << std::endl;
+           // std::cout << "WAITING DONE" << std::endl;
+             emit m->print("WAITING DONE");
             Process rotate = this->waitingQueue->dequeueProcess();
             rotate.setState(READY);
             rotate.incrementPC();

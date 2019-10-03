@@ -1,47 +1,50 @@
 #include <iostream>
-#include <cstring>
 #include "memory.hpp"
 #define ALIGN(a) a + 7 - (a - 1) % 8
 
-using namespace std;
 
 Memory::Memory()
 {
+    this->head = new Block();
+    this->head->setSize(4398046511104);
+    this->tail = this->head;
 }
 
-Memory::Memory(size_t size)
+
+Memory::Memory(long long size)
 {
     this->used = 0;
-    this->head = NULL;
-    this->tail = NULL;
-    this->maxMemory = ALIGN(size);
+    this->maxMemory = size;
+    this->head = new Block();
+    this->head->setSize(ALIGN(size));
+    this->tail = this->head;
 }
 
 Memory::~Memory()
 {
 }
 
-void *Memory::alloc(size_t size)
+Memory::Block * Memory::alloc(long long size)
 {
-}
-
-Memory::Block *Memory::findBestFit(size_t size)
-{
-}
-
-Memory::Block *Memory::split(Block **block, size_t size)
-{
-}
-
-void Memory::freeMemory(void *ptr)
-{
-    if (!ptr)
-    {
-        return;
+    if((size + used) > MAX_SIZE || size > MAX_SIZE){
+        return nullptr;
     }
 
-    Memory::Block *blockPtr = (Memory::Block *)ptr - 1;
-    blockPtr->free = 1;
+
+}
+
+Memory::Block *Memory::findBestFit(long long size)
+{
+
+}
+
+Memory::Block *Memory::split(Block **block, long long size)
+{
+}
+
+void Memory::freeMemory(Memory::Block * ptr)
+{
+    ptr->setFree(true);
     mergeFreeBlocks();
 }
 
@@ -53,10 +56,10 @@ void Memory::printBlocks()
 {
 }
 
-void Memory::page_in(ifstream page)
+void Memory::page_in(std::ifstream page)
 {
 }
 
-ifstream Memory::page_out(Block **block)
+std::ifstream Memory::page_out(Block **block)
 {
 }

@@ -13,18 +13,18 @@ ProcessTable::~ProcessTable()
     this->table.clear();
 }
 
-int ProcessTable::hash(unsigned int pid)
+unsigned int ProcessTable::hash(unsigned int pid)
 {
     return pid * 2654435761 % (int)pow(2, 32);
 }
 
-int ProcessTable::checkCollision(int index)
+bool ProcessTable::checkCollision(unsigned int index)
 {
     if (this->table[index])
     {
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
 void ProcessTable::resize()
@@ -33,7 +33,7 @@ void ProcessTable::resize()
     this->currSize = this->table.size();
 }
 
-int ProcessTable::nextPrime(int n)
+int unsigned ProcessTable::nextPrime(unsigned int n)
 {
     bool found = false;
     while (!found)
@@ -47,16 +47,18 @@ int ProcessTable::nextPrime(int n)
     return n;
 }
 
-bool ProcessTable::isPrime(int n)
+bool ProcessTable::isPrime(unsigned int n)
 {
-    for (size_t i = 2; i < n / 2; i++)
+    for (unsigned int i = 2; i < n / 2; i++)
     {
         if (n % i == 0)
         {
-            break;
+            return false;
         }
     }
+    return true;
 }
+
 void ProcessTable::put(Process *Process)
 {
     if (this->loadFactor > 0.75)

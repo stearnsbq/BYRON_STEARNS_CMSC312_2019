@@ -27,6 +27,7 @@ public:
     int getTimeQ();
     int availableMemory();
     void allocateMemory(size_t amount);
+    void freeMemory(Memory::Block * ptr);
 };
 
 extern CPU *cpu;

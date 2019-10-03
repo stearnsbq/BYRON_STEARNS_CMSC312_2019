@@ -1,4 +1,5 @@
 #include "PCB.hpp"
+#include <ctime>
 
 Process::Process()
 {
@@ -32,18 +33,24 @@ void Process::incrementPC()
 }
 }
 
-void Process::addInstruction(std::string instr)
+void Process::addInstruction(std::string instr, bool toRandom)
 {
-
     Instruction newInstr;
     if (instr.find("CALCULATE") != std::string::npos)
     {
         int burst = stoi(instr.substr(instr.find(" ")));
+        if(toRandom){
+             burst = std::rand() % burst + 1;
+             this->setCycles(this->getCycles() + burst);
+        }
         newInstr = Instruction("CALCULATE", burst, CALCULATE);
     }
     else if (instr.find("I/O") != std::string::npos)
     {
         int burst = stoi(instr.substr(instr.find(" ")));
+        if(toRandom){
+             burst = std::rand() % burst + 1;
+        }
         newInstr = Instruction("I/O", burst, IO);
     }
     this->instructions.push_back(newInstr);
@@ -60,10 +67,7 @@ void Process::decrementBurst()
     this->instructions.at(this->pc).decBurst();
 }
 
-void Process::setMemoryReq(int size)
-{
-    this->memory = size;
-}
+
 
 void Process::setPid(int pid){
     this->pid = pid;
@@ -116,10 +120,7 @@ unsigned int Process::getPriority()
 {
     return this->priority;
 }
-int Process::getMemoryReq()
-{
-    return this->memory;
-}
+
 int Process::getCycles()
 {
     return this->cycles;

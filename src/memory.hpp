@@ -1,33 +1,42 @@
-#define MAX_MEMORY 4096
 #ifndef MEMORY
 #define MEMORY
+#define MAX_SIZE 4398046511104 // 4096mb
 #include <stdlib.h>
 #include <fstream>
 class Memory
 {
 public:
+    class Block{
+    public:
+        Block();
+        ~Block();
+        void setNext(Block * next);
+        void setSize(long long size);
+        void setFree(bool free);
+        Block * getNext();
+        unsigned int getSize();
+        bool isFree();
+    private:
+        Block * next;
+        long long size;
+        bool free;
+    };
     Memory();
-    Memory(size_t sizeOfMemory);
+    Memory(long long sizeOfMemory);
     ~Memory();
-    void *alloc(size_t size);
-    void freeMemory(void *ptr);
+    Block * alloc(long long size);
+    void freeMemory(Block * blkPtr);
     void printBlocks();
 
 private:
-    typedef struct Block
-    {
-        size_t size;
-        int free;
-        struct Block *next;
-        struct Block *prev;
-    } Block;
 
-    unsigned int used;
+
+    long long used;
     size_t maxMemory;
     Block *head;
     Block *tail;
-    Block *findBestFit(size_t size);
-    Block *split(Block **block, size_t size);
+    Block *findBestFit(long long size);
+    Block *split(Block **block, long long size);
     void mergeFreeBlocks();
     std::ifstream page_out(Block **block);
     void page_in(std::ifstream page);

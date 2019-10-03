@@ -1,8 +1,9 @@
 #ifndef PROCESS
 #define PROCESS
-#include <string>
 #include <vector>
 #include <iostream>
+#include <string>
+#include "memory.hpp"
 #include "instruction.hpp"
 typedef enum PROCESS_STATE
 {
@@ -17,15 +18,15 @@ class Process
 {
 private:
     unsigned int pid;
-    std::string name; // Would use just pointers, but provides a ton of abstraction and simple.
+    std::string name;
     std::vector<Instruction> instructions;
     Process * parent;
     Instruction currInstr;
     PROCESS_STATE state;
     unsigned int priority;
-    int memory;
     int cycles;
     int pc;
+    Memory::Block * memory;
 
 public:
     Process();
@@ -34,7 +35,8 @@ public:
     void decrementBurst();
     int getCurrentBurst();
     void operator++();
-    void addInstruction(std::string instr);
+    Process * getParent();
+    void addInstruction(std::string instr, bool toRandom);
     std::vector<Instruction> getInstructions();
     unsigned int getPid();
     void setName(std::string name);
