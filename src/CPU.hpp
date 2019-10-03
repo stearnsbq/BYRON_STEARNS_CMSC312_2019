@@ -25,8 +25,9 @@ public:
     void clock(std::function<void ()> func);
     void setTimeQ(int time);
     int getTimeQ();
+    Memory * getMemory();
     int availableMemory();
-    void allocateMemory(size_t amount);
+    Memory::Block * allocateMemory(size_t amount);
     void freeMemory(Memory::Block * ptr);
 };
 

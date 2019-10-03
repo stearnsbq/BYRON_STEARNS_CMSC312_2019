@@ -141,16 +141,14 @@ void Scheduler::processNewQueue()
 {
     if (!this->newQueue->isEmpty())
     {
-
-//        if (cpu->availableMemory() >= this->newQueue->peek()->getMemoryReq())
-//        {
-
+        if (cpu->availableMemory() >= this->newQueue->peek()->getMemoryReq())
+       {
             Process process = this->newQueue->dequeueProcess();
-
-            //cpu->allocateMemory(process.getMemoryReq());
+            emit m->updateMemoryGraphic(cpu->getMemory());
+            process.setMemoryBlock(cpu->allocateMemory(process.getMemoryReq()));
             process.setState(READY);
             this->readyQueue->enqueueProcess(process);
-      //  }
+        }
     }
 }
 

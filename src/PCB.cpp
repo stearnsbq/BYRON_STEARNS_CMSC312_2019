@@ -33,6 +33,18 @@ void Process::incrementPC()
 }
 }
 
+int Process::getMemoryReq(){
+    return this->memory;
+}
+
+void Process::setMemoryReq(int amount){
+    this->memory = amount;
+}
+
+void Process::setMemoryBlock(Memory::Block * block){
+    this->memoryLoc = block;
+}
+
 void Process::addInstruction(std::string instr, bool toRandom)
 {
     Instruction newInstr;

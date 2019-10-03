@@ -27,11 +27,12 @@ public:
     Block * alloc(long long size);
     void freeMemory(Block * blkPtr);
     void printBlocks();
+    long long availableMemory();
+    Block * getHead();
 
 private:
-
-
     long long used;
+
     size_t maxMemory;
     Block *head;
     Block *tail;

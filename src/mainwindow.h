@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 #include <string>
 #include <QMainWindow>
+#include <memory.hpp>
 #include "loadfiledialog.h"
 
 QT_BEGIN_NAMESPACE
@@ -23,11 +24,13 @@ private:
     void createProcess(std::string instructions, int number, bool toRandom);
     void loadFileThread();
     char *parseCommand(char *cmd);
+    void updateMemory(Memory * memory);
     void cli();
     loadFileDialog * loadfile;
     void drawMemory();
 signals:
     void print(std::string in);
+    void updateMemoryGraphic(Memory * mem);
 private slots:
     void on_loadFile_clicked();
 };

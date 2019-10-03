@@ -26,13 +26,16 @@ private:
     unsigned int priority;
     int cycles;
     int pc;
-    Memory::Block * memory;
+    int memory;
+    Memory::Block * memoryLoc;
 
 public:
     Process();
     ~Process();
     Instruction getCurrentInstruction();
     void decrementBurst();
+    Memory::Block * getMemoryBlock();
+    void setMemoryBlock(Memory::Block * block);
     int getCurrentBurst();
     void operator++();
     Process * getParent();

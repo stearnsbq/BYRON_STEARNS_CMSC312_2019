@@ -26,9 +26,13 @@ CPU::~CPU()
     this->isRunning = false;
 }
 
+Memory * CPU::getMemory(){
+    return this->memory;
+}
+
 int CPU::availableMemory()
 {
-    return 1000;
+    return this->memory->availableMemory();
 }
 
 void CPU::clockThread(std::function<void()> func)
@@ -51,7 +55,7 @@ void CPU::clock(std::function<void()> func)
     this->clock_thread = std::thread(&CPU::clockThread, this, func);
 }
 
-void CPU::allocateMemory(size_t amount)
+Memory::Block * CPU::allocateMemory(size_t amount)
 {
-    // this->memory->alloc(amount);
+    return this->memory->alloc(amount);
 }
