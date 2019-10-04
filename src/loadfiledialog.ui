@@ -29,14 +29,26 @@
   <widget class="QSpinBox" name="spinBox">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>10</x>
      <y>330</y>
-     <width>33</width>
+     <width>71</width>
      <height>20</height>
     </rect>
    </property>
+   <property name="suffix">
+    <string/>
+   </property>
+   <property name="prefix">
+    <string/>
+   </property>
+   <property name="minimum">
+    <number>1</number>
+   </property>
+   <property name="maximum">
+    <number>9999</number>
+   </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QLineEdit" name="fileNameInput">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -46,6 +58,9 @@
     </rect>
    </property>
    <property name="text">
+    <string/>
+   </property>
+   <property name="placeholderText">
     <string>Enter a Program file name</string>
    </property>
   </widget>
@@ -65,7 +80,7 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>90</x>
      <y>330</y>
      <width>72</width>
      <height>16</height>
@@ -75,7 +90,7 @@
     <string># of processes</string>
    </property>
   </widget>
-  <widget class="QTextEdit" name="textEdit">
+  <widget class="QTextEdit" name="filePreview">
    <property name="geometry">
     <rect>
      <x>220</x>
@@ -83,6 +98,25 @@
      <width>341</width>
      <height>401</height>
     </rect>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>111</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>Generates a random program file</string>
+   </property>
+   <property name="text">
+    <string>Generate Random</string>
    </property>
   </widget>
  </widget>

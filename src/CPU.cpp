@@ -30,7 +30,7 @@ Memory * CPU::getMemory(){
     return this->memory;
 }
 
-int CPU::availableMemory()
+long long CPU::availableMemory()
 {
     return this->memory->availableMemory();
 }

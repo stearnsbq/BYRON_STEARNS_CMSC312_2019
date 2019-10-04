@@ -15,6 +15,14 @@ public:
     explicit loadFileDialog(QWidget *parent = nullptr);
     ~loadFileDialog();
 
+private slots:
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
+
+signals:
+void createProcesses(std::string data, int number, bool random);
+
 private:
     Ui::loadFileDialog *ui;
 };

@@ -32,7 +32,6 @@ public:
 
 private:
     long long used;
-
     size_t maxMemory;
     Block *head;
     Block *tail;

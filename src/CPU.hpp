@@ -26,7 +26,7 @@ public:
     void setTimeQ(int time);
     int getTimeQ();
     Memory * getMemory();
-    int availableMemory();
+    long long availableMemory();
     Memory::Block * allocateMemory(size_t amount);
     void freeMemory(Memory::Block * ptr);
 };

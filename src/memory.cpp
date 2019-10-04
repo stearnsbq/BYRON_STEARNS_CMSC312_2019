@@ -5,6 +5,7 @@
 
 Memory::Memory()
 {
+    this->used = 0;
     this->head = new Block();
     this->head->setSize(4398046511104);
     this->head->setFree(true);

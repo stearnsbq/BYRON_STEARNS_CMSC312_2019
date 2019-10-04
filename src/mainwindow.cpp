@@ -140,6 +140,7 @@ using namespace std;
      }
      else if (!strcmp("start\n", cmd))
      {
+
          test->start(this);
          return out;
      }
@@ -170,38 +171,43 @@ void MainWindow::updateText(std::string in){
 }
 
 
-void MainWindow::updateMemory(Memory * memory){
-    Memory::Block * cursor = memory->getHead();
-    QList<QGraphicsItem *> items =  ui->memoryView->scene()->items();
-    QMap<Memory::Block *, QGraphicsRectItem *> memoryBlocks;
-    foreach(QGraphicsItem * item, items){
-        if(qgraphicsitem_cast<QGraphicsRectItem *>(item)){
-            qgraphicsitem_cast<QGraphicsRectItem *>(item)->setBrush(Qt::red);
-            qgraphicsitem_cast<QGraphicsRectItem *>(item)->setRect(0,0,ui->memoryView->width()-3,ui->memoryView->height() / 2);
-        }
-
-        std::cout << item << std::endl;
-    }
-
-
-}
-
-
+//void MainWindow::updateMemory(Memory * memory){
+//    Memory::Block * cursor = memory->getHead();
+//    memory->alloc(10000);
+//    QGraphicsScene * scene = ui->memoryView->scene();
+//    QList<QGraphicsItem *> items = ui->memoryView->scene()->items();
+//    QMap<Memory::Block *, QGraphicsRectItem *> memoryBlocks;
+//    while(cursor){
+//        foreach(QGraphicsItem * item, items){
+//               if(qgraphicsitem_cast<QGraphicsRectItem *>(item)){
+//                   qgraphicsitem_cast<QGraphicsRectItem *>(item)->setBrush(Qt::red);
+//                   qgraphicsitem_cast<QGraphicsRectItem *>(item)->setRect(0,0,ui->memoryView->width()-3,ui->memoryView->height() / 2);
+//               }
+//           }
+//        cursor = cursor->getNext();
+//    }
 
 
-void MainWindow::drawMemory(){
-    QRect rect(0,0,ui->memoryView->width()-3,ui->memoryView->height()-3);
-    QGraphicsScene * scene = new QGraphicsScene(this);
-    QGraphicsRectItem * rectItem = new QGraphicsRectItem();
-    QGraphicsTextItem * textItem = new QGraphicsTextItem(rectItem);
-    textItem->setPlainText("Block size: 4398046511104\nfree = 1");
-    rectItem->setRect(rect);
-    rectItem->setBrush(Qt::green);
-    ui->memoryView->setScene(scene);
-    scene->addItem(rectItem);
-   // scene->setSceneRect(rect);
 
-}
+//}
+
+
+
+//void MainWindow::drawMemory(){
+//    QRect rect(0,0,ui->memoryView->width()-3,ui->memoryView->height()-3);
+//    QGraphicsScene * scene = new QGraphicsScene(this);
+//    QGraphicsRectItem * rectItem = new QGraphicsRectItem();
+//    QGraphicsTextItem * textItem = new QGraphicsTextItem(rectItem);
+//    textItem->setPlainText("Block size: 4398046511104\nfree = 1");
+//    rectItem->setRect(rect);
+//    rectItem->setBrush(Qt::green);
+//    ui->memoryView->setScene(scene);
+//    scene->addItem(rectItem);
+//   // scene->setSceneRect(rect);
+
+//}
+
+
 
 
 
@@ -215,9 +221,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     ui->lineEdit->setText("OS Simulator: ");
     consoleThread = std::thread(&MainWindow::cli,this);
+    consoleThread.detach();
     connect(this, &MainWindow::print, this, &MainWindow::updateText);
-    connect(this, &MainWindow::updateMemoryGraphic, this, &MainWindow::updateMemory);
-    this->drawMemory();
+    //connect(this, &MainWindow::updateMemoryGraphic, this, &MainWindow::updateMemory);
+    //this->drawMemory();
     ptr = ui->simulatorOut;
     ptr->setReadOnly(true);
 
@@ -239,6 +246,8 @@ void MainWindow::on_loadFile_clicked()
 {
     this->loadfile = new loadFileDialog();
     this->loadfile->setFixedSize(this->loadfile->size());
+    connect(this->loadfile, &loadFileDialog::createProcesses, this, &MainWindow::createProcess);
+      ui->simulatorOut->clear();
     loadfile->show();
 
 }

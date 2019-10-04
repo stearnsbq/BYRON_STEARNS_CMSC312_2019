@@ -5,6 +5,8 @@ MainWindow * m;
 
 Scheduler::Scheduler(int timeqc)
 {
+    this->processesRan = 0;
+    this->totalProcesses = 0;
     this->newQueue = new Queue();
     this->readyQueue = new Queue();
     this->waitingQueue = new Queue();
@@ -16,7 +18,8 @@ Scheduler::Scheduler(int timeqc)
 
 Scheduler::Scheduler()
 {
-
+    this->processesRan = 0;
+    this->totalProcesses = 0;
     this->newQueue = new Queue();
     this->readyQueue = new Queue();
     this->waitingQueue = new Queue();
@@ -59,7 +62,7 @@ void Scheduler::rotateProcess()
 
 void Scheduler::clock(){
     while(this->isRunning){
-       run();
+      run();
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
@@ -67,8 +70,13 @@ void Scheduler::clock(){
 void Scheduler::start(MainWindow * window)
 {
     this->isRunning = true;
+    this->processesRan = 0;
+    this->timeQuantum = 0;
     m = window;
     this->clockThread = std::thread(&Scheduler::clock, this);
+    this->clockThread.join();
+    emit m->print("Done!");
+    this->totalProcesses = 0;
 }
 
 void Scheduler::run()
@@ -80,7 +88,6 @@ void Scheduler::run()
 
 void Scheduler::round_robin()
 {
-
     if (this->runningProcess.getCycles() == -1 || this->runningProcess.getState() == WAIT && !this->readyQueue->isEmpty())
     {
         this->timeQuantum = 0;
@@ -88,8 +95,7 @@ void Scheduler::round_robin()
         this->runningProcess.setState(RUN);
     }else if(this->processesRan == this->totalProcesses){
         this->isRunning = false;
-
-
+        this->runningProcess.setCycles(-1);
         return;
     }
 
@@ -105,7 +111,6 @@ void Scheduler::round_robin()
     }
     else if(this->runningProcess.getCurrentInstruction().getType() == IO){
 
-        //simUi->updateText("WAITING PREEMPT");
          emit m->print("WAITING PREEMPT");
         this->runningProcess.setState(WAIT);
         this->waitingQueue->enqueueProcess(this->runningProcess);
@@ -114,6 +119,7 @@ void Scheduler::round_robin()
         if (this->runningProcess.getCurrentBurst() > 0) // if instruction is not done run it
         {
             std::string str = "RUNNING!! PID: " + std::to_string(this->runningProcess.getPid()) + " " + this->runningProcess.getCurrentInstruction().getInstr() + " burst #" + std::to_string(this->runningProcess.getCurrentBurst());
+
             emit m->print(str);
             this->runningProcess.decrementBurst();
         }
@@ -144,7 +150,7 @@ void Scheduler::processNewQueue()
         if (cpu->availableMemory() >= this->newQueue->peek()->getMemoryReq())
        {
             Process process = this->newQueue->dequeueProcess();
-            emit m->updateMemoryGraphic(cpu->getMemory());
+          //  emit m->updateMemoryGraphic(cpu->getMemor);
             process.setMemoryBlock(cpu->allocateMemory(process.getMemoryReq()));
             process.setState(READY);
             this->readyQueue->enqueueProcess(process);
