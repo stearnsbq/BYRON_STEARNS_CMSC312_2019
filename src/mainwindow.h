@@ -26,12 +26,15 @@ private:
     char *parseCommand(char *cmd);
     void updateMemory(Memory * memory);
     void cli();
+    void changeStatus();
     loadFileDialog * loadfile;
     void drawMemory();
 signals:
     void print(std::string in);
     void updateMemoryGraphic(Memory * mem);
+    void done();
 private slots:
     void on_loadFile_clicked();
+    void on_startSim_clicked();
 };
 #endif // MAINWINDOW_H

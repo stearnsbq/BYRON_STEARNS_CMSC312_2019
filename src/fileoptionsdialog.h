@@ -14,9 +14,17 @@ class fileOptionsDialog : public QDialog
 public:
     explicit fileOptionsDialog(QWidget *parent = nullptr);
     ~fileOptionsDialog();
+    void fileData(std::string data);
+signals:
+    void isDone(std::string data, int number, bool random);
+
+private slots:
+    void on_done_clicked();
+
 
 private:
     Ui::fileOptionsDialog *ui;
+        std::string file;
 };
 
 #endif // FILEOPTIONSDIALOG_H

@@ -25,6 +25,8 @@ void createProcesses(std::string data, int number, bool random);
 
 private:
     Ui::loadFileDialog *ui;
+    std::string loadFile(std::string fileName);
+    void passData(std::string data, int number, bool random);
 };
 
 #endif // LOADFILEDIALOG_H

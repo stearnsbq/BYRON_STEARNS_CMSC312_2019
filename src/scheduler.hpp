@@ -19,13 +19,13 @@ public:
     void addNewProcess(Process Process);
     void addReadyProcess(Process Process);
     Process getNextReadyProcess();
-    void start(MainWindow * window);
+    void start(MainWindow * window, int time, QString unit);
 
     void run();
 
 private:
     void rotateProcess();
-    void clock();
+    void clock(int time, QString unit);
     void processNewQueue();
     void processReadyQueue();
     void processWaitingQueue();

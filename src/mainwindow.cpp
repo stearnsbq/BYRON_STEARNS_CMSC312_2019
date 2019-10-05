@@ -10,6 +10,7 @@
 #include <string.h>
 #include <string>
 #include <stdlib.h>
+#include "fileoptionsdialog.h"
 #include <fstream>
 #include <QGraphicsRectItem>
 #include <sstream>
@@ -28,8 +29,6 @@
 using namespace std;
 
  QTextEdit *ptr;
-
-
  Scheduler *test = new Scheduler();
  thread consoleThread;
 
@@ -130,7 +129,7 @@ using namespace std;
      if (!strcmp("load\n", cmd))
      {
        std::thread thread(&MainWindow::loadFileThread,this);
-         thread.join();
+       thread.join();
          return out;
      }
      else if (!strcmp("clear\n", cmd))
@@ -141,7 +140,7 @@ using namespace std;
      else if (!strcmp("start\n", cmd))
      {
 
-         test->start(this);
+         test->start(this, 1, "ms");
          return out;
      }
      strcpy(out, "Command Not Found \"Help\" to see all commands\n\0");
@@ -209,7 +208,15 @@ void MainWindow::updateText(std::string in){
 
 
 
+void MainWindow::changeStatus(){
+    QPalette pal;
 
+    pal.setColor(QPalette::WindowText, Qt::red);
+    ui->isRunning->setText("Not Running...");
+    ui->isRunning->setPalette(pal);
+
+
+}
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -219,14 +226,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     qRegisterMetaType<std::string>("std::string");
     ui->setupUi(this);
-    ui->lineEdit->setText("OS Simulator: ");
     consoleThread = std::thread(&MainWindow::cli,this);
     consoleThread.detach();
     connect(this, &MainWindow::print, this, &MainWindow::updateText);
-    //connect(this, &MainWindow::updateMemoryGraphic, this, &MainWindow::updateMemory);
-    //this->drawMemory();
+    connect(this, &MainWindow::done, this, &MainWindow::changeStatus);
     ptr = ui->simulatorOut;
     ptr->setReadOnly(true);
+    QPalette pal;
+
+    pal.setColor(QPalette::WindowText, Qt::red);
+
+    ui->isRunning->setPalette(pal);
 
 
 }
@@ -249,5 +259,17 @@ void MainWindow::on_loadFile_clicked()
     connect(this->loadfile, &loadFileDialog::createProcesses, this, &MainWindow::createProcess);
       ui->simulatorOut->clear();
     loadfile->show();
+
+}
+
+void MainWindow::on_startSim_clicked()
+{
+    QPalette pal;
+
+    pal.setColor(QPalette::WindowText, Qt::green);
+    ui->isRunning->setText("Running!");
+    ui->isRunning->setPalette(pal);
+    std::thread run = std::thread(&Scheduler::start, test, this, ui->time->value(),ui->timeUnit->currentText());
+    run.detach();
 
 }

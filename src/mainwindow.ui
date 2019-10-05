@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>514</height>
+    <width>597</width>
+    <height>439</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,15 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>801</width>
-      <height>521</height>
+      <width>601</width>
+      <height>451</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
     </property>
     <property name="whatsThis">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -47,7 +53,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>10</y>
+        <y>370</y>
         <width>101</width>
         <height>41</height>
        </rect>
@@ -56,32 +62,82 @@
        <string>Load File</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QPushButton" name="startSim">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>420</y>
-        <width>371</width>
-        <height>21</height>
+        <x>110</x>
+        <y>370</y>
+        <width>101</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>Enter a command</string>
+       <string>Start</string>
       </property>
      </widget>
-    </widget>
-    <widget class="QWidget" name="memoryTab">
-     <attribute name="title">
-      <string>Memory</string>
-     </attribute>
-     <widget class="QGraphicsView" name="memoryView">
+     <widget class="QComboBox" name="timeUnit">
       <property name="geometry">
        <rect>
-        <x>180</x>
-        <y>20</y>
-        <width>256</width>
-        <height>431</height>
+        <x>120</x>
+        <y>340</y>
+        <width>69</width>
+        <height>22</height>
        </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <item>
+       <property name="text">
+        <string>ms</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>s</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QSpinBox" name="time">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>340</y>
+        <width>101</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>1000</number>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>320</y>
+        <width>101</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Cycle time</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="isRunning">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>280</y>
+        <width>111</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Not Running.....</string>
       </property>
      </widget>
     </widget>
@@ -92,7 +148,6 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

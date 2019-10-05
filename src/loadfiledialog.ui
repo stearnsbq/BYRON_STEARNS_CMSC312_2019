@@ -7,53 +7,18 @@
     <x>0</x>
     <y>0</y>
     <width>572</width>
-    <height>426</height>
+    <height>70</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Load Program File</string>
   </property>
-  <widget class="QCheckBox" name="checkBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>360</y>
-     <width>114</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Randomize runtime</string>
-   </property>
-  </widget>
-  <widget class="QSpinBox" name="spinBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>330</y>
-     <width>71</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="suffix">
-    <string/>
-   </property>
-   <property name="prefix">
-    <string/>
-   </property>
-   <property name="minimum">
-    <number>1</number>
-   </property>
-   <property name="maximum">
-    <number>9999</number>
-   </property>
-  </widget>
   <widget class="QLineEdit" name="fileNameInput">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>390</y>
-     <width>141</width>
+     <y>10</y>
+     <width>461</width>
      <height>20</height>
     </rect>
    </property>
@@ -67,53 +32,30 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>370</y>
-     <width>51</width>
-     <height>41</height>
+     <x>480</x>
+     <y>10</y>
+     <width>75</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="text">
     <string>Load</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>90</x>
-     <y>330</y>
-     <width>72</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string># of processes</string>
-   </property>
-  </widget>
-  <widget class="QTextEdit" name="filePreview">
-   <property name="geometry">
-    <rect>
-     <x>220</x>
-     <y>10</y>
-     <width>341</width>
-     <height>401</height>
-    </rect>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>111</width>
-     <height>41</height>
+     <x>9</x>
+     <y>37</y>
+     <width>95</width>
+     <height>23</height>
     </rect>
    </property>
    <property name="toolTip">
     <string>Generates a random program file</string>
+   </property>
+   <property name="whatsThis">
+    <string>Test</string>
    </property>
    <property name="text">
     <string>Generate Random</string>

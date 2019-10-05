@@ -1,7 +1,10 @@
 #include "loadfiledialog.h"
 #include "ui_loadfiledialog.h"
 #include <fstream>
+#include <fileoptionsdialog.h>
+#include <randomfileoptionsdialog.h>
 #include <QMessageBox>
+#include <QFileDialog>
 
 loadFileDialog::loadFileDialog(QWidget *parent) :
     QDialog(parent),
@@ -15,33 +18,64 @@ loadFileDialog::~loadFileDialog()
     delete ui;
 }
 
+std::string loadFileDialog::loadFile(std::string fileName){
+    std::string programFileBuf;
+
+    std::ifstream programFile(fileName);
+    if (!programFile)
+    {
+        QMessageBox::warning(this, "Error", "File not found");
+        return nullptr;
+    }
+    bool isValid = false;
+    for (std::string line; getline(programFile, line);)
+    {
+        programFileBuf += line + "\n";
+        if (line == "EXE")
+        {
+            isValid = true;
+        }
+    }
+    if(!isValid){
+        QMessageBox::warning(this, "Error", "Invalid Program File");
+        return nullptr;
+    }
+    return programFileBuf;
+}
+
+
+
+void loadFileDialog::passData(std::string data, int number, bool random){
+   emit this->createProcesses( data,  number,  random);
+}
+
+
 void loadFileDialog::on_pushButton_clicked()
 {
+
     if(ui->fileNameInput->text().length() > 0){
-        std::string programFileBuf;
+        std::string fileData = this->loadFile(ui->fileNameInput->text().toStdString());
 
-        std::ifstream programFile("C:\\Users\\quinn\\Desktop\\dev\\BYRON_STEARNS_CMSC312_2019\\src\\" + ui->fileNameInput->text().toUtf8());
-        if (!programFile)
-        {
-            QMessageBox::warning(this, "Error", "File not found");
-            return;
-        }
-        bool isValid = false;
-        for (std::string line; getline(programFile, line);)
-        {
-            programFileBuf += line + "\n";
-            if (line == "EXE")
-            {
-                isValid = true;
-            }
-        }
-        if(!isValid){
-            QMessageBox::warning(this, "Error", "Invalid Program File");
-            return;
-        }
+        fileOptionsDialog *dialog = new fileOptionsDialog();
+        connect(dialog, &fileOptionsDialog::isDone, this, &loadFileDialog::passData);
+        dialog->show();
+        dialog->fileData(fileData);
+        this->close();
 
-        ui->filePreview->setText(QString::fromUtf8(programFileBuf.c_str()));
-        emit this->createProcesses(programFileBuf,ui->spinBox->value(), ui->checkBox->isChecked());
+    }else{
+        QString fileName = QFileDialog::getOpenFileName(this,
+                tr("Open Programfile"), "",
+                tr("Program File (*.txt);;All Files (*)"));
+        std::string fileData = this->loadFile(fileName.toStdString());
+
+        fileOptionsDialog *dialog = new fileOptionsDialog();
+
+        connect(dialog, &fileOptionsDialog::isDone, this, &loadFileDialog::passData);
+        dialog->show();
+        dialog->fileData(fileData);
+        this->close();
+
+
     }
 
 
@@ -64,5 +98,5 @@ void loadFileDialog::on_pushButton_2_clicked()
     }
     instr += "EXE";
     QString file = QString("Name: %1\nTotal runtime: %2\nMemory: %3\n\n%4").arg(names.at(rand() % 4), QString::number(runtime), QString::number(rand() % 4096), instr);
-    ui->filePreview->setText(file);
+    //ui->filePreview->setText(file);
 }

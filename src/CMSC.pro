@@ -20,6 +20,7 @@ SOURCES += \
     Exceptions.cpp \
     PCB.cpp \
     dispatcher.cpp \
+    fileoptionsdialog.cpp \
     instruction.cpp \
     loadfiledialog.cpp \
     main.cpp \
@@ -27,6 +28,7 @@ SOURCES += \
     memory.cpp \
     priorityqueue.cpp \
     queue.cpp \
+    randomfileoptionsdialog.cpp \
     scheduler.cpp \
     table.cpp
 
@@ -34,6 +36,7 @@ HEADERS += \
     CPU.hpp \
     PCB.hpp \
     dispatcher.hpp \
+    fileoptionsdialog.h \
     instruction.hpp \
     loadfiledialog.h \
     main.hpp \
@@ -41,12 +44,15 @@ HEADERS += \
     memory.hpp \
     priorityqueue.hpp \
     queue.hpp \
+    randomfileoptionsdialog.h \
     scheduler.hpp \
     table.hpp
 
 FORMS += \
+    fileoptionsdialog.ui \
     loadfiledialog.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    randomfileoptionsdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

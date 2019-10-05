@@ -60,22 +60,28 @@ void Scheduler::rotateProcess()
 {
 }
 
-void Scheduler::clock(){
+void Scheduler::clock(int time, QString unit){
     while(this->isRunning){
       run();
-      std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      if(unit == "ms"){
+        std::this_thread::sleep_for(std::chrono::milliseconds(time));
+      }else{
+          std::this_thread::sleep_for(std::chrono::seconds(time));
+      }
+
     }
 }
 
-void Scheduler::start(MainWindow * window)
+void Scheduler::start(MainWindow * window, int time, QString unit)
 {
     this->isRunning = true;
     this->processesRan = 0;
     this->timeQuantum = 0;
     m = window;
-    this->clockThread = std::thread(&Scheduler::clock, this);
+    this->clockThread = std::thread(&Scheduler::clock, this, time, unit);
     this->clockThread.join();
     emit m->print("Done!");
+    emit m->done();
     this->totalProcesses = 0;
 }
 
