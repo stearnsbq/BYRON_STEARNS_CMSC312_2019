@@ -2,6 +2,7 @@ Name: bigdome
 Total runtime: 235 
 Memory: 125
 
+OUT "Crouch"
 CALCULATE 10
 CALCULATE 40
 I/O 5

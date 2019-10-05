@@ -6,6 +6,14 @@ Instruction::Instruction(std::string instr, int burst, TYPE type)
     this->burst = burst;
     this->type = type;
 }
+Instruction::Instruction(std::string instr, std::string out, TYPE type)
+{
+    this->instr = instr;
+    this->out = out;
+    this->burst = 1;
+    this->type = type;
+}
+
 Instruction::Instruction()
 {
     this->instr = "";
@@ -32,6 +40,13 @@ TYPE Instruction::getType()
 void Instruction::decBurst()
 {
     this->burst--;
+}
+
+std::string Instruction::getOut(){
+    return this->out;
+}
+void Instruction::setOut(std::string out){
+    this->out = out;
 }
 
 void Instruction::setInstr(std::string instr)

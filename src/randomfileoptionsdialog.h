@@ -14,6 +14,11 @@ class randomFileOptionsDialog : public QDialog
 public:
     explicit randomFileOptionsDialog(QWidget *parent = nullptr);
     ~randomFileOptionsDialog();
+signals:
+    void isDone(std::string data, int number, bool random);
+
+private slots:
+    void on_generate_clicked();
 
 private:
     Ui::randomFileOptionsDialog *ui;

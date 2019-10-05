@@ -30,6 +30,10 @@ Memory * CPU::getMemory(){
     return this->memory;
 }
 
+void CPU::freeMemory(Memory::Block * ptr){
+    this->memory->freeMemory(ptr);
+}
+
 long long CPU::availableMemory()
 {
     return this->memory->availableMemory();

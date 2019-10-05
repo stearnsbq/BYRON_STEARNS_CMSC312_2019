@@ -44,6 +44,10 @@ void Process::setMemoryReq(int amount){
 void Process::setMemoryBlock(Memory::Block * block){
     this->memoryLoc = block;
 }
+Memory::Block * Process::getMemoryBlock(){
+    return this->memoryLoc;
+}
+
 
 void Process::addInstruction(std::string instr, bool toRandom)
 {
@@ -64,6 +68,9 @@ void Process::addInstruction(std::string instr, bool toRandom)
              burst = std::rand() % burst + 1;
         }
         newInstr = Instruction("I/O", burst, IO);
+    }else if (instr.find("OUT") != std::string::npos){
+        std::string print = instr.substr(instr.find(" "));
+        newInstr = Instruction("OUT", print, OUT);
     }
     this->instructions.push_back(newInstr);
     this->currInstr = this->instructions.at(this->pc);

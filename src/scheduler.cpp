@@ -124,6 +124,9 @@ void Scheduler::round_robin()
 
         if (this->runningProcess.getCurrentBurst() > 0) // if instruction is not done run it
         {
+            if(this->runningProcess.getCurrentInstruction().getType() == OUT){
+                emit m->print(this->runningProcess.getCurrentInstruction().getOut());
+            }
             std::string str = "RUNNING!! PID: " + std::to_string(this->runningProcess.getPid()) + " " + this->runningProcess.getCurrentInstruction().getInstr() + " burst #" + std::to_string(this->runningProcess.getCurrentBurst());
 
             emit m->print(str);
@@ -131,11 +134,12 @@ void Scheduler::round_robin()
         }
         else if (this->runningProcess.getInstructions().size() - 1 > this->runningProcess.getProgramCounter()) // if instruction is done increment PC
         {
-            std::string out =   "PC " + std::to_string(this->runningProcess.getInstructions().size()) + " " + std::to_string(this->runningProcess.getProgramCounter());
+            std::string out =   "PC " + std::to_string(this->runningProcess.getProgramCounter()) + " instr: " + this->runningProcess.getCurrentInstruction().getInstr();
             emit m->print(out);
             this->runningProcess.incrementPC(); // instruction is finished increment the PC
         }else{ // process is done exit
             this->runningProcess.setState(EXIT);
+            cpu->freeMemory(this->runningProcess.getMemoryBlock());
             this->processesRan++;
         }
         }
