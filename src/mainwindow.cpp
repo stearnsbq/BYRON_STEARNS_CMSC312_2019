@@ -24,6 +24,7 @@
 #include <QGraphicsScene>
 #include <QMap>
 #include "loadfiledialog.h"
+#include <QMessageBox>
 
 
 using namespace std;
@@ -170,50 +171,15 @@ void MainWindow::updateText(std::string in){
 }
 
 
-//void MainWindow::updateMemory(Memory * memory){
-//    Memory::Block * cursor = memory->getHead();
-//    memory->alloc(10000);
-//    QGraphicsScene * scene = ui->memoryView->scene();
-//    QList<QGraphicsItem *> items = ui->memoryView->scene()->items();
-//    QMap<Memory::Block *, QGraphicsRectItem *> memoryBlocks;
-//    while(cursor){
-//        foreach(QGraphicsItem * item, items){
-//               if(qgraphicsitem_cast<QGraphicsRectItem *>(item)){
-//                   qgraphicsitem_cast<QGraphicsRectItem *>(item)->setBrush(Qt::red);
-//                   qgraphicsitem_cast<QGraphicsRectItem *>(item)->setRect(0,0,ui->memoryView->width()-3,ui->memoryView->height() / 2);
-//               }
-//           }
-//        cursor = cursor->getNext();
-//    }
-
-
-
-//}
-
-
-
-//void MainWindow::drawMemory(){
-//    QRect rect(0,0,ui->memoryView->width()-3,ui->memoryView->height()-3);
-//    QGraphicsScene * scene = new QGraphicsScene(this);
-//    QGraphicsRectItem * rectItem = new QGraphicsRectItem();
-//    QGraphicsTextItem * textItem = new QGraphicsTextItem(rectItem);
-//    textItem->setPlainText("Block size: 4398046511104\nfree = 1");
-//    rectItem->setRect(rect);
-//    rectItem->setBrush(Qt::green);
-//    ui->memoryView->setScene(scene);
-//    scene->addItem(rectItem);
-//   // scene->setSceneRect(rect);
-
-//}
 
 
 
 void MainWindow::changeStatus(){
     QPalette pal;
-
     pal.setColor(QPalette::WindowText, Qt::red);
     ui->isRunning->setText("Not Running...");
     ui->isRunning->setPalette(pal);
+    this->isRunning = false;
 
 
 }
@@ -233,10 +199,9 @@ MainWindow::MainWindow(QWidget *parent)
     ptr = ui->simulatorOut;
     ptr->setReadOnly(true);
     QPalette pal;
-
     pal.setColor(QPalette::WindowText, Qt::red);
-
     ui->isRunning->setPalette(pal);
+    this->isRunning = false;
 
 
 }
@@ -264,12 +229,16 @@ void MainWindow::on_loadFile_clicked()
 
 void MainWindow::on_startSim_clicked()
 {
+    if(!this->isRunning){
     QPalette pal;
-
     pal.setColor(QPalette::WindowText, Qt::green);
     ui->isRunning->setText("Running!");
     ui->isRunning->setPalette(pal);
     std::thread run = std::thread(&Scheduler::start, test, this, ui->time->value(),ui->timeUnit->currentText());
     run.detach();
+    this->isRunning = true;
+    }else{
+     QMessageBox::warning(this, "Already Running!!", "The simulator is already running!");
+    }
 
 }

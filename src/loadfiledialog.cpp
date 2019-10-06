@@ -25,7 +25,7 @@ std::string loadFileDialog::loadFile(std::string fileName){
     if (!programFile)
     {
         QMessageBox::warning(this, "Error", "File not found");
-        return nullptr;
+        return "";
     }
     bool isValid = false;
     for (std::string line; getline(programFile, line);)
@@ -38,7 +38,7 @@ std::string loadFileDialog::loadFile(std::string fileName){
     }
     if(!isValid){
         QMessageBox::warning(this, "Error", "Invalid Program File");
-        return nullptr;
+        return "";
     }
     return programFileBuf;
 }
@@ -55,26 +55,31 @@ void loadFileDialog::on_pushButton_clicked()
 
     if(ui->fileNameInput->text().length() > 0){
         std::string fileData = this->loadFile(ui->fileNameInput->text().toStdString());
+        if(fileData.length() > 0){
+
 
         fileOptionsDialog *dialog = new fileOptionsDialog();
         connect(dialog, &fileOptionsDialog::isDone, this, &loadFileDialog::passData);
         dialog->show();
         dialog->fileData(fileData);
         this->close();
+        }
 
     }else{
         QString fileName = QFileDialog::getOpenFileName(this,
                 tr("Open Programfile"), "",
                 tr("Program File (*.txt);;All Files (*)"));
         std::string fileData = this->loadFile(fileName.toStdString());
+        if(fileData.length() > 0){
+            fileOptionsDialog *dialog = new fileOptionsDialog();
 
-        fileOptionsDialog *dialog = new fileOptionsDialog();
+            connect(dialog, &fileOptionsDialog::isDone, this, &loadFileDialog::passData);
+            dialog->show();
+            dialog->fileData(fileData);
+            this->close();
 
-        connect(dialog, &fileOptionsDialog::isDone, this, &loadFileDialog::passData);
-        dialog->show();
-        dialog->fileData(fileData);
-        this->close();
 
+        }
 
     }
 

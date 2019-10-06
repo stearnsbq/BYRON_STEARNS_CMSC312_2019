@@ -26,6 +26,7 @@ private:
     char *parseCommand(char *cmd);
     void updateMemory(Memory * memory);
     void cli();
+    bool isRunning;
     void changeStatus();
     loadFileDialog * loadfile;
     void drawMemory();

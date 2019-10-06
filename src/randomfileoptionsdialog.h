@@ -20,8 +20,11 @@ signals:
 private slots:
     void on_generate_clicked();
 
+    void on_done_clicked();
+
 private:
     Ui::randomFileOptionsDialog *ui;
+    std::string fileData;
 };
 
 #endif // RANDOMFILEOPTIONSDIALOG_H

@@ -1,5 +1,6 @@
 #include "scheduler.hpp"
 #include "CPU.hpp"
+#include <QMessageBox>
 int gPid;
 MainWindow * m;
 
@@ -70,19 +71,28 @@ void Scheduler::clock(int time, QString unit){
       }
 
     }
+    this->processesRan = 0;
+    this->timeQuantum = 0;
+    this->totalProcesses = 0;
 }
 
 void Scheduler::start(MainWindow * window, int time, QString unit)
 {
-    this->isRunning = true;
-    this->processesRan = 0;
-    this->timeQuantum = 0;
-    m = window;
-    this->clockThread = std::thread(&Scheduler::clock, this, time, unit);
-    this->clockThread.join();
-    emit m->print("Done!");
-    emit m->done();
-    this->totalProcesses = 0;
+
+    if(!this->isRunning && !this->newQueue->isEmpty()){
+        this->isRunning = true;
+        this->processesRan = 0;
+        this->timeQuantum = 0;
+         m = window;
+        this->clockThread = std::thread(&Scheduler::clock, this, time, unit);
+        this->clockThread.join();
+        emit m->print("Done!");
+        emit m->done();
+        this->totalProcesses = 0;
+    }else{
+        emit window->done();
+        emit window->print("No processes loaded!!");
+    }
 }
 
 void Scheduler::run()
@@ -117,7 +127,7 @@ void Scheduler::round_robin()
     }
     else if(this->runningProcess.getCurrentInstruction().getType() == IO){
 
-         emit m->print("WAITING PREEMPT");
+         emit m->print("IO, PREEMPT INTO WAITING QUEUE");
         this->runningProcess.setState(WAIT);
         this->waitingQueue->enqueueProcess(this->runningProcess);
     }else{
