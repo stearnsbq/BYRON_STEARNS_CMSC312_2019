@@ -5,12 +5,16 @@ using namespace std;
 
 Queue::Node::Node()
 {
-    this->next = NULL;
+    this->next = nullptr;
 }
 Queue::Node::Node(Process data)
 {
-    this->next = NULL;
+    this->next = nullptr;
     this->data = data;
+}
+
+int Queue::size(){
+    return this->count;
 }
 
 bool Queue::isEmpty()
@@ -36,13 +40,13 @@ void Queue::Node::setData(Process data)
 }
 Queue::Node::~Node()
 {
-    this->next = NULL;
+    this->next = nullptr;
 }
 
 Queue::Queue()
 {
-    this->head = NULL;
-    this->tail = NULL;
+    this->head = nullptr;
+    this->tail = nullptr;
     this->count = 0;
 }
 Queue::~Queue()
@@ -66,14 +70,14 @@ void Queue::enqueueProcess(Process data)
     if (!(this->head)) // empty
     {
         this->head = new Node(data);
-        this->tail = NULL;
-        this->head->setNext(NULL);
+        this->tail = nullptr;
+        this->head->setNext(nullptr);
         this->count++;
     }
     else if (!(this->tail)) // length 1
     {
         this->tail = new Node(data);
-        this->tail->setNext(NULL);
+        this->tail->setNext(nullptr);
         this->head->setNext(tail);
         this->count++;
     }
@@ -82,38 +86,24 @@ void Queue::enqueueProcess(Process data)
         Node *newNode = new Node(data);
         this->tail->setNext(newNode);
         this->tail = newNode;
-        this->tail->setNext(NULL);
+        this->tail->setNext(nullptr);
 
         this->count++;
     }
 }
 Process Queue::dequeueProcess()
 {
-
-    if (!this->head)
-    {
-      
-    }
-    else
+    if (this->head)
     {
         this->tmp = *this->head;
         Process data = this->tmp.getData();
         delete(this->head);
         this->head = this->tmp.getNext();
-        if (this->head == NULL)
+        if (this->head == nullptr)
         {
-            this->tail = NULL;
+            this->tail = nullptr;
         }
         this->count--;
         return data;
-    }
-}
-void Queue::printList()
-{
-    Node *cursor = this->head;
-    while (cursor != NULL)
-    {
-        std::cout << "DATA: " + cursor->getData().getCurrentInstruction().getBurst() << std::endl;
-        cursor = cursor->getNext();
     }
 }

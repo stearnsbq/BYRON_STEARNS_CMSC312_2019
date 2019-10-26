@@ -11,7 +11,7 @@ public:
     void printList();
     Process *peek();
     bool isEmpty();
-
+    int size();
 private:
     class Node
     {

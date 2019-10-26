@@ -7,24 +7,22 @@ enum ALGORITHM
 {
     ROUND_ROBIN,
     PRIORITY_SCHEDULING,
-    MULTILEVEL_QUEUE,
+    MULTILEVEL_FEEDBACK_QUEUE,
 };
 
 class Scheduler
 {
 public:
-    Scheduler(int timeqc);
     Scheduler();
+    Scheduler(ALGORITHM algo);
     ~Scheduler();
     void addNewProcess(Process Process);
-    void addReadyProcess(Process Process);
-    Process getNextReadyProcess();
     void start(MainWindow * window, int time, QString unit);
-
     void run();
 
 private:
-    void rotateProcess();
+    void feedBackQueue();
+    void roundRobinProcess(int queueNum, int timeQ);
     void clock(int time, QString unit);
     void processNewQueue();
     void processReadyQueue();
@@ -41,5 +39,8 @@ private:
     Queue *readyQueue;
     Queue *newQueue;
     Queue *waitingQueue;
+    Queue *topLevel;
+    Queue *midLevel;
+    Queue *baseLevel;
 };
 #endif

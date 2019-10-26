@@ -1,4 +1,4 @@
-Name: skyrim
+Name: voice chat
 Total runtime: 235 
 Memory: 400
 

@@ -5,24 +5,26 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include "scheduler.hpp"
 #include <functional>
 
 class CPU
 {
 private:
     std::vector<std::thread> threads;
+    Scheduler * scheduler;
     Memory *memory;
     int clockTime;
     bool isRunning;
     int timeQuantum;
     std::thread clock_thread;
     void handler(int sig);
-    void clockThread(std::function<void ()> func);
+    void start();
 
 public:
     CPU();
     ~CPU();
-    void clock(std::function<void ()> func);
+    void run();
     void setTimeQ(int time);
     int getTimeQ();
     Memory * getMemory();

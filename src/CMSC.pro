@@ -20,6 +20,7 @@ SOURCES += \
     Exceptions.cpp \
     PCB.cpp \
     dispatcher.cpp \
+    feedbackqueue.cpp \
     fileoptionsdialog.cpp \
     instruction.cpp \
     loadfiledialog.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
     CPU.hpp \
     PCB.hpp \
     dispatcher.hpp \
+    feedbackqueue.h \
     fileoptionsdialog.h \
     instruction.hpp \
     loadfiledialog.h \

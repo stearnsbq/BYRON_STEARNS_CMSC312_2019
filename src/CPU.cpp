@@ -8,8 +8,8 @@ CPU::CPU()
 {
     this->memory = new Memory();
     this->isRunning = true;
-    //this->timeQuantum = 0;
-    //signal(SIGINT, handler);
+    this->timeQuantum = 0;
+
 }
 int CPU::getTimeQ()
 {
@@ -39,11 +39,10 @@ long long CPU::availableMemory()
     return this->memory->availableMemory();
 }
 
-void CPU::clockThread(std::function<void()> func)
+void CPU::run()
 {
     while (this->isRunning)
     {
-        func();
         std::this_thread::sleep_for(std::chrono::seconds(this->clockTime));
     }
     return;
@@ -54,9 +53,10 @@ void CPU::setTimeQ(int time)
     this->timeQuantum = time;
 }
 
-void CPU::clock(std::function<void()> func)
+void CPU::start()
 {
-    this->clock_thread = std::thread(&CPU::clockThread, this, func);
+    this->clock_thread = std::thread(&CPU::run, this);
+    this->clock_thread.join();
 }
 
 Memory::Block * CPU::allocateMemory(size_t amount)

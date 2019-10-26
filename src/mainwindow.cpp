@@ -30,7 +30,7 @@
 using namespace std;
 
  QTextEdit *ptr;
- Scheduler *test = new Scheduler();
+ Scheduler *test = new Scheduler(MULTILEVEL_FEEDBACK_QUEUE);
  thread consoleThread;
 
  void MainWindow::createProcess(string instructions, int number, bool toRandom)

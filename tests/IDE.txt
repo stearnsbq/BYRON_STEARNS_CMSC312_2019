@@ -1,4 +1,4 @@
-Name: Bobby wit dat tool
+Name: IDE
 Total runtime: 135 
 Memory: 120
 
