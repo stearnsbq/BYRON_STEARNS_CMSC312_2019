@@ -6,6 +6,7 @@ Process::Process()
     this->pc = 0;
     this->pid = 0;
     this->priority = 0;
+    this->lastQueue = -1;
 }
 
 Process::~Process()
@@ -20,6 +21,15 @@ Instruction Process::getCurrentInstruction()
 unsigned int Process::getPid()
 {
     return this->pid;
+}
+
+
+int Process::getLastQueue(){
+    return this->lastQueue;
+}
+
+void Process::setLastQueue(int qNum){
+    this->lastQueue = qNum;
 }
 
 void Process::incrementPC()

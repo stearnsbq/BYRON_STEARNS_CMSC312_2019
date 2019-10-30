@@ -27,6 +27,7 @@ private:
     int cycles;
     int pc;
     int memory;
+    int lastQueue;
     Memory::Block * memoryLoc;
 
 public:
@@ -39,6 +40,8 @@ public:
     int getCurrentBurst();
     void operator++();
     Process * getParent();
+    int getLastQueue();
+    void setLastQueue(int qNum);
     void addInstruction(std::string instr, bool toRandom);
     std::vector<Instruction> getInstructions();
     unsigned int getPid();

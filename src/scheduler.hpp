@@ -31,6 +31,7 @@ private:
     void priority();
     int timeQuantum;
     bool isRunning;
+
     int processesRan;
     int totalProcesses;
     std::thread clockThread;

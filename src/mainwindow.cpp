@@ -202,6 +202,7 @@ MainWindow::MainWindow(QWidget *parent)
     pal.setColor(QPalette::WindowText, Qt::red);
     ui->isRunning->setPalette(pal);
     this->isRunning = false;
+         ui->MLQListView->setVisible(false);
 
 
 }
@@ -240,5 +241,10 @@ void MainWindow::on_startSim_clicked()
     }else{
      QMessageBox::warning(this, "Already Running!!", "The simulator is already running!");
     }
+
+}
+
+void MainWindow::on_algorithm_activated(const QString &arg1)
+{
 
 }

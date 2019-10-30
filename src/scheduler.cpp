@@ -161,6 +161,7 @@ void Scheduler::roundRobinProcess(int queueNum, int timeQ){
       if(this->runningProcess.getState() == EXIT && !queueToProcess->isEmpty()){
             this->timeQuantum = 0;
             this->runningProcess = queueToProcess->dequeueProcess();
+            this->runningProcess.setLastQueue(queueNum);
             this->runningProcess.setState(RUN);
       }else if(this->runningProcess.getState() == EXIT && this->topLevel->isEmpty() && this->midLevel->isEmpty() && this->baseLevel->isEmpty() && this->waitingQueue->isEmpty()){
           this->isRunning = false;
@@ -257,6 +258,7 @@ void Scheduler::processReadyQueue()
         break;
     case MULTILEVEL_FEEDBACK_QUEUE:
         this->feedBackQueue();
+        break;
     default:
         break;
     }
@@ -274,7 +276,17 @@ void Scheduler::processWaitingQueue()
             rotate.setState(READY);
             rotate.incrementPC();
             if(this->algorithmToUse == MULTILEVEL_FEEDBACK_QUEUE){
-                this->topLevel->enqueueProcess(rotate);
+                switch (rotate.getLastQueue()) {
+                case 0:
+                    this->topLevel->enqueueProcess(rotate);
+                    break;
+                case 1:
+                    this->midLevel->enqueueProcess(rotate);
+                    break;
+                case 2:
+                    this->baseLevel->enqueueProcess(rotate);
+                    break;
+                }
             }else{
                 this->readyQueue->enqueueProcess(rotate);
             }
