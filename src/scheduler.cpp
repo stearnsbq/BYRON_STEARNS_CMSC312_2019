@@ -20,8 +20,6 @@ Scheduler::Scheduler(ALGORITHM algorithm)
     this->waitingQueue = new Queue();
     this->runningProcess.setState(EXIT);
     this->algorithmToUse = algorithm;
-    cpu = new CPU();
-    cpu->setTimeQ(20);
 }
 
 Scheduler::~Scheduler()
@@ -48,10 +46,6 @@ void Scheduler::clock(int time, QString unit){
       }else{
           std::this_thread::sleep_for(std::chrono::seconds(time));
       }
-
-
-
-
     }
     this->timeQuantum = 0;
     this->totalProcesses = 0;
@@ -126,7 +120,6 @@ void Scheduler::round_robin()
             this->runningProcess.incrementPC();
         }else{ // process is done exit
             this->runningProcess.setState(EXIT);
-            cpu->freeMemory(this->runningProcess.getMemoryBlock());
             this->runningProcess.setCycles(-1);
             this->processesRan++;
         }
@@ -207,7 +200,6 @@ void Scheduler::roundRobinProcess(int queueNum, int timeQ){
                 this->runningProcess.incrementPC();
           }else{
               this->runningProcess.setState(EXIT);
-              cpu->freeMemory(this->runningProcess.getMemoryBlock());
           }
 
       }
@@ -232,17 +224,16 @@ void Scheduler::processNewQueue()
 {
     if (!this->newQueue->isEmpty())
     {
-        if (cpu->availableMemory() >= this->newQueue->peek()->getMemoryReq())
-       {
+//        if (cpu->availableMemory() >= this->newQueue->peek()->getMemoryReq())
+//       {
             Process process = this->newQueue->dequeueProcess();
-            process.setMemoryBlock(cpu->allocateMemory(process.getMemoryReq()));
             process.setState(READY);
             if(this->algorithmToUse == MULTILEVEL_FEEDBACK_QUEUE){
                 this->topLevel->enqueueProcess(process);
             }else{
                 this->readyQueue->enqueueProcess(process);
             }
-        }
+        //}
     }
 }
 

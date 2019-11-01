@@ -22,7 +22,7 @@ void fileOptionsDialog::fileData(std::string data){
 
 void fileOptionsDialog::on_done_clicked()
 {
-     emit this->isDone(file,ui->procCount->value(), ui->isRandom->isChecked());
+    emit this->isDone(file,ui->procCount->value(), ui->isRandom->isChecked());
     QMessageBox::about(this, "Success", "Program loaded! " + QString::number(ui->procCount->value()) + " Processes created !");
     this->close();
 }

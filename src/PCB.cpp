@@ -7,15 +7,24 @@ Process::Process()
     this->pid = 0;
     this->priority = 0;
     this->lastQueue = -1;
+    this->pTable = new pagetable();
 }
 
 Process::~Process()
 {
 }
 
+pagetable * Process::getPTable(){
+    return this->pTable;
+}
+
 Instruction Process::getCurrentInstruction()
 {
     return this->currInstr;
+}
+
+TYPE Process::getCurrentInstructionType(){
+    return this->currInstr.getType();
 }
 
 unsigned int Process::getPid()
@@ -35,12 +44,12 @@ void Process::setLastQueue(int qNum){
 void Process::incrementPC()
 {
 
-    if(!(this->pc + 1 > this->instructions.size() - 1)){
-         this->pc++;
-         this->currInstr = this->instructions.at(this->pc);
+    if(!(this->pc + 1 > this->instructions.size() - 1)) {
+        this->pc++;
+        this->currInstr = this->instructions.at(this->pc);
     }else {
         this->currInstr.setTYPE(NOP);
-}
+    }
 }
 
 int Process::getMemoryReq(){
@@ -51,34 +60,26 @@ void Process::setMemoryReq(int amount){
     this->memory = amount;
 }
 
-void Process::setMemoryBlock(Memory::Block * block){
-    this->memoryLoc = block;
-}
-Memory::Block * Process::getMemoryBlock(){
-    return this->memoryLoc;
-}
-
-
 void Process::addInstruction(std::string instr, bool toRandom)
 {
     Instruction newInstr;
     if (instr.find("CALCULATE") != std::string::npos)
     {
         int burst = stoi(instr.substr(instr.find(" ")));
-        if(toRandom){
-             burst = std::rand() % burst + 1;
-             this->setCycles(this->getCycles() + burst);
+        if(toRandom) {
+            burst = std::rand() % burst + 1;
+            this->setCycles(this->getCycles() + burst);
         }
         newInstr = Instruction("CALCULATE", burst, CALCULATE);
     }
     else if (instr.find("I/O") != std::string::npos)
     {
         int burst = stoi(instr.substr(instr.find(" ")));
-        if(toRandom){
-             burst = std::rand() % burst + 1;
+        if(toRandom) {
+            burst = std::rand() % burst + 1;
         }
         newInstr = Instruction("I/O", burst, IO);
-    }else if (instr.find("OUT") != std::string::npos){
+    }else if (instr.find("OUT") != std::string::npos) {
         std::string print = instr.substr(instr.find(" "));
         newInstr = Instruction("OUT", print, OUT);
     }

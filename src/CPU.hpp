@@ -1,38 +1,49 @@
 #ifndef CPU_H
 #define CPU_H
-#include "memory.hpp"
+#include "mainmemory.h"
 #include <chrono>
 #include <iostream>
 #include <thread>
 #include <vector>
-#include "scheduler.hpp"
-#include <functional>
+#include "kernel.h"
+#include "longtermscheduler.h"
+#include "shorttermscheduler.h"
+#include <QString>
 
 class CPU
 {
 private:
-    std::vector<std::thread> threads;
-    Scheduler * scheduler;
-    Memory *memory;
-    int clockTime;
-    bool isRunning;
-    int timeQuantum;
-    std::thread clock_thread;
-    void handler(int sig);
-    void start();
+CPU();
+~CPU();
+mainmemory *memory;
+int clockTime;
+bool isRunning;
+int timeQuantum;
+std::thread clock_thread;
+void cycle();
+void run(int time, QString unit);
+Process runningProcess;
 
 public:
-    CPU();
-    ~CPU();
-    void run();
-    void setTimeQ(int time);
-    int getTimeQ();
-    Memory * getMemory();
-    long long availableMemory();
-    Memory::Block * allocateMemory(size_t amount);
-    void freeMemory(Memory::Block * ptr);
-};
 
-extern CPU *cpu;
+static CPU& getInstance(){     // make this singleton because I only ever need one instance of CPU
+
+    static CPU instance;
+
+    return instance;
+
+}
+
+CPU(CPU const&) = delete;     // prevents possible insts
+void operator=(CPU const&) = delete;
+void setTimeQ(int time);
+void start(int time, QString unit);
+int getTimeQ();
+void setIsRunning(bool val);
+mainmemory * getMemory();
+long long availableMemory();
+Process& getRunningProcess();
+void setRunningProcess(Process p);
+};
 
 #endif

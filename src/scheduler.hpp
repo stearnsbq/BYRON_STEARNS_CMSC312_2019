@@ -3,18 +3,12 @@
 #include "queue.hpp"
 #include <thread>
 #include "mainwindow.h"
-enum ALGORITHM
-{
-    ROUND_ROBIN,
-    PRIORITY_SCHEDULING,
-    MULTILEVEL_FEEDBACK_QUEUE,
-};
 
 class Scheduler
 {
 public:
     Scheduler();
-    Scheduler(ALGORITHM algo);
+    //Scheduler(ALGORITHM algo);
     ~Scheduler();
     void addNewProcess(Process Process);
     void start(MainWindow * window, int time, QString unit);
@@ -36,7 +30,7 @@ private:
     int totalProcesses;
     std::thread clockThread;
     Process runningProcess;
-    ALGORITHM algorithmToUse;
+   // ALGORITHM algorithmToUse;
     Queue *readyQueue;
     Queue *newQueue;
     Queue *waitingQueue;

@@ -6,12 +6,10 @@
 class Main
 {
 private:
-    CPU cpu;
-    Scheduler scheduler;
 
 public:
-    Main();
-    ~Main();
+Main();
+~Main();
 };
 
 #endif

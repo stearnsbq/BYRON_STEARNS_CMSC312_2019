@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "memory.hpp"
+#include "pagetable.h"
 #include "instruction.hpp"
 typedef enum PROCESS_STATE
 {
@@ -28,20 +28,21 @@ private:
     int pc;
     int memory;
     int lastQueue;
-    Memory::Block * memoryLoc;
+    pagetable * pTable;
+
 
 public:
     Process();
     ~Process();
+    pagetable * getPTable();
     Instruction getCurrentInstruction();
     void decrementBurst();
-    Memory::Block * getMemoryBlock();
-    void setMemoryBlock(Memory::Block * block);
     int getCurrentBurst();
     void operator++();
     Process * getParent();
     int getLastQueue();
     void setLastQueue(int qNum);
+    TYPE getCurrentInstructionType();
     void addInstruction(std::string instr, bool toRandom);
     std::vector<Instruction> getInstructions();
     unsigned int getPid();

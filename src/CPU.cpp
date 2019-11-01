@@ -1,24 +1,22 @@
 #include "CPU.hpp"
 #include <csignal>
-using namespace std;
-
-CPU *cpu = new CPU();
 
 CPU::CPU()
 {
-    this->memory = new Memory();
+    this->memory = new mainmemory(4096000, 4.0);
     this->isRunning = true;
     this->timeQuantum = 0;
-
+    this->runningProcess.setState(EXIT);
 }
+
+long long CPU::availableMemory(){
+    return 1000;
+}
+
+
 int CPU::getTimeQ()
 {
     return this->timeQuantum;
-}
-
-void CPU::handler(int sig)
-{
-    this->isRunning = false;
 }
 
 CPU::~CPU()
@@ -26,26 +24,37 @@ CPU::~CPU()
     this->isRunning = false;
 }
 
-Memory * CPU::getMemory(){
-    return this->memory;
+void CPU::setIsRunning(bool val){
+    this->isRunning = val;
 }
 
-void CPU::freeMemory(Memory::Block * ptr){
-    this->memory->freeMemory(ptr);
+Process& CPU::getRunningProcess(){
+    return this->runningProcess;
 }
 
-long long CPU::availableMemory()
+void CPU::setRunningProcess(Process p){
+    this->runningProcess = p;
+}
+
+void CPU::run(int time, QString unit)
 {
-    return this->memory->availableMemory();
-}
-
-void CPU::run()
-{
-    while (this->isRunning)
-    {
-        std::this_thread::sleep_for(std::chrono::seconds(this->clockTime));
+    while(!kernel::getInstance().isFinished()) {
+        cycle();
+        if(unit == "ms") {
+            std::this_thread::sleep_for(std::chrono::milliseconds(time));
+        }else if(unit == "ns") {
+            std::this_thread::sleep_for(std::chrono::nanoseconds(time));
+        }else{
+            std::this_thread::sleep_for(std::chrono::seconds(time));
+        }
     }
+    kernel::getInstance().window->done();
+    this->timeQuantum = 0;
     return;
+}
+
+void CPU::cycle(){
+    kernel::getInstance().schedule();
 }
 
 void CPU::setTimeQ(int time)
@@ -53,13 +62,9 @@ void CPU::setTimeQ(int time)
     this->timeQuantum = time;
 }
 
-void CPU::start()
+void CPU::start(int time, QString unit)
 {
-    this->clock_thread = std::thread(&CPU::run, this);
-    this->clock_thread.join();
+    this->runningProcess.setState(EXIT);
+    this->run(time, unit);
 }
 
-Memory::Block * CPU::allocateMemory(size_t amount)
-{
-    return this->memory->alloc(amount);
-}

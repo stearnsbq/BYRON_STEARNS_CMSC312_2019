@@ -3,7 +3,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
-
+CONFIG += console
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -19,36 +19,40 @@ SOURCES += \
     CPU.cpp \
     Exceptions.cpp \
     PCB.cpp \
-    dispatcher.cpp \
     feedbackqueue.cpp \
     fileoptionsdialog.cpp \
     instruction.cpp \
+    kernel.cpp \
     loadfiledialog.cpp \
+    longtermscheduler.cpp \
     main.cpp \
+    mainmemory.cpp \
     mainwindow.cpp \
-    memory.cpp \
+    page.cpp \
+    pagetable.cpp \
     priorityqueue.cpp \
     queue.cpp \
     randomfileoptionsdialog.cpp \
-    scheduler.cpp \
-    table.cpp
+    shorttermscheduler.cpp
 
 HEADERS += \
     CPU.hpp \
     PCB.hpp \
-    dispatcher.hpp \
     feedbackqueue.h \
     fileoptionsdialog.h \
     instruction.hpp \
+    kernel.h \
     loadfiledialog.h \
+    longtermscheduler.h \
     main.hpp \
+    mainmemory.h \
     mainwindow.h \
-    memory.hpp \
+    page.h \
+    pagetable.h \
     priorityqueue.hpp \
     queue.hpp \
     randomfileoptionsdialog.h \
-    scheduler.hpp \
-    table.hpp
+    shorttermscheduler.h
 
 FORMS += \
     fileoptionsdialog.ui \
