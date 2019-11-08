@@ -1,11 +1,13 @@
 #include "instruction.hpp"
 
-Instruction::Instruction(std::string instr, int burst, TYPE type)
+Instruction::Instruction(std::string instr, int burst, TYPE type, bool critical)
 {
     this->instr = instr;
     this->burst = burst;
     this->type = type;
+    this->critical = critical;
 }
+
 Instruction::Instruction(std::string instr, std::string out, TYPE type)
 {
     this->instr = instr;
@@ -40,6 +42,10 @@ TYPE Instruction::getType()
 void Instruction::decBurst()
 {
     this->burst--;
+}
+
+bool Instruction::isCritical(){
+    return this->critical;
 }
 
 std::string Instruction::getOut(){

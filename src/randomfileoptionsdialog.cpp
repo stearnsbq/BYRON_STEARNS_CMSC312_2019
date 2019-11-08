@@ -1,12 +1,14 @@
 #include "randomfileoptionsdialog.h"
 #include "ui_randomfileoptionsdialog.h"
 #include <QMessageBox>
+#include <ctime>
 
 randomFileOptionsDialog::randomFileOptionsDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::randomFileOptionsDialog)
 {
     ui->setupUi(this);
+    srand(time(nullptr));
 }
 
 randomFileOptionsDialog::~randomFileOptionsDialog()
@@ -22,6 +24,7 @@ void randomFileOptionsDialog::on_generate_clicked()
     std::vector<QString> instrs = {"CALCULATE", "I/O", "OUT"};
     QString instr;
     unsigned int runtime = 0;
+
     for(int i = 0; i < ui->numInstructions->value(); i++) {
         QString it = instrs.at(rand() % 2);
         unsigned int rt = (rand() % 75 + 1);

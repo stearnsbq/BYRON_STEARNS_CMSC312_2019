@@ -96,6 +96,30 @@ void MainWindow::changeStatus(){
 }
 
 
+void MainWindow::updateReadyQueue(){
+
+}
+
+void MainWindow::updateWaitingQueue(){
+
+}
+
+void MainWindow::updateNewQueue(){
+
+}
+
+
+void MainWindow::updateProcessList(){
+    std::vector<Process> processes = kernel::getInstance().getListOfProcesses();
+    ui->processList->setRowCount(processes.size());
+    for(int i = 0; i < processes.size(); i++) {
+        ui->processList->setItem(i, 0, new QTableWidgetItem(QString::number(processes[i].getPid())));
+        ui->processList->setItem(i, 1, new QTableWidgetItem(QString::fromUtf8(processes[i].getName().c_str())));
+        ui->processList->setItem(i, 2, new QTableWidgetItem(processes[i].getStateString()));
+    }
+}
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -105,15 +129,18 @@ MainWindow::MainWindow(QWidget *parent)
     qRegisterMetaType<std::string>("std::string");
     connect(this, &MainWindow::print, this, &MainWindow::updateText);
     connect(this, &MainWindow::done, this, &MainWindow::changeStatus);
+    connect(this, &MainWindow::updateProcessListGUI, this, &MainWindow::updateProcessList);
+    connect(this, &MainWindow::updateNewQueueGUI, this, &MainWindow::updateNewQueue);
+    connect(this, &MainWindow::updateReadyQueueGUI, this, &MainWindow::updateReadyQueue);
+    connect(this, &MainWindow::updateWaitingQueueGUI, this, &MainWindow::updateWaitingQueue);
     ptr = ui->simulatorOut;
     ptr->setReadOnly(true);
+    ui->processList->setColumnWidth(0, 15);
+    ui->processList->verticalHeader()->setVisible(false);
     QPalette pal;
     pal.setColor(QPalette::WindowText, Qt::red);
     ui->isRunning->setPalette(pal);
     this->isRunning = false;
-    ui->MLQListView->setVisible(false);
-
-
 }
 
 MainWindow::~MainWindow()

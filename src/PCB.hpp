@@ -3,8 +3,10 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "pagetable.h"
 #include "instruction.hpp"
+#include <QString>
+#include "page.h"
+
 typedef enum PROCESS_STATE
 {
     NEW,
@@ -17,49 +19,51 @@ typedef enum PROCESS_STATE
 class Process
 {
 private:
-    unsigned int pid;
-    std::string name;
-    std::vector<Instruction> instructions;
-    Process * parent;
-    Instruction currInstr;
-    PROCESS_STATE state;
-    unsigned int priority;
-    int cycles;
-    int pc;
-    int memory;
-    int lastQueue;
-    pagetable * pTable;
+unsigned int pid;
+std::string name;
+std::vector<Instruction> instructions;
+Process * parent;
+Instruction currInstr;
+PROCESS_STATE state;
+unsigned int priority;
+int cycles;
+int pc;
+int memory;
+int lastQueue;
+
+
 
 
 public:
-    Process();
-    ~Process();
-    pagetable * getPTable();
-    Instruction getCurrentInstruction();
-    void decrementBurst();
-    int getCurrentBurst();
-    void operator++();
-    Process * getParent();
-    int getLastQueue();
-    void setLastQueue(int qNum);
-    TYPE getCurrentInstructionType();
-    void addInstruction(std::string instr, bool toRandom);
-    std::vector<Instruction> getInstructions();
-    unsigned int getPid();
-    void setName(std::string name);
-    std::string getName();
-    void setPid(int pid);
-    void setPriority(int p);
-    void setMemoryReq(int size);
-    void setCycles(int cycles);
-    void setPC(int pc);
-    void incrementPC();
-    PROCESS_STATE getState();
-    void setState(PROCESS_STATE state);
-    unsigned int getPriority();
-    int getMemoryReq();
-    int getCycles();
-    int getProgramCounter();
+Process();
+~Process();
+std::vector <page> pages;
+Instruction getCurrentInstruction();
+void decrementBurst();
+int getCurrentBurst();
+void operator++();
+Process * getParent();
+int getLastQueue();
+void setLastQueue(int qNum);
+QString getStateString();
+TYPE getCurrentInstructionType();
+void addInstruction(std::string instr, bool toRandom);
+std::vector<Instruction> getInstructions();
+unsigned int getPid();
+void setName(std::string name);
+std::string getName();
+void setPid(int pid);
+void setPriority(int p);
+void setMemoryReq(int size);
+void setCycles(int cycles);
+void setPC(int pc);
+void incrementPC();
+PROCESS_STATE getState();
+void setState(PROCESS_STATE state);
+unsigned int getPriority();
+int getMemoryReq();
+int getCycles();
+int getProgramCounter();
 };
 
 #endif

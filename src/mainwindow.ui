@@ -114,24 +114,14 @@
         </item>
         <item row="0" column="2">
          <layout class="QGridLayout" name="SIM_DISPLAY">
-          <item row="3" column="1">
-           <widget class="QTableWidget" name="readyQueueListView">
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>PID</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>NAME</string>
-             </property>
-            </column>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Process List</string>
+            </property>
            </widget>
           </item>
-          <item row="1" column="2">
+          <item row="1" column="1">
            <widget class="QTableWidget" name="newQueueProcessList">
             <attribute name="horizontalHeaderStretchLastSection">
              <bool>true</bool>
@@ -148,60 +138,7 @@
             </column>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Process List</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QTableWidget" name="processListView">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Plain</enum>
-            </property>
-            <attribute name="horizontalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-            <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>PC</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>STATE</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Waiting queue</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="readyQueueLabel">
-            <property name="text">
-             <string>Ready queue</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
+          <item row="3" column="1">
            <widget class="QTableWidget" name="waitingQueueListView">
             <property name="autoFillBackground">
              <bool>false</bool>
@@ -221,15 +158,71 @@
             </column>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item row="2" column="1">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Waiting queue</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="readyQueueLabel">
+            <property name="text">
+             <string>Ready queue</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QTableWidget" name="readyQueueListView">
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>PID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>NAME</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+          <item row="0" column="1">
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>New queue</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QTableView" name="MLQListView"/>
+          <item row="1" column="0">
+           <widget class="QTableWidget" name="processList">
+            <attribute name="horizontalHeaderHighlightSections">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>PID</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>NAME</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>STATE</string>
+             </property>
+            </column>
+           </widget>
           </item>
          </layout>
         </item>

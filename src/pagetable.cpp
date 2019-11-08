@@ -4,7 +4,8 @@ pagetable::pagetable()
 {
     this->loadFactor = 0.75;
     this->size = 757;
-    this->pages.reserve(this->size);
+    this->storedPages = 0;
+    this->pages.resize(this->size);
 }
 
 
@@ -58,25 +59,26 @@ void pagetable::resize(){
 
 }
 
-unsigned int pagetable::hash(int num){
+unsigned int pagetable::hash(unsigned int a){
 
-    return num * 2654435761 % (int)std::pow(2, 32);
+    return (a * 2654435769 >> 32);
 
 }
 
-void pagetable::putPage(int pageNumber, int frameNumber){
+page pagetable::putPage(int pageNumber){
     unsigned int index = this->hash(pageNumber) % this->size;
 
     page * newPage = new page(pageNumber);
-    newPage->frameNumber = frameNumber;
+    newPage->frameNumber = CPU::getInstance().getNextOpenFrame();
     newPage->inMemory = true;
     this->pages.at(index).push_back(newPage);
-
-    if(this->pages.size() / this->storedPages >= 0.75) {
+    this->storedPages++;
+    if((this->storedPages / this->pages.size()  ) >= 0.75) {
 
         this->resize();
 
     }
+    return *newPage;
 }
 
 page * pagetable::removePage(int pageNumber){

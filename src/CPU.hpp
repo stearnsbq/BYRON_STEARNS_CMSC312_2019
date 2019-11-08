@@ -9,13 +9,19 @@
 #include "longtermscheduler.h"
 #include "shorttermscheduler.h"
 #include <QString>
+#include "mutex.h"
 
+
+class mainmemory;
 class CPU
 {
 private:
 CPU();
 ~CPU();
+unsigned int logicalAddr;
+unsigned int nextOpenFrame;
 mainmemory *memory;
+mutex * mutexLock;
 int clockTime;
 bool isRunning;
 int timeQuantum;
@@ -44,6 +50,11 @@ mainmemory * getMemory();
 long long availableMemory();
 Process& getRunningProcess();
 void setRunningProcess(Process p);
+void executeInstruction();
+unsigned int getNextLogicalAddr();
+unsigned int getNextOpenFrame();
+std::vector<page> alloc(unsigned int size);
+void free(std::vector<page> pages);
 };
 
 #endif

@@ -11,7 +11,6 @@ kernel::kernel()
 }
 
 void kernel::schedule(){
-    this->window->print("Long term scheduler running in: " + std::to_string(this->longTermTimer));
     if(longTermTimer <= 0) {
         this->longTerm->runScheduler();
         this->longTermTimer = 10;
@@ -22,6 +21,7 @@ void kernel::schedule(){
 
 void kernel::updateProcessTable(int index, Process p){
     this->processTable[index] = p;
+    emit window->updateProcessListGUI();
 }
 
 void kernel::newProcess(Process& p){
@@ -29,11 +29,12 @@ void kernel::newProcess(Process& p){
     p.setPid(pidCounter++);
     this->longTerm->enqueueProcess(p);
     this->processTable.push_back(p);
+    emit window->updateProcessListGUI();
 }
 
 bool kernel::isFinished(){
     for(int i = 0; i < this->processTable.size(); i++) {
-        if(this->processTable[i].getState() != EXIT) {
+        if(this->processTable[i].getState() != EXIT || this->processTable[i].getCurrentBurst() > 0) {
             return false;
         }
     }
@@ -41,7 +42,20 @@ bool kernel::isFinished(){
 }
 
 void kernel::swapIn(Process p){
-    this->shortTerm->enqueueProcess(p);
+    std::vector<page> pages = CPU::getInstance().alloc(p.getMemoryReq());
+    p.pages = pages;
+    if(!pages.empty()) {
+        this->shortTerm->enqueueProcess(p, READY_Q);
+    }
+}
+
+void kernel::IOPreempt(Process p){
+    this->shortTerm->enqueueProcess(p, WAITING);
+}
+
+
+std::vector<Process > kernel::getListOfProcesses(){
+    return this->processTable;
 }
 
 

@@ -7,6 +7,10 @@ page::page(int pageNumber)
     this->frameNumber = -1;
 }
 
+page::~page(){
+
+}
+
 bool page::isInMemory(){
     return this->inMemory;
 }

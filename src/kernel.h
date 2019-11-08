@@ -7,6 +7,7 @@ class CPU;
 class ShortTermScheduler;
 class LongTermScheduler;
 class MainWindow;
+class pagetable;
 class kernel
 {
 public:
@@ -27,10 +28,12 @@ std::vector<Process > getListOfProcesses();
 void updateProcessTable(int index, Process p);
 bool isFinished();
 MainWindow * window;
+void IOPreempt(Process p);
 private:
 kernel();
 ~kernel(){
 }
+pagetable * pTable;
 int pidCounter = 0;
 ShortTermScheduler * shortTerm;
 LongTermScheduler * longTerm;

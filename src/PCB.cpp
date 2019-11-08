@@ -1,30 +1,29 @@
 #include "PCB.hpp"
 #include <ctime>
 
+
 Process::Process()
 {
     this->pc = 0;
     this->pid = 0;
     this->priority = 0;
-    this->lastQueue = -1;
-    this->pTable = new pagetable();
+    this->lastQueue = 0;
+
+
 }
 
 Process::~Process()
 {
 }
 
-pagetable * Process::getPTable(){
-    return this->pTable;
-}
 
 Instruction Process::getCurrentInstruction()
 {
-    return this->currInstr;
+    return this->instructions.at(this->pc);
 }
 
 TYPE Process::getCurrentInstructionType(){
-    return this->currInstr.getType();
+    return this->instructions.at(this->pc).getType();
 }
 
 unsigned int Process::getPid()
@@ -43,13 +42,7 @@ void Process::setLastQueue(int qNum){
 
 void Process::incrementPC()
 {
-
-    if(!(this->pc + 1 > this->instructions.size() - 1)) {
-        this->pc++;
-        this->currInstr = this->instructions.at(this->pc);
-    }else {
-        this->currInstr.setTYPE(NOP);
-    }
+    this->pc++;
 }
 
 int Process::getMemoryReq(){
@@ -70,7 +63,12 @@ void Process::addInstruction(std::string instr, bool toRandom)
             burst = std::rand() % burst + 1;
             this->setCycles(this->getCycles() + burst);
         }
-        newInstr = Instruction("CALCULATE", burst, CALCULATE);
+        if(instr.find("CRITICAL") != std::string::npos) {
+            newInstr = Instruction("CRITICAL_CALCULATE", burst, CRITICAL_CALC, true);
+        }else{
+            newInstr = Instruction("CALCULATE", burst, CALCULATE, false);
+        }
+
     }
     else if (instr.find("I/O") != std::string::npos)
     {
@@ -78,7 +76,11 @@ void Process::addInstruction(std::string instr, bool toRandom)
         if(toRandom) {
             burst = std::rand() % burst + 1;
         }
-        newInstr = Instruction("I/O", burst, IO);
+        if(instr.find("CRITICAL") != std::string::npos) {
+            newInstr = Instruction("CRITICAL_I/O", burst, CRITICAL_IO, true);
+        }else{
+            newInstr = Instruction("I/O", burst, IO, false);
+        }
     }else if (instr.find("OUT") != std::string::npos) {
         std::string print = instr.substr(instr.find(" "));
         newInstr = Instruction("OUT", print, OUT);
@@ -97,8 +99,6 @@ void Process::decrementBurst()
     this->instructions.at(this->pc).decBurst();
 }
 
-
-
 void Process::setPid(int pid){
     this->pid = pid;
 }
@@ -115,8 +115,12 @@ void Process::setPriority(int p)
 
 int Process::getCurrentBurst()
 {
+    if(this->pc > this->instructions.size() -1) {
+        return 0;
+    }else{
+        return this->instructions.at(this->pc).getBurst();
+    }
 
-    return this->instructions.at(this->pc).getBurst();
 }
 
 void Process::setName(std::string name)
@@ -142,6 +146,12 @@ PROCESS_STATE Process::getState()
 {
     return this->state;
 }
+
+QString Process::getStateString(){
+    const char * strings[] = {"NEW", "READY","RUN","WAIT","EXIT"};
+    return QString::fromUtf8(strings[this->state]);
+}
+
 void Process::setState(PROCESS_STATE state)
 {
     this->state = state;

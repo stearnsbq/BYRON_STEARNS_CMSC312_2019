@@ -2,7 +2,7 @@
 #include "mainwindow.h"
 
 
-ShortTermScheduler::ShortTermScheduler() : ShortTermScheduler(ROUND_ROBIN)
+ShortTermScheduler::ShortTermScheduler() : ShortTermScheduler(MULTILEVEL_FEEDBACK_QUEUE)
 {
 
 }
@@ -13,6 +13,7 @@ ShortTermScheduler::ShortTermScheduler(ALGORITHM algoToUse)
     this->readyQueue = new Queue();
     this->midLevel = new Queue();
     this->baseLevel = new Queue();
+    this->waitingQueue = new Queue();
 }
 
 
@@ -32,18 +33,32 @@ void ShortTermScheduler::runScheduler(){
     default:
         break;
     }
+    this->processWaitingQueue();
 }
 
-void ShortTermScheduler::enqueueProcess(Process p){
-    this->readyQueue->enqueueProcess(p);
+void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
+    switch (q) {
+    case WAITING:
+        this->waitingQueue->enqueueProcess(p);
+        break;
+    case MID:
+        this->midLevel->enqueueProcess(p);
+        break;
+    case READY_Q:
+        this->readyQueue->enqueueProcess(p);
+        break;
+    case BASE:
+        this->readyQueue->enqueueProcess(p);
+        break;
+    }
 }
 
 void ShortTermScheduler::feedBackQueue(){
-    if(!this->readyQueue->isEmpty()) {
+    if(!this->readyQueue->isEmpty() || (CPU::getInstance().getRunningProcess().getLastQueue() == 0 && CPU::getInstance().getRunningProcess().getState() != EXIT) ) {
         this->roundRobinProcess(0, 8);
-    }else if(!this->midLevel->isEmpty()) {
+    }else if(!this->midLevel->isEmpty() || (CPU::getInstance().getRunningProcess().getLastQueue() == 1 && CPU::getInstance().getRunningProcess().getState() != EXIT)) {
         this->roundRobinProcess(1, 16);
-    }else{
+    }else if (!this->baseLevel->isEmpty() || (CPU::getInstance().getRunningProcess().getLastQueue() == 2 && CPU::getInstance().getRunningProcess().getState() != EXIT)) {
         this->roundRobinProcess(2, 20);
     }
 }
@@ -67,49 +82,48 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
 
         if(CPU::getInstance().getRunningProcess().getState() == EXIT && !queueToProcess->isEmpty()) {
             this->timeQuantum = 0;
-            CPU::getInstance().setRunningProcess(this->readyQueue->dequeueProcess());
-            CPU::getInstance().getRunningProcess().setLastQueue(queue);
-            CPU::getInstance().getRunningProcess().setState(RUN);
+            Process newProcess = queueToProcess->dequeueProcess();
+            newProcess.setState(RUN);
+            CPU::getInstance().setRunningProcess(newProcess);
+            kernel::getInstance().updateProcessTable(newProcess.getPid(),  newProcess);
         }
 
         if(this->timeQuantum >= timeQ) {
-
+            CPU::getInstance().getRunningProcess().setLastQueue(queue >= 2 ? 2 : queue +1);
             Process rotate = CPU::getInstance().getRunningProcess();
             rotate.setState(READY);
             CPU::getInstance().getRunningProcess().setState(EXIT);
+            kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
             switch (queue) {
             case 0:
-                //emit m->print("Process q1 -> q2");
+                emit kernel::getInstance().window->print("PID " + std::to_string(rotate.getPid()) +  " demoting from q1 -> q2");
                 this->midLevel->enqueueProcess(rotate);
                 break;
             case 1:
-                //emit m->print("Process q2 -> q3");
+                emit kernel::getInstance().window->print(  "PID " + std::to_string(rotate.getPid()) +" demoting from q2 -> q3");
                 this->baseLevel->enqueueProcess(rotate);
                 break;
             case 2:
-                //emit m->print("preempt to back");
+                emit kernel::getInstance().window->print(  "PID " + std::to_string(rotate.getPid()) +" preempt to back");
                 this->baseLevel->enqueueProcess(rotate);
                 break;
             }
 
         }else{
             if(CPU::getInstance().getRunningProcess().getCurrentBurst() > 0) {
-                if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == OUT) {
-                    //emit m->print(this->runningProcess.getCurrentInstruction().getOut());
-                }else if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == IO) {
-                    // emit m->print("IO, PREEMPT INTO WAITING QUEUE");
-                    Process rotate = CPU::getInstance().getRunningProcess();
-                    rotate.setState(WAIT);
-                    CPU::getInstance().getRunningProcess().setState(EXIT);
-                    //this->waitingQueue->enqueueProcess(rotate);
-                }else{
-                    // std::string str = "RUNNING!! PID: " + std::to_string(this->runningProcess.getPid()) + " " + this->runningProcess.getCurrentInstruction().getInstr() + " burst #" + std::to_string(this->runningProcess.getCurrentBurst());
-                    // emit kernel::getInstance().window->print(str);
-                    CPU::getInstance().getRunningProcess().decrementBurst();
-                }
+
+                CPU::getInstance().executeInstruction();
+
             }else if(CPU::getInstance().getRunningProcess().getInstructions().size() - 1 > CPU::getInstance().getRunningProcess().getProgramCounter()) {
+                std::string out = "PC " + std::to_string(CPU::getInstance().getRunningProcess().getProgramCounter()) + " instr: " + CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr();
+                std::cout << out << std::endl;
+                emit kernel::getInstance().window->print(out);
                 CPU::getInstance().getRunningProcess().incrementPC();
             }else{
+                Process rotate = CPU::getInstance().getRunningProcess();
+                rotate.setState(EXIT);
+                kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
+                CPU::getInstance().free(rotate.pages);
                 CPU::getInstance().getRunningProcess().setState(EXIT);
             }
         }
@@ -127,6 +141,7 @@ void ShortTermScheduler::roundRobin()
         Process newProcess = this->readyQueue->dequeueProcess();
         newProcess.setState(RUN);
         CPU::getInstance().setRunningProcess(newProcess);
+        kernel::getInstance().updateProcessTable(newProcess.getPid(),  newProcess);
     }
 
     if (this->timeQuantum >= 20) // ran out of time for this process preempt it out
@@ -141,36 +156,55 @@ void ShortTermScheduler::roundRobin()
     }else{
         if (CPU::getInstance().getRunningProcess().getCurrentBurst() > 0) // if instruction is not done run it
         {
-            if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == OUT) {
-
-            }else if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == IO) {
-
-                Process rotate = CPU::getInstance().getRunningProcess();
-                rotate.setState(WAIT);
-                CPU::getInstance().getRunningProcess().setState(EXIT);
-                //this->waitingQueue->enqueueProcess(rotate);
-            }else{
-
-                std::string str = "RUNNING!! PID: " + std::to_string(CPU::getInstance().getRunningProcess().getPid()) + " " + CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr() + " burst #" + std::to_string(CPU::getInstance().getRunningProcess().getCurrentBurst());
-                std::cout << str << std::endl;
-                emit kernel::getInstance().window->print(str);
-                CPU::getInstance().getRunningProcess().decrementBurst();
-            }
+            CPU::getInstance().executeInstruction();
         }
-        else if (CPU::getInstance().getRunningProcess().getInstructions().size() - 1 > CPU::getInstance().getRunningProcess().getProgramCounter()) // if instruction is done increment PC
+        else if (CPU::getInstance().getRunningProcess().getInstructions().size() - 1 > CPU::getInstance().getRunningProcess().getProgramCounter())// if instruction is done increment PC
         {
-            std::string out =   "PC " + std::to_string(CPU::getInstance().getRunningProcess().getProgramCounter()) + " instr: " + CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr();
-            //emit m->print(out);
+            std::string out = "PC " + std::to_string(CPU::getInstance().getRunningProcess().getProgramCounter()) + " instr: " + CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr();
+            std::cout << out << std::endl;
             emit kernel::getInstance().window->print(out);
             CPU::getInstance().getRunningProcess().incrementPC();
         }else{ // process is done exit
             Process rotate = CPU::getInstance().getRunningProcess();
             rotate.setState(EXIT);
-
+            kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
             CPU::getInstance().getRunningProcess().setState(EXIT);
         }
-        kernel::getInstance().updateProcessTable( CPU::getInstance().getRunningProcess().getPid(),  CPU::getInstance().getRunningProcess());
+
     }
 
     this->timeQuantum++;
+}
+
+
+void ShortTermScheduler::processWaitingQueue()
+{
+    if(!this->waitingQueue->isEmpty()) {
+        if(this->waitingQueue->peek()->getCurrentBurst() > 0) {
+            //  emit kernel::getInstance().window->print("WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr());
+            std::cout << "WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr() << std::endl;
+            this->waitingQueue->peek()->decrementBurst();
+        }else{
+            Process rotate = this->waitingQueue->dequeueProcess();
+            emit kernel::getInstance().window->print("WAITING DONE: " + std::to_string(rotate.getPid()));
+            std::cout << "WAITING DONE: " + std::to_string(rotate.getPid()) << std::endl;
+            rotate.setState(READY);
+            rotate.incrementPC();
+            if(this->algorithmToUse == MULTILEVEL_FEEDBACK_QUEUE) {
+                switch (rotate.getLastQueue()) {
+                case 0:
+                    this->readyQueue->enqueueProcess(rotate);
+                    break;
+                case 1:
+                    this->midLevel->enqueueProcess(rotate);
+                    break;
+                case 2:
+                    this->baseLevel->enqueueProcess(rotate);
+                    break;
+                }
+            }else{
+                this->readyQueue->enqueueProcess(rotate);
+            }
+        }
+    }
 }

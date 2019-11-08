@@ -19,15 +19,18 @@ SOURCES += \
     CPU.cpp \
     Exceptions.cpp \
     PCB.cpp \
+    contextswitchinterrupt.cpp \
     feedbackqueue.cpp \
     fileoptionsdialog.cpp \
     instruction.cpp \
+    interrupt.cpp \
     kernel.cpp \
     loadfiledialog.cpp \
     longtermscheduler.cpp \
     main.cpp \
     mainmemory.cpp \
     mainwindow.cpp \
+    mutex.cpp \
     page.cpp \
     pagetable.cpp \
     priorityqueue.cpp \
@@ -38,15 +41,18 @@ SOURCES += \
 HEADERS += \
     CPU.hpp \
     PCB.hpp \
+    contextswitchinterrupt.h \
     feedbackqueue.h \
     fileoptionsdialog.h \
     instruction.hpp \
+    interrupt.h \
     kernel.h \
     loadfiledialog.h \
     longtermscheduler.h \
     main.hpp \
     mainmemory.h \
     mainwindow.h \
+    mutex.h \
     page.h \
     pagetable.h \
     priorityqueue.hpp \
