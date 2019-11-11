@@ -1,7 +1,7 @@
 #include "mainmemory.h"
 #include <cmath>
 
-mainmemory::mainmemory(int totalMemory, double pageSize)
+mainmemory::mainmemory(unsigned int totalMemory, double pageSize)
 {
     this->pageSize = pageSize;
     this->usedFrames = 0;
@@ -9,11 +9,11 @@ mainmemory::mainmemory(int totalMemory, double pageSize)
     this->totalMemory = totalMemory;
     unsigned int frameCount = std::ceil((double)this->totalMemory / this->pageSize);
     this->totalFrames = frameCount;
-    this->emptyFrames.reserve(frameCount);
+    this->frames.reserve(frameCount);
     this->nextFrame = frameCount-1;
-    for(int i = frameCount-1; i >= 0; i--) {
-
-        this->emptyFrames.push_back({i, true});
+    for(unsigned int i = frameCount-1; i > 0; i--) {
+        this->frames.push_back({i, true});
+        this->emptyFrames.push({i, true});
     }
 }
 
@@ -37,23 +37,21 @@ unsigned int mainmemory::availableMemory(){
 
 void mainmemory::freeMemory(std::vector<page> pages){
     for(int i = 0; i < pages.size(); i++) {
-        this->emptyFrames.at((this->emptyFrames.size() - 1) - pages[i].frameNumber).free = true;
+        frame &tmp = this->frames.at((this->emptyFrames.size() - 1) - pages[i].getFrameNumber());
+        tmp.free = true;
+        this->emptyFrames.push(tmp);
     }
 }
 
-
 unsigned int mainmemory::getNextFrame(){
-    for(int i = this->emptyFrames.size()-1; i >= 0; i--) {
-        if(this->emptyFrames[i].free) {
-            this->emptyFrames[i].free = false;
-            return this->emptyFrames[i].num;
-        }
-    }
+    frame newFrame = this->emptyFrames.top();
+    this->emptyFrames.pop();
+    return newFrame.num;
 }
 
 bool comparePages(page * p1, page * p2)
 {
-    return (p1->pageNumber < p2->pageNumber);
+    return (p1->getPageNumber() < p2->getPageNumber());
 }
 
 page * mainmemory::tlbSearch(int pageNum, int l = 0, int h = 0){   // basic binary search of tlb
@@ -62,9 +60,9 @@ page * mainmemory::tlbSearch(int pageNum, int l = 0, int h = 0){   // basic bina
     }else{
         std::sort(this->TLB.begin(), this->TLB.end(), comparePages);
         unsigned int mid = (l + h) / 2;
-        if(pageNum == this->TLB.at(mid)->pageNumber) {
+        if(pageNum == this->TLB.at(mid)->getPageNumber()) {
             return this->TLB.at(mid); // hit
-        }else if(pageNum < this->TLB.at(mid)->pageNumber) {
+        }else if(pageNum < this->TLB.at(mid)->getPageNumber()) {
             return tlbSearch(pageNum, l, mid-1);
         }else{
             return tlbSearch(pageNum, mid+1, h);

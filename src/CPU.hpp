@@ -21,8 +21,9 @@ CPU();
 unsigned int logicalAddr;
 unsigned int nextOpenFrame;
 mainmemory *memory;
-mutex * mutexLock;
+
 int clockTime;
+QString unit;
 bool isRunning;
 int timeQuantum;
 std::thread clock_thread;
@@ -39,7 +40,7 @@ static CPU& getInstance(){     // make this singleton because I only ever need o
     return instance;
 
 }
-
+mutex * mutexLock;
 CPU(CPU const&) = delete;     // prevents possible insts
 void operator=(CPU const&) = delete;
 void setTimeQ(int time);
@@ -50,7 +51,7 @@ mainmemory * getMemory();
 long long availableMemory();
 Process& getRunningProcess();
 void setRunningProcess(Process p);
-void executeInstruction();
+void executeInstruction(unsigned int timeQ);
 unsigned int getNextLogicalAddr();
 unsigned int getNextOpenFrame();
 std::vector<page> alloc(unsigned int size);

@@ -39,6 +39,8 @@ void CPU::setRunningProcess(Process p){
 
 void CPU::run(int time, QString unit)
 {
+    this->unit = unit;
+    this->clockTime = time;
     while(!kernel::getInstance().isFinished()) {
         cycle();
         if(unit == "ms") {
@@ -51,7 +53,6 @@ void CPU::run(int time, QString unit)
     }
     kernel::getInstance().window->done();
     this->timeQuantum = 0;
-    return;
 }
 
 void CPU::cycle(){
@@ -90,7 +91,7 @@ void CPU::free(std::vector<page> pages){
     this->memory->freeMemory(pages);
 }
 
-void CPU::executeInstruction(){
+void CPU::executeInstruction(unsigned int timeQ){
     if(this->getRunningProcess().getState() != EXIT) {
         if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == OUT) {
 
@@ -121,18 +122,57 @@ void CPU::executeInstruction(){
                 emit kernel::getInstance().window->print(str);
 
             }else{
+
+                unsigned int timeOut = 0;
                 while(CPU::getInstance().getRunningProcess().getCurrentBurst() > 0) {
 
-                    std::string str = CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr() + " burst #" + std::to_string(CPU::getInstance().getRunningProcess().getCurrentBurst());
+                    // std::string str = CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr() + " burst #" + std::to_string(CPU::getInstance().getRunningProcess().getCurrentBurst());
 
-                    emit kernel::getInstance().window->print(str);
+                    //  emit kernel::getInstance().window->print(str);
 
                     CPU::getInstance().getRunningProcess().decrementBurst();
 
+                    if(unit == "ms") {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(clockTime));
+                    }else if(unit == "ns") {
+                        std::this_thread::sleep_for(std::chrono::nanoseconds(clockTime));
+                    }else{
+                        std::this_thread::sleep_for(std::chrono::seconds(clockTime));
+                    }
+
+                    if(timeOut >= timeQ * 3) {
+                        emit kernel::getInstance().window->print("critical section timeout");
+                        break;
+                    }
+                    timeOut++;
                 }
 
                 mutexLock->unlock();
             }
+        } else if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == CRITICAL_IO) {
+
+            std::string str = "PID: " + std::to_string(CPU::getInstance().getRunningProcess().getPid()) + " ENTERED CRITICAL SECTION";
+
+            emit kernel::getInstance().window->print(str);
+
+            if(mutexLock->lock() != 0) {
+
+                std::string str = "Process tried to enter critical second however it timed out trying again....";
+
+                emit kernel::getInstance().window->print(str);
+
+            }
+
+            Process rotate = CPU::getInstance().getRunningProcess();
+
+            rotate.setState(WAIT);
+
+            kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
+
+            CPU::getInstance().getRunningProcess().setState(EXIT);
+
+            kernel::getInstance().IOPreempt(rotate);
+
         }else{
 
             std::string str = "RUNNING!! PID: " + std::to_string(CPU::getInstance().getRunningProcess().getPid()) + " " + CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr() + " burst #" + std::to_string(CPU::getInstance().getRunningProcess().getCurrentBurst());

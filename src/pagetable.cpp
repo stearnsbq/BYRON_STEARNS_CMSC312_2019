@@ -29,7 +29,7 @@ std::vector<int> pagetable::getPages(){
     for(int i = 0; i < this->pages.size(); i++) {
         if(this->pages.at(i).size() > 0) {
             for(int j = 0; j < this->pages.at(i).size(); j++) {
-                frames.push_back(this->pages.at(i).at(j)->frameNumber);
+                frames.push_back(this->pages.at(i).at(j)->getPageNumber());
             }
         }
     }
@@ -69,8 +69,8 @@ page pagetable::putPage(int pageNumber){
     unsigned int index = this->hash(pageNumber) % this->size;
 
     page * newPage = new page(pageNumber);
-    newPage->frameNumber = CPU::getInstance().getNextOpenFrame();
-    newPage->inMemory = true;
+    newPage->setPageNumber(CPU::getInstance().getNextOpenFrame());
+    newPage->setInMemory(true);
     this->pages.at(index).push_back(newPage);
     this->storedPages++;
     if((this->storedPages / this->pages.size()  ) >= 0.75) {
@@ -90,11 +90,12 @@ page * pagetable::removePage(int pageNumber){
 
     for(unsigned int i = 0; i < length; i++) {
 
-        if(chain.at(i)->pageNumber == pageNumber) {
-
+        if(chain.at(i)->getPageNumber() == pageNumber) {
             return chain.at(i);
-
         }
     }
+    std::remove_if(chain.begin(), chain.end(), [pageNumber](page* x) {
+        return x->getPageNumber() == pageNumber;
+    });
     return nullptr;
 }

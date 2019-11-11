@@ -19,6 +19,7 @@ void kernel::schedule(){
     this->longTermTimer--;
 }
 
+
 void kernel::updateProcessTable(int index, Process p){
     this->processTable[index] = p;
     emit window->updateProcessListGUI();

@@ -24,6 +24,7 @@ public:
 ShortTermScheduler(ALGORITHM algoToUse);
 ShortTermScheduler();
 ~ShortTermScheduler();
+void setAlgorithm(ALGORITHM algoToUse);
 void runScheduler();
 void enqueueProcess(Process p, QUEUE_TYPE queue);
 private:

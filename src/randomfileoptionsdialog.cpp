@@ -44,7 +44,10 @@ void randomFileOptionsDialog::on_generate_clicked()
 
 void randomFileOptionsDialog::on_done_clicked()
 {
-    emit isDone(fileData, ui->numProc->value(), true);
-    QMessageBox::about(this, "Success", "Program loaded! " + QString::number(ui->numProc->value()) + " Processes created !");
-    this->close();
+    if(fileData.length() > 0) {
+        emit isDone(fileData, ui->numProc->value(), true);
+        QMessageBox::about(this, "Success", "Program loaded! " + QString::number(ui->numProc->value()) + " Processes created !");
+        this->close();
+    }
+
 }

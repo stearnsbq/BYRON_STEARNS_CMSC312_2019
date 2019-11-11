@@ -3,11 +3,13 @@
 #include "CPU.hpp"
 #include "mainwindow.h"
 #include <vector>
+
 class CPU;
 class ShortTermScheduler;
 class LongTermScheduler;
 class MainWindow;
 class pagetable;
+
 class kernel
 {
 public:

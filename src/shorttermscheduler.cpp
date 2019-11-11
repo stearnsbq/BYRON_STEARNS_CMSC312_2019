@@ -112,7 +112,7 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
         }else{
             if(CPU::getInstance().getRunningProcess().getCurrentBurst() > 0) {
 
-                CPU::getInstance().executeInstruction();
+                CPU::getInstance().executeInstruction(timeQ);
 
             }else if(CPU::getInstance().getRunningProcess().getInstructions().size() - 1 > CPU::getInstance().getRunningProcess().getProgramCounter()) {
                 std::string out = "PC " + std::to_string(CPU::getInstance().getRunningProcess().getProgramCounter()) + " instr: " + CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr();
@@ -156,7 +156,7 @@ void ShortTermScheduler::roundRobin()
     }else{
         if (CPU::getInstance().getRunningProcess().getCurrentBurst() > 0) // if instruction is not done run it
         {
-            CPU::getInstance().executeInstruction();
+            CPU::getInstance().executeInstruction(20);
         }
         else if (CPU::getInstance().getRunningProcess().getInstructions().size() - 1 > CPU::getInstance().getRunningProcess().getProgramCounter())// if instruction is done increment PC
         {
@@ -186,8 +186,8 @@ void ShortTermScheduler::processWaitingQueue()
             this->waitingQueue->peek()->decrementBurst();
         }else{
             Process rotate = this->waitingQueue->dequeueProcess();
-            emit kernel::getInstance().window->print("WAITING DONE: " + std::to_string(rotate.getPid()));
-            std::cout << "WAITING DONE: " + std::to_string(rotate.getPid()) << std::endl;
+            emit kernel::getInstance().window->print("WAITING DONE PID: " + std::to_string(rotate.getPid()));
+            std::cout << "WAITING DONE PID: " + std::to_string(rotate.getPid()) << std::endl;
             rotate.setState(READY);
             rotate.incrementPC();
             if(this->algorithmToUse == MULTILEVEL_FEEDBACK_QUEUE) {
@@ -205,6 +205,7 @@ void ShortTermScheduler::processWaitingQueue()
             }else{
                 this->readyQueue->enqueueProcess(rotate);
             }
+            CPU::getInstance().mutexLock->unlock();
         }
     }
 }

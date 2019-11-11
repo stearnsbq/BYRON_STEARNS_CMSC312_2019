@@ -44,7 +44,6 @@ void updateWaitingQueueGUI(Process p);
 private slots:
 void on_loadFile_clicked();
 void on_startSim_clicked();
-void on_comboBox_activated(const QString &arg1);
 void on_algorithm_activated(const QString &arg1);
 void on_timeUnit_activated(const QString &arg1);
 };

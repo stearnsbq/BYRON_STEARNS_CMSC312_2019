@@ -171,6 +171,7 @@ void MainWindow::on_startSim_clicked()
         pal.setColor(QPalette::WindowText, Qt::green);
         ui->isRunning->setText("Running!");
         ui->isRunning->setPalette(pal);
+
         std::thread run = std::thread(&CPU::start, &CPU::getInstance(), ui->time->value(), ui->timeUnit->currentText());
         run.detach();
         this->isRunning = true;
@@ -182,6 +183,11 @@ void MainWindow::on_startSim_clicked()
 
 void MainWindow::on_algorithm_activated(const QString &arg1)
 {
+//    if(arg1 == "Round Robin") {
+//        kernel::getInstance().setShortTermAlgo(ROUND_ROBIN);
+//    }else if(arg1 == "Multi-Level Feedback Queue") {
+//        kernel::getInstance().setShortTermAlgo(MULTILEVEL_FEEDBACK_QUEUE);
+//    }
 
 }
 
