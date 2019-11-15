@@ -171,7 +171,6 @@ void MainWindow::on_startSim_clicked()
         pal.setColor(QPalette::WindowText, Qt::green);
         ui->isRunning->setText("Running!");
         ui->isRunning->setPalette(pal);
-
         std::thread run = std::thread(&CPU::start, &CPU::getInstance(), ui->time->value(), ui->timeUnit->currentText());
         run.detach();
         this->isRunning = true;

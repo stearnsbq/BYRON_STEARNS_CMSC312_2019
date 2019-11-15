@@ -21,7 +21,6 @@ CPU();
 unsigned int logicalAddr;
 unsigned int nextOpenFrame;
 mainmemory *memory;
-
 int clockTime;
 QString unit;
 bool isRunning;

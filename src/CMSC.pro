@@ -20,6 +20,8 @@ SOURCES += \
     Exceptions.cpp \
     PCB.cpp \
     contextswitchinterrupt.cpp \
+    core.cpp \
+    cpu_thread.cpp \
     feedbackqueue.cpp \
     fileoptionsdialog.cpp \
     instruction.cpp \
@@ -42,6 +44,8 @@ HEADERS += \
     CPU.hpp \
     PCB.hpp \
     contextswitchinterrupt.h \
+    core.h \
+    cpu_thread.h \
     feedbackqueue.h \
     fileoptionsdialog.h \
     instruction.hpp \
