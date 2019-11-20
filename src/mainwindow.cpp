@@ -70,7 +70,7 @@ void MainWindow::createProcess(string instructions, int number, bool toRandom)
     }
     for (int i = 0; i < number; i++)
     {
-        p.setPriority(0);
+        p.setPriority(rand()% 1000);
         kernel::getInstance().newProcess(p);
     }
     cout << "Program: " << p.getName() << " Loaded!"<< " Processes created: " << number  << endl;

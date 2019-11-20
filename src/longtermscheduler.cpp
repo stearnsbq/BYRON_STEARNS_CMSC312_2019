@@ -1,20 +1,20 @@
 #include "longtermscheduler.h"
+#include "kernel.h"
+#include "CPU.hpp"
 
 // Uses priority queue to determine what process should be added into the ready queue
 
-LongTermScheduler::LongTermScheduler()
+LongTermScheduler::LongTermScheduler(ShortTermScheduler * sched)
 {
-    this->jobQueue = new PriorityQueue();
+    this->scheduler = sched;
 }
 
 void LongTermScheduler::runScheduler(){
-    if(CPU::getInstance().availableMemory() > 0 && this->jobQueue->getSize() > 0) {
-        Process newProcess = this->jobQueue->removeProcess();
-        this->jobQueue->ageProcesses(); // age the processes to reduce starvation
-        kernel::getInstance().swapIn(newProcess); // put into the ready queue
+    if(CPU::getInstance().availableMemory() > 0 && !kernel::getInstance().isJobPoolEmpty()) {
+        Process p = kernel::getInstance().getNextProcessInPool();
+        this->scheduler->enqueueProcess(p, READY_Q);
+        p.pages = CPU::getInstance().alloc(p.getMemoryReq());
     }
 }
 
-void LongTermScheduler::enqueueProcess(Process p){
-    this->jobQueue->addProcess(p);
-}
+

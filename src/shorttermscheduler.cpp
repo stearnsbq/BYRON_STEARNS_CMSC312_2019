@@ -2,18 +2,14 @@
 #include "mainwindow.h"
 
 
-ShortTermScheduler::ShortTermScheduler() : ShortTermScheduler(MULTILEVEL_FEEDBACK_QUEUE)
-{
 
-}
-
-ShortTermScheduler::ShortTermScheduler(ALGORITHM algoToUse)
-{
+ShortTermScheduler::ShortTermScheduler(ALGORITHM algoToUse, Core & parent) : parent(parent) {
     this->algorithmToUse = algoToUse;
     this->readyQueue = new Queue();
     this->midLevel = new Queue();
     this->baseLevel = new Queue();
     this->waitingQueue = new Queue();
+    this->dp = new Dispatcher(parent);
 }
 
 
@@ -54,11 +50,11 @@ void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
 }
 
 void ShortTermScheduler::feedBackQueue(){
-    if(!this->readyQueue->isEmpty() || (CPU::getInstance().getRunningProcess().getLastQueue() == 0 && CPU::getInstance().getRunningProcess().getState() != EXIT) ) {
+    if(!this->readyQueue->isEmpty() || (parent.runningProcess.getLastQueue() == 0 && parent.runningProcess.getState() != EXIT) ) {
         this->roundRobinProcess(0, 8);
-    }else if(!this->midLevel->isEmpty() || (CPU::getInstance().getRunningProcess().getLastQueue() == 1 && CPU::getInstance().getRunningProcess().getState() != EXIT)) {
+    }else if(!this->midLevel->isEmpty() || (parent.runningProcess.getLastQueue() == 1 && parent.runningProcess.getState() != EXIT)) {
         this->roundRobinProcess(1, 16);
-    }else if (!this->baseLevel->isEmpty() || (CPU::getInstance().getRunningProcess().getLastQueue() == 2 && CPU::getInstance().getRunningProcess().getState() != EXIT)) {
+    }else if (!this->baseLevel->isEmpty() || (parent.runningProcess.getLastQueue() == 2 && parent.runningProcess.getState() != EXIT)) {
         this->roundRobinProcess(2, 20);
     }
 }
@@ -80,19 +76,19 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
 
     if(queueToProcess != nullptr) {
 
-        if(CPU::getInstance().getRunningProcess().getState() == EXIT && !queueToProcess->isEmpty()) {
+        if(parent.runningProcess.getState() == EXIT && !queueToProcess->isEmpty()) {
             this->timeQuantum = 0;
             Process newProcess = queueToProcess->dequeueProcess();
             newProcess.setState(RUN);
-            CPU::getInstance().setRunningProcess(newProcess);
+            parent.runningProcess = newProcess;
             kernel::getInstance().updateProcessTable(newProcess.getPid(),  newProcess);
         }
 
         if(this->timeQuantum >= timeQ) {
-            CPU::getInstance().getRunningProcess().setLastQueue(queue >= 2 ? 2 : queue +1);
-            Process rotate = CPU::getInstance().getRunningProcess();
+            parent.runningProcess.setLastQueue(queue >= 2 ? 2 : queue +1);
+            Process rotate = parent.runningProcess;
             rotate.setState(READY);
-            CPU::getInstance().getRunningProcess().setState(EXIT);
+            parent.runningProcess.setState(EXIT);
             kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
             switch (queue) {
             case 0:
@@ -110,21 +106,17 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
             }
 
         }else{
-            if(CPU::getInstance().getRunningProcess().getCurrentBurst() > 0) {
-
-                CPU::getInstance().executeInstruction(timeQ);
-
-            }else if(CPU::getInstance().getRunningProcess().getInstructions().size() - 1 > CPU::getInstance().getRunningProcess().getProgramCounter()) {
-                std::string out = "PC " + std::to_string(CPU::getInstance().getRunningProcess().getProgramCounter()) + " instr: " + CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr();
+            if(parent.runningProcess.getInstructions().size() - 1 > parent.runningProcess.getProgramCounter()) {
+                std::string out = "PC " + std::to_string(parent.runningProcess.getProgramCounter()) + " instr: " + parent.runningProcess.getCurrentInstruction().getInstr();
                 std::cout << out << std::endl;
                 emit kernel::getInstance().window->print(out);
-                CPU::getInstance().getRunningProcess().incrementPC();
+                parent.runningProcess.incrementPC();
             }else{
-                Process rotate = CPU::getInstance().getRunningProcess();
+                Process rotate = parent.runningProcess;
                 rotate.setState(EXIT);
                 kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
                 CPU::getInstance().free(rotate.pages);
-                CPU::getInstance().getRunningProcess().setState(EXIT);
+                parent.runningProcess.setState(EXIT);
             }
         }
     }
@@ -135,7 +127,7 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
 
 void ShortTermScheduler::roundRobin()
 {
-    if (CPU::getInstance().getRunningProcess().getState() == EXIT && !this->readyQueue->isEmpty())
+    if (parent.runningProcess.getState() == EXIT && !this->readyQueue->isEmpty())
     {
         this->timeQuantum = 0;
         Process newProcess = this->readyQueue->dequeueProcess();
@@ -146,29 +138,29 @@ void ShortTermScheduler::roundRobin()
 
     if (this->timeQuantum >= 20) // ran out of time for this process preempt it out
     {
-        Process rotate = CPU::getInstance().getRunningProcess();
-        CPU::getInstance().getRunningProcess().setState(EXIT);
+        Process rotate = parent.runningProcess;
+        parent.runningProcess.setState(EXIT);
         rotate.setState(READY);
         this->readyQueue->enqueueProcess(rotate);
         emit kernel::getInstance().window->print("preempt");
         kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
         this->timeQuantum = 0;
     }else{
-        if (CPU::getInstance().getRunningProcess().getCurrentBurst() > 0) // if instruction is not done run it
+        if (parent.runningProcess.getCurrentBurst() > 0) // if instruction is not done run it
         {
             CPU::getInstance().executeInstruction(20);
         }
-        else if (CPU::getInstance().getRunningProcess().getInstructions().size() - 1 > CPU::getInstance().getRunningProcess().getProgramCounter())// if instruction is done increment PC
+        else if (parent.runningProcess.getInstructions().size() - 1 > parent.runningProcess.getProgramCounter())// if instruction is done increment PC
         {
-            std::string out = "PC " + std::to_string(CPU::getInstance().getRunningProcess().getProgramCounter()) + " instr: " + CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr();
+            std::string out = "PC " + std::to_string(parent.runningProcess.getProgramCounter()) + " instr: " + parent.runningProcess.getCurrentInstruction().getInstr();
             std::cout << out << std::endl;
             emit kernel::getInstance().window->print(out);
-            CPU::getInstance().getRunningProcess().incrementPC();
+            parent.runningProcess.incrementPC();
         }else{ // process is done exit
-            Process rotate = CPU::getInstance().getRunningProcess();
+            Process rotate = parent.runningProcess;
             rotate.setState(EXIT);
             kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
-            CPU::getInstance().getRunningProcess().setState(EXIT);
+            parent.runningProcess.setState(EXIT);
         }
 
     }

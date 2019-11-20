@@ -1,12 +1,11 @@
 #ifndef KERNEL_H
 #define KERNEL_H
-#include "CPU.hpp"
 #include "mainwindow.h"
 #include <vector>
+#include <mutex>
+#include "priorityqueue.hpp"
 
 class CPU;
-class ShortTermScheduler;
-class LongTermScheduler;
 class MainWindow;
 class pagetable;
 
@@ -31,17 +30,19 @@ void updateProcessTable(int index, Process p);
 bool isFinished();
 MainWindow * window;
 void IOPreempt(Process p);
+Process getNextProcessInPool();
+bool isJobPoolEmpty();
 private:
 kernel();
 ~kernel(){
 }
 pagetable * pTable;
 int pidCounter = 0;
-ShortTermScheduler * shortTerm;
-LongTermScheduler * longTerm;
 unsigned int pageSize; // size of each page
 unsigned int longTermTimer; // time before long term runs
 std::vector<Process > processTable;
+PriorityQueue * jobPool;
+std::mutex jobPoolMutex;
 
 };
 

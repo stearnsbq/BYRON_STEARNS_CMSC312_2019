@@ -22,6 +22,7 @@ SOURCES += \
     contextswitchinterrupt.cpp \
     core.cpp \
     cpu_thread.cpp \
+    dispatcher.cpp \
     feedbackqueue.cpp \
     fileoptionsdialog.cpp \
     instruction.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     contextswitchinterrupt.h \
     core.h \
     cpu_thread.h \
+    dispatcher.h \
     feedbackqueue.h \
     fileoptionsdialog.h \
     instruction.hpp \

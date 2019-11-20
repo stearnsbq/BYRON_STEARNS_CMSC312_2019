@@ -1,8 +1,8 @@
 #ifndef SHORTTERMSCHEDULER_H
 #define SHORTTERMSCHEDULER_H
 #include "queue.hpp"
-#include "CPU.hpp"
 #include "mutex.h"
+#include "dispatcher.h"
 
 enum ALGORITHM
 {
@@ -16,12 +16,13 @@ enum QUEUE_TYPE {
     WAITING, READY_Q, MID, BASE
 };
 
-
+class Core;
+class Dispatcher;
 class ShortTermScheduler
 {
 
 public:
-ShortTermScheduler(ALGORITHM algoToUse);
+ShortTermScheduler(ALGORITHM algoToUse, Core & parent);
 ShortTermScheduler();
 ~ShortTermScheduler();
 void setAlgorithm(ALGORITHM algoToUse);
@@ -33,6 +34,8 @@ Queue * readyQueue;     // used both for RR (tq of 20) / Priority and the top qu
 Queue * midLevel;     // time quantum of 16
 Queue * baseLevel;     // time quantum of 20
 Queue * waitingQueue;
+Core & parent;
+Dispatcher * dp;
 void roundRobin();
 void roundRobinProcess(int queue, int timeQ);
 void processWaitingQueue();

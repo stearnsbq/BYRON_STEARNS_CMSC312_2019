@@ -5,6 +5,7 @@
 
 PriorityQueue::PriorityQueue()
 {
+    this->size = 0;
 }
 
 PriorityQueue::~PriorityQueue()
@@ -17,6 +18,7 @@ void PriorityQueue::addProcess(Process newProcess)
 
     this->heap.push_back(newProcess);
     int i = getSize() - 1;
+    this->size++;
 
     while (i != 0 && this->heap[parent(i)].getPriority() > this->heap[i].getPriority())
     {
@@ -30,6 +32,10 @@ int PriorityQueue::getSize()
     return this->heap.size();
 }
 
+bool PriorityQueue::isEmpty(){
+    return this->size <= 0;
+}
+
 
 Process PriorityQueue::removeProcess()
 {
@@ -37,6 +43,8 @@ Process PriorityQueue::removeProcess()
     PriorityQueue::heap[0] = this->heap.back();
     this->heap.pop_back();
     heapify(0);
+    this->size--;
+    this->ageProcesses();
     return root;
 }
 

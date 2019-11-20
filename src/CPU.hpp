@@ -6,13 +6,14 @@
 #include <thread>
 #include <vector>
 #include "kernel.h"
-#include "longtermscheduler.h"
-#include "shorttermscheduler.h"
 #include <QString>
 #include "mutex.h"
+#include "core.h"
 
 
 class mainmemory;
+class Core;
+class ShortTermScheduler;
 class CPU
 {
 private:
@@ -29,6 +30,8 @@ std::thread clock_thread;
 void cycle();
 void run(int time, QString unit);
 Process runningProcess;
+Core * core1;
+Core * core2;
 
 public:
 
