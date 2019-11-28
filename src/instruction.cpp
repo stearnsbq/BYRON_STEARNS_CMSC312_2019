@@ -23,7 +23,7 @@ Instruction::Instruction()
 }
 Instruction::~Instruction()
 {
-    this->instr.clear();
+    //this->instr.clear();
 }
 
 std::string Instruction::getInstr()

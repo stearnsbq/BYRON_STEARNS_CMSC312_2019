@@ -3,6 +3,7 @@
 #include "mainwindow.h"
 #include <vector>
 #include <mutex>
+#include <queue>
 #include "priorityqueue.hpp"
 
 class CPU;
@@ -26,7 +27,7 @@ void swapIn(Process p);
 void schedule(); // runs the schedulers
 void newProcess(Process& p);
 std::vector<Process > getListOfProcesses();
-void updateProcessTable(int index, Process p);
+void updateProcessTable( Process p);
 bool isFinished();
 MainWindow * window;
 void IOPreempt(Process p);
@@ -41,8 +42,9 @@ int pidCounter = 0;
 unsigned int pageSize; // size of each page
 unsigned int longTermTimer; // time before long term runs
 std::vector<Process > processTable;
-PriorityQueue * jobPool;
+std::priority_queue<Process> jobPool;
 std::mutex jobPoolMutex;
+std::mutex processTableMutex;
 
 };
 

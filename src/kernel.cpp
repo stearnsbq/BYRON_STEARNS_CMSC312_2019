@@ -3,9 +3,6 @@
 
 kernel::kernel()
 {
-    // this->longTerm = new LongTermScheduler();
-    //  this->shortTerm = new ShortTermScheduler();
-    this->jobPool = new PriorityQueue();
     this->longTermTimer = 0;
 }
 
@@ -19,20 +16,21 @@ void kernel::schedule(){
 }
 
 
-void kernel::updateProcessTable(int index, Process p){
-    this->processTable[index] = p;
+void kernel::updateProcessTable(Process p){
+    this->processTable[p.getPid()] = p;
     emit window->updateProcessListGUI();
 }
 
 void kernel::newProcess(Process& p){
     p.setState(NEW);
     p.setPid(pidCounter++);
-    this->jobPool->addProcess(p);
+    this->jobPool.push(p);
     this->processTable.push_back(p);
     emit window->updateProcessListGUI();
 }
 
 bool kernel::isFinished(){
+    std::lock_guard<std::mutex>(this->processTableMutex);
     for(int i = 0; i < this->processTable.size(); i++) {
         if(this->processTable[i].getState() != EXIT || this->processTable[i].getCurrentBurst() > 0) {
             return false;
@@ -43,13 +41,16 @@ bool kernel::isFinished(){
 
 Process kernel::getNextProcessInPool(){
     std::lock_guard<std::mutex>(this->jobPoolMutex);
-    if(!this->jobPool->isEmpty()) {
-        return this->jobPool->removeProcess();
+    if(!this->jobPool.empty()) {
+        Process p = this->jobPool.top();
+        this->jobPool.pop();
+        return p;
     }
+    return Process();
 }
 
 bool kernel::isJobPoolEmpty(){
-    return this->jobPool->isEmpty();
+    return this->jobPool.empty();
 }
 
 void kernel::swapIn(Process p){

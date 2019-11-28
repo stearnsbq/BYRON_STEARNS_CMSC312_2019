@@ -4,6 +4,7 @@
 #include "PCB.hpp"
 #include "pagetable.h"
 #include <stack>
+#include <mutex>
 
 
 class pagetable;
@@ -30,6 +31,7 @@ std::stack<frame> emptyFrames;
 std::vector<frame> frames;
 std::vector<page *> TLB;
 page * tlbSearch(int pageNum, int l, int h );
+std::mutex _mutex;
 
 };
 

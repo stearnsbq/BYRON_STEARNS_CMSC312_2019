@@ -6,6 +6,7 @@ class page
 {
 public:
 page(int pageNumber);
+page();
 ~page();
 bool isInMemory();
 int getPageNumber();

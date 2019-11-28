@@ -26,7 +26,7 @@ Process * parent;
 Instruction currInstr;
 PROCESS_STATE state;
 unsigned int priority;
-int cycles;
+int cycles = -1;
 int pc;
 int memory;
 int lastQueue;
@@ -36,6 +36,8 @@ int lastQueue;
 
 public:
 Process();
+friend bool operator<(Process const&p1, Process const&p2);
+friend bool operator>(Process const&p1, Process const&p2);
 ~Process();
 std::vector <page> pages;
 Instruction getCurrentInstruction();
