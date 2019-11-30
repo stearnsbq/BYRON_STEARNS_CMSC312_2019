@@ -4,6 +4,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 CONFIG += console
+
+INCLUDEPATH += "C:/Program Files (x86)/Visual Leak Detector/include/"
+LIBS      += -L"C:/Program Files (x86)/Visual Leak Detector/lib/Win32"
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -22,6 +25,7 @@ SOURCES += \
     contextswitchinterrupt.cpp \
     core.cpp \
     cpu_thread.cpp \
+    dispatcher.cpp \
     feedbackqueue.cpp \
     fileoptionsdialog.cpp \
     instruction.cpp \
@@ -46,8 +50,10 @@ HEADERS += \
     contextswitchinterrupt.h \
     core.h \
     cpu_thread.h \
+    dispatcher.h \
     feedbackqueue.h \
     fileoptionsdialog.h \
+    guiupdater.h \
     instruction.hpp \
     interrupt.h \
     kernel.h \

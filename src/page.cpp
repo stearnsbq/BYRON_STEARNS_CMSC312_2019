@@ -4,7 +4,20 @@ page::page(int pageNumber)
 {
     this->pageNumber = pageNumber;
     this->inMemory = true;
+    this->dirty = 0;
+    this->lastUsed = 0;
+    this->timeInMemory = 0;
     this->frameNumber = -1;
+}
+
+page::page(){
+    this->pageNumber = -1;
+    this->inMemory = false;
+    this->dirty = 0;
+    this->lastUsed = 0;
+    this->timeInMemory = 0;
+    this->frameNumber = -1;
+
 }
 
 page::~page(){

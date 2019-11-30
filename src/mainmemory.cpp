@@ -20,6 +20,8 @@ mainmemory::mainmemory(unsigned int totalMemory, double pageSize)
 
 
 std::vector<page> mainmemory::allocateMemory(size_t size){
+
+
     std::vector <page> pages;
     unsigned int amountOfPages = std::ceil((double)size/this->pageSize);
     this->usedFrames += amountOfPages;
@@ -31,19 +33,28 @@ std::vector<page> mainmemory::allocateMemory(size_t size){
 }
 
 unsigned int mainmemory::availableMemory(){
+
     return this->totalMemory - (this->usedFrames * this->pageSize);
 }
 
 
 void mainmemory::freeMemory(std::vector<page> pages){
+
+
     for(int i = 0; i < pages.size(); i++) {
         frame &tmp = this->frames.at((this->emptyFrames.size() - 1) - pages[i].getFrameNumber());
+        this->pageTable->removePage(pages[i].getPageNumber());
+        emit kernel::getInstance().window->updateMemoryBarGUI(-this->pageSize);
         tmp.free = true;
         this->emptyFrames.push(tmp);
     }
+
 }
 
 unsigned int mainmemory::getNextFrame(){
+
+
+
     frame newFrame = this->emptyFrames.top();
     this->emptyFrames.pop();
     return newFrame.num;

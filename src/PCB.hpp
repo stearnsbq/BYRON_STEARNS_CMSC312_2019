@@ -25,8 +25,8 @@ std::vector<Instruction> instructions;
 Process * parent;
 Instruction currInstr;
 PROCESS_STATE state;
-unsigned int priority;
-int cycles;
+int priority;
+int cycles = -1;
 int pc;
 int memory;
 int lastQueue;
@@ -36,6 +36,8 @@ int lastQueue;
 
 public:
 Process();
+friend bool operator<(Process const&p1, Process const&p2);
+friend bool operator>(Process const&p1, Process const&p2);
 ~Process();
 std::vector <page> pages;
 Instruction getCurrentInstruction();
@@ -60,7 +62,7 @@ void setPC(int pc);
 void incrementPC();
 PROCESS_STATE getState();
 void setState(PROCESS_STATE state);
-unsigned int getPriority();
+int getPriority();
 int getMemoryReq();
 int getCycles();
 int getProgramCounter();

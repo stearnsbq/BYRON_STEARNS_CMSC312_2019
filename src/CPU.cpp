@@ -1,7 +1,7 @@
 #include "CPU.hpp"
 #include <csignal>
 
-CPU::CPU()
+CPU::CPU() : memoryMutex()
 {
     this->memory = new mainmemory(4096000, 1024.0);
     this->isRunning = true;
@@ -9,6 +9,9 @@ CPU::CPU()
     this->timeQuantum = 0;
     this->runningProcess.setState(EXIT);
     this->mutexLock = new mutex();
+    this->core1 = new Core(1);
+    this->core2 = new Core(2);
+
 }
 
 long long CPU::availableMemory(){
@@ -39,20 +42,8 @@ void CPU::setRunningProcess(Process p){
 
 void CPU::run(int time, QString unit)
 {
-    this->unit = unit;
-    this->clockTime = time;
-    while(!kernel::getInstance().isFinished()) {
-        cycle();
-        if(unit == "ms") {
-            std::this_thread::sleep_for(std::chrono::milliseconds(time));
-        }else if(unit == "ns") {
-            std::this_thread::sleep_for(std::chrono::nanoseconds(time));
-        }else{
-            std::this_thread::sleep_for(std::chrono::seconds(time));
-        }
-    }
-    kernel::getInstance().window->done();
-    this->timeQuantum = 0;
+    this->core1->start(time, unit);
+    this->core2->start(time, unit);
 }
 
 void CPU::cycle(){
@@ -79,15 +70,18 @@ unsigned int CPU::getNextOpenFrame(){
 }
 
 std::vector<page> CPU::alloc(unsigned int size){
+    std::lock_guard<std::mutex> lock(this->memoryMutex);
     if(size >= this->availableMemory()) {
         std::vector<page> empty;
         return empty;
     }else{
+        emit kernel::getInstance().window->updateMemoryBarGUI(size);
         return this->memory->allocateMemory(size);
     }
 }
 
 void CPU::free(std::vector<page> pages){
+    std::lock_guard<std::mutex> lock(this->memoryMutex);
     this->memory->freeMemory(pages);
 }
 
@@ -103,7 +97,7 @@ void CPU::executeInstruction(unsigned int timeQ){
 
             rotate.setState(WAIT);
 
-            kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
+            kernel::getInstance().updateProcessTable(rotate);
 
             CPU::getInstance().getRunningProcess().setState(EXIT);
 
@@ -167,7 +161,7 @@ void CPU::executeInstruction(unsigned int timeQ){
 
             rotate.setState(WAIT);
 
-            kernel::getInstance().updateProcessTable(rotate.getPid(),  rotate);
+            kernel::getInstance().updateProcessTable(rotate);
 
             CPU::getInstance().getRunningProcess().setState(EXIT);
 

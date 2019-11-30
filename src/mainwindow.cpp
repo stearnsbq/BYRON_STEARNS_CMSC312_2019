@@ -70,7 +70,7 @@ void MainWindow::createProcess(string instructions, int number, bool toRandom)
     }
     for (int i = 0; i < number; i++)
     {
-        p.setPriority(0);
+        p.setPriority(rand()% 100 + 1);
         kernel::getInstance().newProcess(p);
     }
     cout << "Program: " << p.getName() << " Loaded!"<< " Processes created: " << number  << endl;
@@ -79,9 +79,9 @@ void MainWindow::createProcess(string instructions, int number, bool toRandom)
 
 
 void MainWindow::updateText(std::string in){
-    QString str = QString::fromUtf8(in.c_str());
-    ptr->append(str);
-    ptr->verticalScrollBar()->setValue(ptr->verticalScrollBar()->maximum());
+    //QString str = QString::fromUtf8(in.c_str());
+    // ptr->append(str);
+    // ptr->verticalScrollBar()->setValue(ptr->verticalScrollBar()->maximum());
 }
 
 
@@ -120,11 +120,19 @@ void MainWindow::updateProcessList(){
 }
 
 
+
+void MainWindow::updateMemoryBar(int amount){
+    this->ui->memoryUsage->setValue(this->ui->memoryUsage->value() + amount);
+
+}
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setFixedSize(width(), height());
     kernel::getInstance().window = this;
     qRegisterMetaType<std::string>("std::string");
     connect(this, &MainWindow::print, this, &MainWindow::updateText);
@@ -133,9 +141,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateNewQueueGUI, this, &MainWindow::updateNewQueue);
     connect(this, &MainWindow::updateReadyQueueGUI, this, &MainWindow::updateReadyQueue);
     connect(this, &MainWindow::updateWaitingQueueGUI, this, &MainWindow::updateWaitingQueue);
+    connect(this, &MainWindow::updateMemoryBarGUI, this, &MainWindow::updateMemoryBar);
     ptr = ui->simulatorOut;
     ptr->setReadOnly(true);
     ui->processList->setColumnWidth(0, 15);
+    this->ui->memoryUsage->setRange(0, 4096000);
     ui->processList->verticalHeader()->setVisible(false);
     QPalette pal;
     pal.setColor(QPalette::WindowText, Qt::red);
@@ -154,6 +164,9 @@ void MainWindow::save(){
 }
 
 
+
+
+
 void MainWindow::on_loadFile_clicked()
 {
     this->loadfile = new loadFileDialog();
@@ -166,13 +179,15 @@ void MainWindow::on_loadFile_clicked()
 
 void MainWindow::on_startSim_clicked()
 {
+    kernel::getInstance().shutDown = false;
     if(!this->isRunning) {
         QPalette pal;
         pal.setColor(QPalette::WindowText, Qt::green);
         ui->isRunning->setText("Running!");
         ui->isRunning->setPalette(pal);
-        std::thread run = std::thread(&CPU::start, &CPU::getInstance(), ui->time->value(), ui->timeUnit->currentText());
-        run.detach();
+
+        CPU::getInstance().start(ui->time->value(), ui->timeUnit->currentText());
+
         this->isRunning = true;
     }else{
         QMessageBox::warning(this, "Already Running!!", "The simulator is already running!");
@@ -193,4 +208,10 @@ void MainWindow::on_algorithm_activated(const QString &arg1)
 void MainWindow::on_timeUnit_activated(const QString &arg1)
 {
 
+}
+
+void MainWindow::on_stop_clicked()
+{
+    this->isRunning = false;
+    kernel::getInstance().shutDown = true;
 }

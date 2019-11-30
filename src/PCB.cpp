@@ -6,7 +6,7 @@ Process::Process()
 {
     this->pc = 0;
     this->pid = 0;
-    this->priority = 0;
+    this->priority = -1;
     this->lastQueue = 0;
 
 
@@ -14,6 +14,16 @@ Process::Process()
 
 Process::~Process()
 {
+    this->instructions.clear();
+}
+
+
+bool operator<(Process const&p1, Process const&p2){
+    return p1.priority < p2.priority;
+}
+
+bool operator>(Process const&p1, Process const&p2){
+    return p1.priority < p2.priority;
 }
 
 
@@ -60,7 +70,7 @@ void Process::addInstruction(std::string instr, bool toRandom)
     {
         int burst = stoi(instr.substr(instr.find(" ")));
         if(toRandom) {
-            burst = std::rand() % burst + 1;
+            burst = (std::rand() % burst) + 1;
             this->setCycles(this->getCycles() + burst);
         }
         if(instr.find("CRITICAL") != std::string::npos) {
@@ -74,7 +84,7 @@ void Process::addInstruction(std::string instr, bool toRandom)
     {
         int burst = stoi(instr.substr(instr.find(" ")));
         if(toRandom) {
-            burst = std::rand() % burst + 1;
+            burst = (std::rand() % burst) + 1;
         }
         if(instr.find("CRITICAL") != std::string::npos) {
             newInstr = Instruction("CRITICAL_I/O", burst, CRITICAL_IO, true);
@@ -156,7 +166,7 @@ void Process::setState(PROCESS_STATE state)
 {
     this->state = state;
 }
-unsigned int Process::getPriority()
+int Process::getPriority()
 {
     return this->priority;
 }

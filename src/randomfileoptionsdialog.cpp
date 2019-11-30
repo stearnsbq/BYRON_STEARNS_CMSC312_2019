@@ -36,7 +36,7 @@ void randomFileOptionsDialog::on_generate_clicked()
         instr += QString("%1 %2\n").arg(it, QString::number(rt));
     }
     instr += "EXE";
-    QString file = QString("Name: %1\nTotal runtime: %2\nMemory: %3\n\n%4").arg(names.at(rand() % 4), QString::number(runtime), QString::number(rand() % 4096), instr);
+    QString file = QString("Name: %1\nTotal runtime: %2\nMemory: %3\n\n%4").arg(names.at(rand() % 4), QString::number(runtime), QString::number(rand() % 4096 + 1), instr);
     ui->plainTextEdit->setPlainText(file);
     this->fileData = file.toStdString();
 

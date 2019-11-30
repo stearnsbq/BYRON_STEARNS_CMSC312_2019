@@ -1,19 +1,22 @@
 #ifndef LONGTERMSCHEDULER_H
 #define LONGTERMSCHEDULER_H
 #include "PCB.hpp"
-#include "priorityqueue.hpp"
-#include "CPU.hpp"
+
+
+
 class CPU;
 class kernel;
+class ShortTermScheduler;
 class LongTermScheduler
 {
 public:
-LongTermScheduler();
+LongTermScheduler(ShortTermScheduler * scheduler);
 ~LongTermScheduler();
 void enqueueProcess(Process p);
 void runScheduler();
 private:
-PriorityQueue * jobQueue;
+ShortTermScheduler * scheduler;
+
 
 };
 

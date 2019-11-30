@@ -6,13 +6,15 @@
 #include <thread>
 #include <vector>
 #include "kernel.h"
-#include "longtermscheduler.h"
-#include "shorttermscheduler.h"
 #include <QString>
 #include "mutex.h"
+#include "core.h"
+#include <mutex>
 
 
 class mainmemory;
+class Core;
+class ShortTermScheduler;
 class CPU
 {
 private:
@@ -29,6 +31,10 @@ std::thread clock_thread;
 void cycle();
 void run(int time, QString unit);
 Process runningProcess;
+Core * core1;
+Core * core2;
+Core * core3;
+Core * core4;
 
 public:
 
@@ -55,6 +61,7 @@ unsigned int getNextLogicalAddr();
 unsigned int getNextOpenFrame();
 std::vector<page> alloc(unsigned int size);
 void free(std::vector<page> pages);
+std::mutex memoryMutex;
 };
 
 #endif

@@ -21,9 +21,11 @@ Instruction::Instruction()
     this->instr = "";
     this->burst = 0;
 }
+
 Instruction::~Instruction()
 {
     this->instr.clear();
+    this->out.clear();
 }
 
 std::string Instruction::getInstr()
