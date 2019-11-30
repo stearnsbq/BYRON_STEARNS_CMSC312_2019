@@ -4,6 +4,7 @@
 kernel::kernel()
 {
     this->longTermTimer = 0;
+    this->shutDown = false;
 }
 
 void kernel::schedule(){
@@ -29,22 +30,29 @@ void kernel::newProcess(Process& p){
     emit window->updateProcessListGUI();
 }
 
+
+bool kernel::compare( Process& p1,  Process& p2){
+    return p1.getPriority() < p2.getPriority();
+}
+
+
+
+
 bool kernel::isFinished(){
-    std::lock_guard<std::mutex>(this->processTableMutex);
-    for(int i = 0; i < this->processTable.size(); i++) {
-        if(this->processTable[i].getState() != EXIT || this->processTable[i].getCurrentBurst() > 0) {
-            return false;
-        }
-    }
-    return true;
+    return this->shutDown;
 }
 
 Process kernel::getNextProcessInPool(){
-    std::lock_guard<std::mutex>(this->jobPoolMutex);
+    std::lock_guard<std::mutex> lock{this->jobPoolMutex};
     if(!this->jobPool.empty()) {
-        Process p = this->jobPool.top();
-        this->jobPool.pop();
-        return p;
+        try {
+
+            Process p = this->jobPool.top();
+            this->jobPool.pop();
+            return p;
+        } catch (std::exception e) {
+            std::cout << e.what() << std::endl;
+        }
     }
     return Process();
 }

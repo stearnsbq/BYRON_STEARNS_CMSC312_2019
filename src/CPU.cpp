@@ -1,7 +1,7 @@
 #include "CPU.hpp"
 #include <csignal>
 
-CPU::CPU()
+CPU::CPU() : memoryMutex()
 {
     this->memory = new mainmemory(4096000, 1024.0);
     this->isRunning = true;
@@ -44,7 +44,6 @@ void CPU::run(int time, QString unit)
 {
     this->core1->start(time, unit);
     this->core2->start(time, unit);
-
 }
 
 void CPU::cycle(){
@@ -71,6 +70,7 @@ unsigned int CPU::getNextOpenFrame(){
 }
 
 std::vector<page> CPU::alloc(unsigned int size){
+    std::lock_guard<std::mutex> lock(this->memoryMutex);
     if(size >= this->availableMemory()) {
         std::vector<page> empty;
         return empty;
@@ -81,6 +81,7 @@ std::vector<page> CPU::alloc(unsigned int size){
 }
 
 void CPU::free(std::vector<page> pages){
+    std::lock_guard<std::mutex> lock(this->memoryMutex);
     this->memory->freeMemory(pages);
 }
 

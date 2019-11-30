@@ -311,7 +311,7 @@
       <property name="geometry">
        <rect>
         <x>190</x>
-        <y>510</y>
+        <y>480</y>
         <width>75</width>
         <height>23</height>
        </rect>
@@ -324,6 +324,19 @@
       </property>
       <property name="text">
        <string>Start</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="stop">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>510</y>
+        <width>75</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Stop</string>
       </property>
      </widget>
     </widget>

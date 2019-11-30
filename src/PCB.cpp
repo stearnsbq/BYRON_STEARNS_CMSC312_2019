@@ -14,6 +14,7 @@ Process::Process()
 
 Process::~Process()
 {
+    this->instructions.clear();
 }
 
 
@@ -165,7 +166,7 @@ void Process::setState(PROCESS_STATE state)
 {
     this->state = state;
 }
-unsigned int Process::getPriority()
+int Process::getPriority()
 {
     return this->priority;
 }

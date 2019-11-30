@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QObject>
 #include "PCB.hpp"
+#include <vld.h>
 
 
 int main(int argc, char *argv[])

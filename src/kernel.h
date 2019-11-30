@@ -5,6 +5,7 @@
 #include <mutex>
 #include <queue>
 #include "priorityqueue.hpp"
+#include <string>
 
 class CPU;
 class MainWindow;
@@ -33,18 +34,22 @@ MainWindow * window;
 void IOPreempt(Process p);
 Process getNextProcessInPool();
 bool isJobPoolEmpty();
+void shutdown();
+bool shutDown;
 private:
 kernel();
 ~kernel(){
 }
+bool compare(Process& p1, Process&p2);
 pagetable * pTable;
 int pidCounter = 0;
 unsigned int pageSize; // size of each page
 unsigned int longTermTimer; // time before long term runs
 std::vector<Process > processTable;
-std::priority_queue<Process> jobPool;
+std::priority_queue<Process, std::vector<Process> > jobPool;
 std::mutex jobPoolMutex;
 std::mutex processTableMutex;
+
 
 };
 

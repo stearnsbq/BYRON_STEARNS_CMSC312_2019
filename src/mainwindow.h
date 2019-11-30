@@ -34,7 +34,7 @@ void updateProcessList();
 void updateNewQueue();
 void updateReadyQueue();
 void updateWaitingQueue();
-void updateMemoryBar(unsigned int amount);
+void updateMemoryBar(int amount);
 signals:
 void print(std::string in);
 void done();
@@ -42,11 +42,12 @@ void updateProcessListGUI();
 void updateNewQueueGUI(Process p);
 void updateReadyQueueGUI(Process p);
 void updateWaitingQueueGUI(Process p);
-void updateMemoryBarGUI(unsigned int amount);
+void updateMemoryBarGUI(int amount);
 private slots:
 void on_loadFile_clicked();
 void on_startSim_clicked();
 void on_algorithm_activated(const QString &arg1);
 void on_timeUnit_activated(const QString &arg1);
+void on_stop_clicked();
 };
 #endif // MAINWINDOW_H

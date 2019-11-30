@@ -121,7 +121,7 @@ void MainWindow::updateProcessList(){
 
 
 
-void MainWindow::updateMemoryBar(unsigned int amount){
+void MainWindow::updateMemoryBar(int amount){
     this->ui->memoryUsage->setValue(this->ui->memoryUsage->value() + amount);
 
 }
@@ -164,6 +164,9 @@ void MainWindow::save(){
 }
 
 
+
+
+
 void MainWindow::on_loadFile_clicked()
 {
     this->loadfile = new loadFileDialog();
@@ -176,13 +179,15 @@ void MainWindow::on_loadFile_clicked()
 
 void MainWindow::on_startSim_clicked()
 {
+    kernel::getInstance().shutDown = false;
     if(!this->isRunning) {
         QPalette pal;
         pal.setColor(QPalette::WindowText, Qt::green);
         ui->isRunning->setText("Running!");
         ui->isRunning->setPalette(pal);
-        std::thread run = std::thread(&CPU::start, &CPU::getInstance(), ui->time->value(), ui->timeUnit->currentText());
-        run.detach();
+
+        CPU::getInstance().start(ui->time->value(), ui->timeUnit->currentText());
+
         this->isRunning = true;
     }else{
         QMessageBox::warning(this, "Already Running!!", "The simulator is already running!");
@@ -203,4 +208,10 @@ void MainWindow::on_algorithm_activated(const QString &arg1)
 void MainWindow::on_timeUnit_activated(const QString &arg1)
 {
 
+}
+
+void MainWindow::on_stop_clicked()
+{
+    this->isRunning = false;
+    kernel::getInstance().shutDown = true;
 }
