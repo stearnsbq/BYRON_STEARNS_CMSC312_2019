@@ -159,33 +159,54 @@ void ShortTermScheduler::roundRobin()
 void ShortTermScheduler::processWaitingQueue()
 {
     if(!this->waitingQueue.empty()) {
-        if(this->waitingQueue.front().getCurrentBurst() > 0) {
-            //  emit kernel::getInstance().window->print("WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr());
-            //  std::cout << "WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr() << std::endl;
-            this->waitingQueue.front().decrementBurst();
-        }else{
-            Process rotate = this->waitingQueue.front();
-            this->waitingQueue.pop();
-            emit kernel::getInstance().window->print("WAITING DONE PID: " + std::to_string(rotate.getPid()));
-            // std::cout << "WAITING DONE PID: " + std::to_string(rotate.getPid()) << std::endl;
-            rotate.setState(READY);
-            rotate.incrementPC();
-            if(this->algorithmToUse == MULTILEVEL_FEEDBACK_QUEUE) {
-                switch (rotate.getLastQueue()) {
-                case 0:
-                    this->readyQueue.push(rotate);
-                    break;
-                case 1:
-                    this->midLevel.push(rotate);
-                    break;
-                case 2:
-                    this->baseLevel.push(rotate);
-                    break;
-                }
-            }else{
-                this->readyQueue.push(rotate);
+
+
+        if(this->waitingQueue.front().getState() == WAITING_FOR_CHILD) {
+            std::cout << "waiting on child" << std::endl;
+            if(this->waitingQueue.front().getChild() != nullptr && this->waitingQueue.front().getChild()->getState() == EXIT) {
+                std::cout << "child exited" << std::endl;
+                Process rotate = this->waitingQueue.front();
+                this->waitingQueue.pop();
+                CPU::getInstance().free(rotate.pages);
             }
-            CPU::getInstance().mutexLock->unlock();
+
+        }else{
+
+            if(this->waitingQueue.front().getCurrentBurst() > 0) {
+
+                //  emit kernel::getInstance().window->print("WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr());
+                //  std::cout << "WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr() << std::endl;
+                this->waitingQueue.front().decrementBurst();
+
+            }else{
+
+                Process rotate = this->waitingQueue.front();
+                this->waitingQueue.pop();
+                emit kernel::getInstance().window->print("WAITING DONE PID: " + std::to_string(rotate.getPid()));
+                // std::cout << "WAITING DONE PID: " + std::to_string(rotate.getPid()) << std::endl;
+                rotate.setState(READY);
+                rotate.incrementPC();
+                if(this->algorithmToUse == MULTILEVEL_FEEDBACK_QUEUE) {
+                    switch (rotate.getLastQueue()) {
+                    case 0:
+                        this->readyQueue.push(rotate);
+                        break;
+                    case 1:
+                        this->midLevel.push(rotate);
+                        break;
+                    case 2:
+                        this->baseLevel.push(rotate);
+                        break;
+                    }
+                }else{
+                    this->readyQueue.push(rotate);
+                }
+                CPU::getInstance().mutexLock->unlock();
+            }
         }
     }
+
+
+
+
 }

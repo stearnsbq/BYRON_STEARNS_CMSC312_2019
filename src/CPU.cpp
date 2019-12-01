@@ -11,6 +11,8 @@ CPU::CPU() : memoryMutex()
     this->mutexLock = new mutex();
     this->core1 = new Core(1);
     this->core2 = new Core(2);
+    this->core3 = new Core(3);
+    this->core4 = new Core(4);
 
 }
 
@@ -44,10 +46,12 @@ void CPU::run(int time, QString unit)
 {
     this->core1->start(time, unit);
     this->core2->start(time, unit);
+    this->core3->start(time, unit);
+    this->core4->start(time, unit);
 }
 
 void CPU::cycle(){
-    kernel::getInstance().schedule();
+
 }
 
 void CPU::setTimeQ(int time)
@@ -101,7 +105,7 @@ void CPU::executeInstruction(unsigned int timeQ){
 
             CPU::getInstance().getRunningProcess().setState(EXIT);
 
-            kernel::getInstance().IOPreempt(rotate);
+
 
         }else if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == CRITICAL_CALC) {
 
@@ -165,7 +169,7 @@ void CPU::executeInstruction(unsigned int timeQ){
 
             CPU::getInstance().getRunningProcess().setState(EXIT);
 
-            kernel::getInstance().IOPreempt(rotate);
+
 
         }else{
 

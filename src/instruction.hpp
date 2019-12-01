@@ -9,7 +9,8 @@ enum TYPE
     CALCULATE,
     IO,
     OUT,
-    NOP
+    YIELD,
+    FORK
 };
 
 class Instruction
@@ -26,6 +27,7 @@ void decBurst();
 bool isCritical();
 Instruction(std::string instr, int burst, TYPE type, bool critical);
 Instruction(std::string instr, std::string out, TYPE type);
+Instruction(std::string instr,  TYPE type);
 Instruction();
 ~Instruction();
 std::string getInstr();

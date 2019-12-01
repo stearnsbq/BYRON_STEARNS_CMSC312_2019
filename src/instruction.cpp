@@ -16,6 +16,13 @@ Instruction::Instruction(std::string instr, std::string out, TYPE type)
     this->type = type;
 }
 
+Instruction::Instruction(std::string instr, TYPE type){
+
+    this->instr = instr;
+    this->burst = 1;
+    this->type = type;
+}
+
 Instruction::Instruction()
 {
     this->instr = "";

@@ -13,7 +13,8 @@ typedef enum PROCESS_STATE
     READY,
     RUN,
     WAIT,
-    EXIT
+    EXIT,
+    WAITING_FOR_CHILD,
 } PROCESS_STATE;
 
 class Process
@@ -30,12 +31,14 @@ int cycles = -1;
 int pc;
 int memory;
 int lastQueue;
+Process * child;
 
 
 
 
 public:
 Process();
+Process(Process * parent);
 friend bool operator<(Process const&p1, Process const&p2);
 friend bool operator>(Process const&p1, Process const&p2);
 ~Process();
@@ -49,7 +52,7 @@ int getLastQueue();
 void setLastQueue(int qNum);
 QString getStateString();
 TYPE getCurrentInstructionType();
-void addInstruction(std::string instr, bool toRandom);
+void addInstruction(std::string instr, int burst,  bool toRandom);
 std::vector<Instruction> getInstructions();
 unsigned int getPid();
 void setName(std::string name);
@@ -60,6 +63,9 @@ void setMemoryReq(int size);
 void setCycles(int cycles);
 void setPC(int pc);
 void incrementPC();
+void setChild(Process * child);
+Process * getChild();
+void setParent(Process * parent);
 PROCESS_STATE getState();
 void setState(PROCESS_STATE state);
 int getPriority();

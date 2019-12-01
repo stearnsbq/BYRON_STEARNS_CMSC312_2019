@@ -42,7 +42,7 @@ void mainmemory::freeMemory(std::vector<page> pages){
 
 
     for(int i = 0; i < pages.size(); i++) {
-        frame &tmp = this->frames.at((this->emptyFrames.size() - 1) - pages[i].getFrameNumber());
+        frame &tmp = this->frames.at(pages[i].getFrameNumber());
         this->pageTable->removePage(pages[i].getPageNumber());
         emit kernel::getInstance().window->updateMemoryBarGUI(-this->pageSize);
         tmp.free = true;

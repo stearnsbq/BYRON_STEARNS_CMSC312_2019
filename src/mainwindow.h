@@ -5,6 +5,7 @@
 #include "mainmemory.h"
 #include "loadfiledialog.h"
 #include "CPU.hpp"
+#include <QJsonDocument>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,15 +23,17 @@ void updateText(std::string in);
 private:
 Ui::MainWindow *ui;
 void save();
-void createProcess(std::string instructions, int number, bool toRandom);
+void initProcessList();
+void createProcess(QJsonDocument instructions, int number, bool toRandom);
 void loadFileThread();
 char *parseCommand(char *cmd);
 void cli();
 bool isRunning;
 void changeStatus();
 loadFileDialog * loadfile;
+void simulateOS();
 void drawMemory();
-void updateProcessList();
+void updateProcessList(Process p);
 void updateNewQueue();
 void updateReadyQueue();
 void updateWaitingQueue();
@@ -38,10 +41,7 @@ void updateMemoryBar(int amount);
 signals:
 void print(std::string in);
 void done();
-void updateProcessListGUI();
-void updateNewQueueGUI(Process p);
-void updateReadyQueueGUI(Process p);
-void updateWaitingQueueGUI(Process p);
+void updateProcessListGUI(Process p);
 void updateMemoryBarGUI(int amount);
 private slots:
 void on_loadFile_clicked();

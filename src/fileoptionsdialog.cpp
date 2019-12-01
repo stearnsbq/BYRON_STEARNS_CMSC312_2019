@@ -15,9 +15,9 @@ fileOptionsDialog::~fileOptionsDialog()
 }
 
 
-void fileOptionsDialog::fileData(std::string data){
+void fileOptionsDialog::fileData(QJsonDocument data){
     this->file = data;
-    ui->filePreview->setPlainText(QString::fromUtf8(data.c_str()));
+    ui->filePreview->setPlainText(QString::fromUtf8(data.toJson().toStdString().c_str()));
 }
 
 void fileOptionsDialog::on_done_clicked()

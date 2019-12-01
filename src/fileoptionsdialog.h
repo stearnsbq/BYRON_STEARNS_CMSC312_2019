@@ -2,29 +2,29 @@
 #define FILEOPTIONSDIALOG_H
 
 #include <QDialog>
-
+#include <QJsonDocument>
 namespace Ui {
 class fileOptionsDialog;
 }
 
 class fileOptionsDialog : public QDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
-    explicit fileOptionsDialog(QWidget *parent = nullptr);
-    ~fileOptionsDialog();
-    void fileData(std::string data);
+explicit fileOptionsDialog(QWidget *parent = nullptr);
+~fileOptionsDialog();
+void fileData(QJsonDocument data);
 signals:
-    void isDone(std::string data, int number, bool random);
+void isDone(QJsonDocument data, int number, bool random);
 
 private slots:
-    void on_done_clicked();
+void on_done_clicked();
 
 
 private:
-    Ui::fileOptionsDialog *ui;
-        std::string file;
+Ui::fileOptionsDialog *ui;
+QJsonDocument file;
 };
 
 #endif // FILEOPTIONSDIALOG_H

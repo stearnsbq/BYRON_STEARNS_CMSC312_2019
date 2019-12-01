@@ -40,6 +40,7 @@ SOURCES += \
     page.cpp \
     pagetable.cpp \
     priorityqueue.cpp \
+    programfilegenerator.cpp \
     queue.cpp \
     randomfileoptionsdialog.cpp \
     shorttermscheduler.cpp
@@ -53,7 +54,6 @@ HEADERS += \
     dispatcher.h \
     feedbackqueue.h \
     fileoptionsdialog.h \
-    guiupdater.h \
     instruction.hpp \
     interrupt.h \
     kernel.h \
@@ -66,6 +66,7 @@ HEADERS += \
     page.h \
     pagetable.h \
     priorityqueue.hpp \
+    programfilegenerator.h \
     queue.hpp \
     randomfileoptionsdialog.h \
     shorttermscheduler.h

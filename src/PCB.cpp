@@ -8,8 +8,23 @@ Process::Process()
     this->pid = 0;
     this->priority = -1;
     this->lastQueue = 0;
+    this->parent = nullptr;
+    this->child = nullptr;
 
 
+}
+
+Process::Process(Process * parent){
+    this->pc = parent->pc;
+    this->priority = parent->priority <= 0 ?  0 : parent->priority -1;
+    this->lastQueue = 0;
+    this->parent = parent;
+    this->child = nullptr;
+    this->cycles = parent->cycles;
+    this->memory = parent->memory;
+    this->name = parent->name;
+    this->instructions = parent->instructions;
+    this->currInstr = parent->currInstr;
 }
 
 Process::~Process()
@@ -63,12 +78,12 @@ void Process::setMemoryReq(int amount){
     this->memory = amount;
 }
 
-void Process::addInstruction(std::string instr, bool toRandom)
+void Process::addInstruction(std::string instr, int burst, bool toRandom)
 {
     Instruction newInstr;
     if (instr.find("CALCULATE") != std::string::npos)
     {
-        int burst = stoi(instr.substr(instr.find(" ")));
+
         if(toRandom) {
             burst = (std::rand() % burst) + 1;
             this->setCycles(this->getCycles() + burst);
@@ -82,7 +97,6 @@ void Process::addInstruction(std::string instr, bool toRandom)
     }
     else if (instr.find("I/O") != std::string::npos)
     {
-        int burst = stoi(instr.substr(instr.find(" ")));
         if(toRandom) {
             burst = (std::rand() % burst) + 1;
         }
@@ -94,6 +108,10 @@ void Process::addInstruction(std::string instr, bool toRandom)
     }else if (instr.find("OUT") != std::string::npos) {
         std::string print = instr.substr(instr.find(" "));
         newInstr = Instruction("OUT", print, OUT);
+    } else if (instr.find("YIELD")!= std::string::npos) {
+        newInstr = Instruction("YIELD", YIELD);
+    }else if (instr.find("FORK")!= std::string::npos) {
+        newInstr = Instruction("FORK", FORK);
     }
     this->instructions.push_back(newInstr);
     this->currInstr = this->instructions.at(this->pc);
@@ -133,6 +151,22 @@ int Process::getCurrentBurst()
 
 }
 
+Process * Process::getChild(){
+    return this->child;
+}
+
+void Process::setChild(Process *child){
+    this->child = child;
+}
+
+void Process::setParent(Process *parent){
+    this->parent = parent;
+}
+
+Process * Process::getParent(){
+    return this->parent;
+}
+
 void Process::setName(std::string name)
 {
     this->name = name;
@@ -158,7 +192,7 @@ PROCESS_STATE Process::getState()
 }
 
 QString Process::getStateString(){
-    const char * strings[] = {"NEW", "READY","RUN","WAIT","EXIT"};
+    const char * strings[] = {"NEW", "READY","RUN","WAIT","EXIT", "WAITING FOR CHILD"};
     return QString::fromUtf8(strings[this->state]);
 }
 

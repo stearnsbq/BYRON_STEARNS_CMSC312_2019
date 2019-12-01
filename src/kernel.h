@@ -6,6 +6,7 @@
 #include <queue>
 #include "priorityqueue.hpp"
 #include <string>
+#include <unordered_map>
 
 class CPU;
 class MainWindow;
@@ -17,7 +18,7 @@ public:
 
 static kernel& getInstance(){     // make this singleton because I only ever need one instance of kernel
 
-    static kernel instance;
+    static kernel instance; // thread safe
     return instance;
 
 }
@@ -25,17 +26,17 @@ static kernel& getInstance(){     // make this singleton because I only ever nee
 kernel(kernel const&) = delete;
 void operator=(kernel const&) = delete;
 void swapIn(Process p);
-void schedule(); // runs the schedulers
-void newProcess(Process& p);
-std::vector<Process > getListOfProcesses();
+void newProcess(Process & p);
+void newProcess(Process const& p);
+std::unordered_map<int, Process > getListOfProcesses();
 void updateProcessTable( Process p);
 bool isFinished();
 MainWindow * window;
-void IOPreempt(Process p);
 Process getNextProcessInPool();
 bool isJobPoolEmpty();
 void shutdown();
 bool shutDown;
+int getNextPid();
 private:
 kernel();
 ~kernel(){
@@ -45,11 +46,10 @@ pagetable * pTable;
 int pidCounter = 0;
 unsigned int pageSize; // size of each page
 unsigned int longTermTimer; // time before long term runs
-std::vector<Process > processTable;
+std::unordered_map<int, Process> processTable;
 std::priority_queue<Process, std::vector<Process> > jobPool;
 std::mutex jobPoolMutex;
 std::mutex processTableMutex;
-
 
 };
 

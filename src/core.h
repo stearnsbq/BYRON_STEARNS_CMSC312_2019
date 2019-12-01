@@ -18,6 +18,12 @@ void run(int time, QString unit);
 void cycle();
 void sleep();
 void executeOperation();
+void iO();
+void calculate();
+void criticalSection();
+void yield();
+void fork();
+void out();
 ShortTermScheduler * shortTerm;
 LongTermScheduler * longTerm;
 
