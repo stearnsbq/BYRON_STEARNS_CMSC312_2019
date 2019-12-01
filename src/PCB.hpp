@@ -5,6 +5,7 @@
 #include <string>
 #include "instruction.hpp"
 #include <QString>
+#include <QJsonObject>
 #include "page.h"
 
 typedef enum PROCESS_STATE
@@ -15,6 +16,7 @@ typedef enum PROCESS_STATE
     WAIT,
     EXIT,
     WAITING_FOR_CHILD,
+    WAITING_FOR_MSG,
 } PROCESS_STATE;
 
 class Process
@@ -49,7 +51,7 @@ int getLastQueue();
 void setLastQueue(int qNum);
 QString getStateString();
 TYPE getCurrentInstructionType();
-void addInstruction(std::string instr, int burst,  bool toRandom);
+void addInstruction(QJsonObject instr,  bool toRandom);
 std::vector<Instruction> getInstructions();
 unsigned int getPid();
 void setName(std::string name);

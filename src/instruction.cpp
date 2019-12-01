@@ -10,10 +10,18 @@ Instruction::Instruction(std::string instr, int burst, TYPE type, bool critical)
 
 Instruction::Instruction(std::string instr, std::string out, TYPE type)
 {
-    this->instr = instr;
-    this->out = out;
-    this->burst = 1;
-    this->type = type;
+    if(type == OUT) {
+        this->instr = instr;
+        this->out = out;
+        this->burst = 1;
+        this->type = type;
+    }else if (type == SEND) {
+        this->instr = instr;
+        this->msg = out;
+        this->burst = 1;
+        this->type = type;
+    }
+
 }
 
 Instruction::Instruction(std::string instr, TYPE type){
@@ -51,6 +59,10 @@ TYPE Instruction::getType()
 void Instruction::decBurst()
 {
     this->burst--;
+}
+
+std::string Instruction::getMsg(){
+    return this->msg;
 }
 
 bool Instruction::isCritical(){

@@ -163,7 +163,30 @@ void Core::yield(){
 
 void Core::out(){
     emit kernel::getInstance().window->print(runningProcess.getCurrentInstruction().getOut());
-    // refactor this
+}
+
+void Core::send(){
+    kernel::getInstance().mailBox->newMessage(runningProcess.getCurrentInstruction().getMsg(), runningProcess.getPid());
+    runningProcess.incrementPC();
+}
+
+void Core::recieve(){
+    if(!kernel::getInstance().mailBox->empty()) {
+        mailbox::message msg =  kernel::getInstance().mailBox->recieveMessage();
+        emit kernel::getInstance().window->print(msg.msg);
+        std::cout << "RECIEVED MESSAGE " + msg.msg + " FROM PID: " + std::to_string(msg.originPid) << std::endl;
+    }else{
+        Process yield = runningProcess;
+
+        yield.setState(WAITING_FOR_MSG);
+
+        kernel::getInstance().updateProcessTable(yield);
+
+        runningProcess.setState(EXIT);
+
+        this->shortTerm->enqueueProcess(yield, WAITING);
+
+    }
 }
 
 
@@ -205,6 +228,12 @@ void Core::executeOperation(){
                 break;
             case FORK:
                 fork();
+                break;
+            case SEND:
+                send();
+                break;
+            case RECIEVE:
+                recieve();
                 break;
 
 

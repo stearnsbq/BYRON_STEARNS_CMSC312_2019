@@ -50,7 +50,7 @@ void MainWindow::createProcess(QJsonDocument programFile, int number, bool toRan
 
     foreach (QJsonValue value, arr) {
         QJsonObject obj = value.toObject();
-        p.addInstruction(obj["Type"].toString().toStdString(), obj["Burst"].toInt(), toRandom);
+        p.addInstruction(obj, toRandom);
     }
 
 

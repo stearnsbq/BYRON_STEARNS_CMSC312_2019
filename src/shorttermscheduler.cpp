@@ -170,6 +170,16 @@ void ShortTermScheduler::processWaitingQueue()
                 CPU::getInstance().free(rotate.pages);
             }
 
+        }else if(this->waitingQueue.front().getState() == WAITING_FOR_MSG) {
+            if(!kernel::getInstance().mailBox->empty()) {
+                mailbox::message msg = kernel::getInstance().mailBox->recieveMessage();
+                emit kernel::getInstance().window->print(msg.msg);
+                std::cout << "RECIEVED MESSAGE " + msg.msg + " FROM PID: " + std::to_string(msg.originPid) << std::endl;
+                Process rotate = this->waitingQueue.front();
+                rotate.incrementPC();
+                this->waitingQueue.pop();
+                this->readyQueue.push(rotate);
+            }
         }else{
 
             if(this->waitingQueue.front().getCurrentBurst() > 0) {
@@ -202,7 +212,7 @@ void ShortTermScheduler::processWaitingQueue()
                     this->readyQueue.push(rotate);
                 }
 
-                if(rotate.getInstructions().size() -1 > rotate.getProgramCounter() && rotate.getCurrentInstruction().isCritical()) {
+                if(rotate.getInstructions().size() - 1 > rotate.getProgramCounter() && rotate.getCurrentInstruction().isCritical()) {
                     CPU::getInstance().mutexLock->unlock();
                     emit kernel::getInstance().window->setCritical(false);
                 }

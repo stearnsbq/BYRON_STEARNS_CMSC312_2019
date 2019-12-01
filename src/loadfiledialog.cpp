@@ -58,7 +58,7 @@ void loadFileDialog::on_pushButton_clicked()
 
     }else{
         QString fileName = QFileDialog::getOpenFileName(this,
-                                                        tr("Open Programfile"), "",
+                                                        tr("Open Program File"), "",
                                                         tr("Program File (*.json);;All Files (*)"));
         QJsonDocument fileData = this->loadFile(fileName.toStdString());
         if(!fileData.isEmpty()) {

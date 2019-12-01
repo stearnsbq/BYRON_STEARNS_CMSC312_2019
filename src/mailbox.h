@@ -14,6 +14,7 @@ struct message {
 };
 void newMessage(std::string msg, int origin);
 message recieveMessage();
+bool empty();
 private:
 std::queue<message> msgQueue;
 std::mutex _mailMutex;

@@ -24,6 +24,8 @@ void criticalSection();
 void yield();
 void fork();
 void out();
+void send();
+void recieve();
 ShortTermScheduler * shortTerm;
 LongTermScheduler * longTerm;
 

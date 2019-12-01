@@ -10,7 +10,9 @@ enum TYPE
     IO,
     OUT,
     YIELD,
-    FORK
+    FORK,
+    SEND,
+    RECIEVE
 };
 
 class Instruction
@@ -21,6 +23,7 @@ std::string out;
 int burst;
 TYPE type;
 bool critical;
+std::string msg;
 
 public:
 void decBurst();
@@ -38,6 +41,7 @@ void setOut(std::string out);
 void setInstr(std::string instr);
 void setBurst(int burst);
 void setTYPE(TYPE type);
+std::string getMsg();
 };
 
 #endif

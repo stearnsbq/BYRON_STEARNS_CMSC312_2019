@@ -1,5 +1,6 @@
 #include "PCB.hpp"
 #include <ctime>
+#include <memory>
 
 
 Process::Process()
@@ -78,41 +79,69 @@ void Process::setMemoryReq(int amount){
     this->memory = amount;
 }
 
-void Process::addInstruction(std::string instr, int burst, bool toRandom)
+void Process::addInstruction(QJsonObject instr, bool toRandom)
 {
     Instruction newInstr;
-    if (instr.find("CALCULATE") != std::string::npos)
+    if (instr["Type"] == "CALCULATE")
     {
 
         if(toRandom) {
-            burst = (std::rand() % burst) + 1;
-            this->setCycles(this->getCycles() + burst);
+            instr["Burst"] = (std::rand() % instr["Burst"].toInt()) + 1;
+            this->setCycles(this->getCycles() + instr["Burst"].toInt());
         }
-        if(instr.find("CRITICAL") != std::string::npos) {
-            newInstr = Instruction("CRITICAL_CALCULATE", burst, CRITICAL_CALC, true);
-        }else{
-            newInstr = Instruction("CALCULATE", burst, CALCULATE, false);
-        }
+
+        newInstr = Instruction("CALCULATE", instr["Burst"].toInt(), CALCULATE, false);
 
     }
-    else if (instr.find("I/O") != std::string::npos)
+    else if (instr["Type"] == "I/O")
     {
         if(toRandom) {
-            burst = (std::rand() % burst) + 1;
+            instr["Burst"] = (std::rand() % instr["Burst"].toInt()) + 1;
         }
-        if(instr.find("CRITICAL") != std::string::npos) {
-            newInstr = Instruction("CRITICAL_I/O", burst, CRITICAL_IO, true);
-        }else{
-            newInstr = Instruction("I/O", burst, IO, false);
-        }
-    }else if (instr.find("OUT") != std::string::npos) {
-        std::string print = instr.substr(instr.find(" "));
-        newInstr = Instruction("OUT", print, OUT);
-    } else if (instr.find("YIELD")!= std::string::npos) {
+
+        newInstr = Instruction("I/O", instr["Burst"].toInt(), IO, false);
+
+    }else if (instr["Type"] == "OUT") {
+
+        newInstr = Instruction("OUT", instr["Out"].toString().toStdString(), OUT);
+
+    } else if (instr["Type"] == "YIELD") {
+
         newInstr = Instruction("YIELD", YIELD);
-    }else if (instr.find("FORK")!= std::string::npos) {
+
+    }else if (instr["Type"] == "FORK") {
+
         newInstr = Instruction("FORK", FORK);
+
+    }else if (instr["Type"] == "CRITICAL_IO") {
+
+        if(toRandom) {
+
+            instr["Burst"] = (std::rand() % instr["Burst"].toInt()) + 1;
+
+        }
+
+        newInstr = Instruction("CRITICAL_IO", instr["Burst"].toInt(), CRITICAL_IO, true);
+
+    }else if (instr["Type"] == "CRITICAL_CALCULATE") {
+
+        if(toRandom) {
+            instr["Burst"] = (std::rand() % instr["Burst"].toInt()) + 1;
+            this->setCycles(this->getCycles() + instr["Burst"].toInt());
+        }
+
+        newInstr = Instruction("CRITICAL_CALCULATE", instr["Burst"].toInt(), CRITICAL_CALC, true);
+
+    }else if (instr["Type"] == "SEND") {
+
+        newInstr = Instruction("SEND", instr["Msg"].toString().toStdString(), SEND);
+
+    }else if ( instr["Type"] == "RECIEVE") {
+
+        newInstr = Instruction("RECIEVE",  RECIEVE);
+
     }
+
     this->instructions.push_back(newInstr);
     this->currInstr = this->instructions.at(this->pc);
 }
@@ -191,8 +220,8 @@ PROCESS_STATE Process::getState()
 }
 
 QString Process::getStateString(){
-    const char * strings[] = {"NEW", "READY","RUN","WAIT","EXIT", "WAITING FOR CHILD"};
-    return QString::fromUtf8(strings[this->state]);
+    const std::vector<std::string> strings = {"NEW", "READY","RUN","WAIT","EXIT", "WAITING FOR CHILD", "WAITING FOR MESSAGE"};
+    return QString::fromUtf8(strings.at(this->state).c_str());
 }
 
 void Process::setState(PROCESS_STATE state)
