@@ -12,7 +12,7 @@ int mutex::lock(){
     if(!this->isLocked) {
         this->isLocked = true;
     }else{
-        std::cout << " waiting " << std::endl;
+        std::cout << "Process Waiting...." << std::endl;
         auto start = std::chrono::high_resolution_clock::now();
         while(this->isLocked) {
             auto end = std::chrono::high_resolution_clock::now();

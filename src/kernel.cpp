@@ -6,6 +6,7 @@ kernel::kernel()
     this->longTermTimer = 0;
     this->shutDown = false;
     this->pidCounter = 0;
+    this->mailBox = new mailbox();
 }
 
 void kernel::updateProcessTable(Process p){
@@ -17,16 +18,11 @@ void kernel::newProcess(Process & p){
     p.setState(NEW);
     p.setPid(getNextPid());
     this->jobPool.push(p);
-    this->processTable.insert(std::make_pair(pidCounter, p));
+    this->processTable.insert(std::make_pair(p.getPid(), p));
     emit window->updateProcessListGUI(p);
 }
 
-void kernel::newProcess(Process const& p){
 
-    this->jobPool.push(p);
-    this->processTable.insert(std::make_pair(pidCounter, p));
-    emit window->updateProcessListGUI(p);
-}
 
 
 int kernel::getNextPid(){

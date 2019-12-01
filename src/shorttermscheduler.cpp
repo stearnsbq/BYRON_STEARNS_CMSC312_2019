@@ -201,7 +201,12 @@ void ShortTermScheduler::processWaitingQueue()
                 }else{
                     this->readyQueue.push(rotate);
                 }
-                CPU::getInstance().mutexLock->unlock();
+
+                if(rotate.getInstructions().size() -1 > rotate.getProgramCounter() && rotate.getCurrentInstruction().isCritical()) {
+                    CPU::getInstance().mutexLock->unlock();
+                    emit kernel::getInstance().window->setCritical(false);
+                }
+
             }
         }
     }

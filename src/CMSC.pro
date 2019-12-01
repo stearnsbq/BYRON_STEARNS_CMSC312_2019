@@ -33,6 +33,7 @@ SOURCES += \
     kernel.cpp \
     loadfiledialog.cpp \
     longtermscheduler.cpp \
+    mailbox.cpp \
     main.cpp \
     mainmemory.cpp \
     mainwindow.cpp \
@@ -59,6 +60,7 @@ HEADERS += \
     kernel.h \
     loadfiledialog.h \
     longtermscheduler.h \
+    mailbox.h \
     main.hpp \
     mainmemory.h \
     mainwindow.h \

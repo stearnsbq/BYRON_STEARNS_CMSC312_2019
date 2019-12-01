@@ -74,6 +74,8 @@ void Core::iO(){
 
 void Core::criticalSection(){
 
+
+
     if(runningProcess.getCurrentInstructionType() == CRITICAL_CALC) {
 
         std::string str = "PID: " + std::to_string(runningProcess.getPid()) + " ENTERED CRITICAL SECTION";
@@ -89,6 +91,7 @@ void Core::criticalSection(){
         }else{
 
             unsigned int timeOut = 0;
+            emit kernel::getInstance().window->setCritical(true);
             while(runningProcess.getCurrentBurst() > 0) {
 
                 std::string str = runningProcess.getCurrentInstruction().getInstr() + " burst #" + std::to_string(runningProcess.getCurrentBurst());
@@ -107,6 +110,7 @@ void Core::criticalSection(){
             }
 
             CPU::getInstance().mutexLock->unlock();
+            emit kernel::getInstance().window->setCritical(false);
         }
     } else if(runningProcess.getCurrentInstructionType() == CRITICAL_IO) {
 
@@ -120,17 +124,18 @@ void Core::criticalSection(){
 
             emit kernel::getInstance().window->print(str);
 
+        }else{
+            emit kernel::getInstance().window->setCritical(true);
+            Process rotate = runningProcess;
+
+            rotate.setState(WAIT);
+
+            kernel::getInstance().updateProcessTable(rotate);
+
+            runningProcess.setState(EXIT);
+
+            this->shortTerm->enqueueProcess(rotate, WAITING);
         }
-
-        Process rotate = runningProcess;
-
-        rotate.setState(WAIT);
-
-        kernel::getInstance().updateProcessTable(rotate);
-
-        runningProcess.setState(EXIT);
-
-        this->shortTerm->enqueueProcess(rotate, WAITING);
     }
 
 }
@@ -165,11 +170,12 @@ void Core::out(){
 void Core::fork(){
     runningProcess.incrementPC();
     std::cout << "FORKING" << std::endl;
-//    Process * child = new Process(&runningProcess);
-//    runningProcess.setChild(child);
-//    child->setPid(kernel::getInstance().getNextPid());
-//    child->setState(NEW);
-//    kernel::getInstance().newProcess(child);
+    Process * parent = new Process();
+    *parent = runningProcess;
+    Process child = parent;
+    child.setParent(parent);
+    parent->setChild(&child);
+    kernel::getInstance().newProcess(child);
 }
 
 

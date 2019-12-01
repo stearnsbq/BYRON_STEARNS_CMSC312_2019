@@ -9,6 +9,10 @@ pagetable::pagetable()
     this->storedPages = 0;
 }
 
+pagetable::~pagetable(){
+    this->pages.clear();
+}
+
 
 page pagetable::putPage(int pageNumber){
 

@@ -7,6 +7,7 @@
 #include "priorityqueue.hpp"
 #include <string>
 #include <unordered_map>
+#include <mailbox.h>
 
 class CPU;
 class MainWindow;
@@ -27,7 +28,6 @@ kernel(kernel const&) = delete;
 void operator=(kernel const&) = delete;
 void swapIn(Process p);
 void newProcess(Process & p);
-void newProcess(Process const& p);
 std::unordered_map<int, Process > getListOfProcesses();
 void updateProcessTable( Process p);
 bool isFinished();
@@ -37,9 +37,13 @@ bool isJobPoolEmpty();
 void shutdown();
 bool shutDown;
 int getNextPid();
+mailbox * mailBox;
 private:
 kernel();
 ~kernel(){
+    this->shutDown = true;
+    delete this->mailBox;
+    delete this->pTable;
 }
 bool compare(Process& p1, Process&p2);
 pagetable * pTable;
@@ -47,7 +51,7 @@ int pidCounter = 0;
 unsigned int pageSize; // size of each page
 unsigned int longTermTimer; // time before long term runs
 std::unordered_map<int, Process> processTable;
-std::priority_queue<Process, std::vector<Process> > jobPool;
+std::priority_queue<Process, std::vector<Process > > jobPool;
 std::mutex jobPoolMutex;
 std::mutex processTableMutex;
 

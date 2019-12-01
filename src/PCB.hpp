@@ -24,6 +24,7 @@ unsigned int pid;
 std::string name;
 std::vector<Instruction> instructions;
 Process * parent;
+Process * child;
 Instruction currInstr;
 PROCESS_STATE state;
 int priority;
@@ -31,10 +32,6 @@ int cycles = -1;
 int pc;
 int memory;
 int lastQueue;
-Process * child;
-
-
-
 
 public:
 Process();
@@ -72,6 +69,7 @@ int getPriority();
 int getMemoryReq();
 int getCycles();
 int getProgramCounter();
+QString toString();
 };
 
 #endif

@@ -148,7 +148,6 @@ int Process::getCurrentBurst()
     }else{
         return this->instructions.at(this->pc).getBurst();
     }
-
 }
 
 Process * Process::getChild(){
@@ -212,4 +211,9 @@ int Process::getCycles()
 int Process::getProgramCounter()
 {
     return this->pc;
+}
+
+QString Process::toString(){
+    QString str = "======PROCESS======\nNAME: " + QString::fromUtf8(this->name.c_str()) + "\nPID: " + QString::number(pid) + "\nPRIORITY: " + QString::number(priority)+ "\nSTATE: " + this->getStateString() + "\nPC: " + QString::number(pc) + "\nMEMORY: " + QString::number(memory) + "\nCYCLES: " + QString::number(cycles) +"\n===================";
+    return str;
 }

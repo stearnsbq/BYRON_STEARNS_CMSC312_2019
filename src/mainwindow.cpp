@@ -60,7 +60,7 @@ void MainWindow::createProcess(QJsonDocument programFile, int number, bool toRan
         kernel::getInstance().newProcess(p);
     }
     cout << "Program: " << p.getName() << " Loaded!"<< " Processes created: " << number  << endl;
-    //this->initProcessList();
+    this->initProcessList();
 }
 
 
@@ -86,8 +86,10 @@ void MainWindow::initProcessList(){
     std::unordered_map<int, Process> processes = kernel::getInstance().getListOfProcesses();
     ui->processList->setRowCount(processes.size());
     for(std::pair<int, Process> e : processes) {
+        QTableWidgetItem * name =  new QTableWidgetItem(QString::fromUtf8(e.second.getName().c_str()));
+        name->setToolTip(e.second.toString());
         ui->processList->setItem(e.first, 0, new QTableWidgetItem(QString::number(e.second.getPid())));
-        ui->processList->setItem(e.first, 1, new QTableWidgetItem(QString::fromUtf8(e.second.getName().c_str())));
+        ui->processList->setItem(e.first, 1, name );
         ui->processList->setItem(e.first, 2, new QTableWidgetItem(e.second.getStateString()));
     }
 }
@@ -98,14 +100,29 @@ void MainWindow::updateProcessList(Process p){
         ui->processList->setRowCount(kernel::getInstance().getListOfProcesses().size() - 1);
     }
 
-    ui->processList->setItem(p.getPid(), 0, new QTableWidgetItem(QString::number(p.getPid())));
-    ui->processList->setItem(p.getPid(), 1, new QTableWidgetItem(QString::fromUtf8(p.getName().c_str())));
-    ui->processList->setItem(p.getPid(), 2, new QTableWidgetItem(p.getStateString()));
+    QTableWidgetItem * pid =  new QTableWidgetItem(QString::number(p.getPid()));
+    QTableWidgetItem * name =  new QTableWidgetItem(QString::fromUtf8(p.getName().c_str()));
+    QTableWidgetItem * state =  new QTableWidgetItem(p.getStateString());
+
+    name->setToolTip(p.toString());
+
+    ui->processList->setItem(p.getPid(), 0, pid);
+    ui->processList->setItem(p.getPid(), 1, name);
+    ui->processList->setItem(p.getPid(), 2, state);
 
 }
 
 void MainWindow::updateMemoryBar(int amount){
     this->ui->memoryUsage->setValue(this->ui->memoryUsage->value() + amount);
+
+}
+
+void MainWindow::onSetCritical(bool set){
+    if(set) {
+        ui->criticalSecFrame->setStyleSheet("background-color: green;");
+    }else{
+        ui->criticalSecFrame->setStyleSheet("background-color: red;");
+    }
 
 }
 
@@ -123,6 +140,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::done, this, &MainWindow::changeStatus);
     connect(this, &MainWindow::updateProcessListGUI, this, &MainWindow::updateProcessList);
     connect(this, &MainWindow::updateMemoryBarGUI, this, &MainWindow::updateMemoryBar);
+    connect(this, &MainWindow::setCritical, this, &MainWindow::onSetCritical);
     ptr = ui->simulatorOut;
     ptr->setReadOnly(true);
     ui->processList->setColumnWidth(0, 15);
