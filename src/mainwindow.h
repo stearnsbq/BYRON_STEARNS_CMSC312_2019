@@ -39,12 +39,14 @@ void updateReadyQueue();
 void updateWaitingQueue();
 void updateMemoryBar(int amount);
 void onSetCritical(bool set);
+void onSetLoad(int core, int load);
 signals:
 void print(std::string in);
 void done();
 void updateProcessListGUI(Process p);
 void updateMemoryBarGUI(int amount);
 void setCritical(bool set);
+void setLoad(int core, int load);
 private slots:
 void on_loadFile_clicked();
 void on_startSim_clicked();

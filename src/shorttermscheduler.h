@@ -29,6 +29,8 @@ ShortTermScheduler();
 void setAlgorithm(ALGORITHM algoToUse);
 void runScheduler();
 void enqueueProcess(Process p, QUEUE_TYPE queue);
+Process determineProcessForMigrate();
+int totalProcesses;
 private:
 mutex * mutexLock;
 std::queue<Process> readyQueue;     // used both for RR (tq of 20) / Priority and the top queue for Multilevel feedback queue (RR of time quantum 8)

@@ -5,12 +5,14 @@
 
 ShortTermScheduler::ShortTermScheduler(ALGORITHM algoToUse, Core & parent) : parent(parent) {
     this->algorithmToUse = algoToUse;
+    this->totalProcesses = 0;
     this->dp = new Dispatcher(parent);
 }
 
 
 
 void ShortTermScheduler::runScheduler(){
+    emit kernel::getInstance().window->setLoad(parent.coreNum,totalProcesses);
     switch (this->algorithmToUse)
     {
     case ROUND_ROBIN:
@@ -29,20 +31,47 @@ void ShortTermScheduler::runScheduler(){
 }
 
 void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
+
+
     switch (q) {
     case WAITING:
         this->waitingQueue.push(p);
         break;
     case MID:
         this->midLevel.push(p);
+        this->totalProcesses++;
         break;
     case READY_Q:
         this->readyQueue.push(p);
+        this->totalProcesses++;
         break;
     case BASE:
         this->readyQueue.push(p);
+        this->totalProcesses++;
         break;
     }
+}
+
+Process ShortTermScheduler::determineProcessForMigrate(){
+    if(!this->readyQueue.empty()  ) {
+        Process toMigrate = this->readyQueue.front();
+        this->readyQueue.pop();
+        this->totalProcesses--;
+        return toMigrate;
+    }else if(!this->midLevel.empty() ) {
+        Process toMigrate = this->midLevel.front();
+        this->midLevel.pop();
+        this->totalProcesses--;
+        return toMigrate;
+    }else if (!this->baseLevel.empty()) {
+        Process toMigrate = this->baseLevel.front();
+        this->baseLevel.pop();
+        this->totalProcesses--;
+        return toMigrate;
+    }
+    emit kernel::getInstance().window->setLoad(parent.coreNum,totalProcesses);
+    return Process();
+
 }
 
 void ShortTermScheduler::feedBackQueue(){
@@ -148,6 +177,7 @@ void ShortTermScheduler::roundRobin()
             rotate.setState(EXIT);
             kernel::getInstance().updateProcessTable(  rotate);
             parent.runningProcess.setState(EXIT);
+            this->totalProcesses--;
         }
 
     }

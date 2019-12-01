@@ -31,10 +31,11 @@ std::thread clock_thread;
 void cycle();
 void run(int time, QString unit);
 Process runningProcess;
+void migrateProcess(Process p, int coreToMigrateTo);
+void loadBalancer(int time, QString unit);
+void sleep(int time, QString unit);
 Core * core1;
 Core * core2;
-Core * core3;
-Core * core4;
 
 public:
 

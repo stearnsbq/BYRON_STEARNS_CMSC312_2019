@@ -309,10 +309,10 @@
       <widget class="QFrame" name="criticalSecFrame">
        <property name="geometry">
         <rect>
-         <x>110</x>
-         <y>0</y>
-         <width>100</width>
-         <height>50</height>
+         <x>100</x>
+         <y>10</y>
+         <width>81</width>
+         <height>41</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -329,8 +329,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>100</width>
-          <height>50</height>
+          <width>81</width>
+          <height>41</height>
          </rect>
         </property>
         <property name="text">
@@ -343,6 +343,76 @@
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
+      </widget>
+      <widget class="QLCDNumber" name="core1">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>20</y>
+         <width>64</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: black;</string>
+       </property>
+      </widget>
+      <widget class="QLCDNumber" name="core2">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>20</y>
+         <width>64</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: black;</string>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>false</bool>
+       </property>
+       <property name="digitCount">
+        <number>5</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Filled</enum>
+       </property>
+      </widget>
+      <widget class="QLabel" name="core1Load">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>0</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Core 1 Load</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="core2Load">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>0</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Core 2 Load</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
       </widget>
      </widget>
      <widget class="QPushButton" name="startSim">

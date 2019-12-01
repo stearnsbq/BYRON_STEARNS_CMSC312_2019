@@ -44,6 +44,7 @@ SOURCES += \
     programfilegenerator.cpp \
     queue.cpp \
     randomfileoptionsdialog.cpp \
+    resource.cpp \
     shorttermscheduler.cpp
 
 HEADERS += \
@@ -71,6 +72,7 @@ HEADERS += \
     programfilegenerator.h \
     queue.hpp \
     randomfileoptionsdialog.h \
+    resource.h \
     shorttermscheduler.h
 
 FORMS += \

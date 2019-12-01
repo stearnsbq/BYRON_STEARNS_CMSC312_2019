@@ -11,9 +11,13 @@ public:
 Core(int coreNumber);
 ~Core();
 void start(int time, QString unit);
+Process migrate();
+void addProcess(Process p);
 Process runningProcess;
-private:
+int getLoad();
 int coreNum;
+private:
+
 void run(int time, QString unit);
 void cycle();
 void sleep();

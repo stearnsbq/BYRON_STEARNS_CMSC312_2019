@@ -16,6 +16,18 @@ Core::~Core(){
 
 }
 
+int Core::getLoad(){
+    return this->shortTerm->totalProcesses;
+}
+
+Process Core::migrate(){
+    return this->shortTerm->determineProcessForMigrate();
+}
+
+void Core::addProcess(Process p){
+    this->shortTerm->enqueueProcess(p, READY_Q);
+}
+
 
 void Core::start(int time, QString unit){
     std::thread schedulerThread = std::thread(&Core::run, this, time, unit);
@@ -263,6 +275,8 @@ void Core::executeOperation(){
                 runningProcess.setState(EXIT);
                 runningProcess.setChild(nullptr);
                 runningProcess.setParent(nullptr);
+                this->shortTerm->totalProcesses--;
+                emit kernel::getInstance().window->setLoad(coreNum, this->shortTerm->totalProcesses);
             }
 
         }

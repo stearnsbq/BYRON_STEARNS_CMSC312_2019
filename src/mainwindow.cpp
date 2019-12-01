@@ -65,6 +65,14 @@ void MainWindow::createProcess(QJsonDocument programFile, int number, bool toRan
 
 
 
+void MainWindow::onSetLoad(int core, int load){
+    if(core == 1) {
+        ui->core1->display(load);
+    }else{
+        ui->core2->display(load);
+    }
+}
+
 void MainWindow::updateText(std::string in){
 //    QString str = QString::fromUtf8(in.c_str());
 //    ptr->append(str);
@@ -141,6 +149,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateProcessListGUI, this, &MainWindow::updateProcessList);
     connect(this, &MainWindow::updateMemoryBarGUI, this, &MainWindow::updateMemoryBar);
     connect(this, &MainWindow::setCritical, this, &MainWindow::onSetCritical);
+    connect(this, &MainWindow::setLoad, this, &MainWindow::onSetLoad);
     ptr = ui->simulatorOut;
     ptr->setReadOnly(true);
     ui->processList->setColumnWidth(0, 15);
@@ -183,12 +192,12 @@ void MainWindow::simulateOS(){
 
     while(true) {
 
-        if((rand() % 100) < 1) {
-            this->createProcess(gen.generate(), (rand() % 5) + 1, false);
+        if((rand() % 100) < 5) {
+            this->createProcess(gen.generate(), 1, false);
         }
 
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(32));
+        std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 256 + 32));
 
     }
 

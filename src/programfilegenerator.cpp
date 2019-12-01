@@ -13,7 +13,7 @@ programfilegenerator::programfilegenerator()
 QJsonDocument programfilegenerator::generate(int count){
 
     std::vector<QString> names = {"Text Processor", "Web Browser", "Video Game", "Chat"};
-    std::vector<QString> instrs = {"CALCULATE", "I/O", "OUT"};
+    std::vector<QString> instrs = {"CALCULATE", "I/O", "OUT", "CRITICAL_CALCULATE", "CRITICAL_IO", "YIELD"};
     QString instr;
 
     QJsonDocument doc;
@@ -27,7 +27,7 @@ QJsonDocument programfilegenerator::generate(int count){
     int c = (rand() % 50) + 1;
     for(int i = 0; i < c; i++) {
 
-        QString it = instrs.at(rand() % 2);
+        QString it = instrs.at(rand() % 6);
         int rt = (rand() % 75 + 1);
         if(it == "CALCULATE") {
             runtime += rt;
