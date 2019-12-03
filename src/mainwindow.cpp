@@ -25,63 +25,58 @@
 #include <QMap>
 #include "loadfiledialog.h"
 #include <QMessageBox>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <programfilegenerator.h>
 
 
 using namespace std;
 
 QTextEdit *ptr;
 
-void MainWindow::createProcess(string instructions, int number, bool toRandom)
+void MainWindow::createProcess(QJsonDocument programFile, int number, bool toRandom)
 {
     Process p = Process();
-    istringstream f(instructions);
-    for (string line; getline(f, line);)
-    {
-        if (line.find("Name:") != string::npos)
-        {
-            string name = line.substr(line.find(":") + 2);
 
-            p.setName(name);
-        }
-        else if (line.find("Total runtime:") != string::npos)
-        {
-            string runtime = line.substr(line.find(":") + 2);
+    QJsonObject obj = programFile.object();
+    QJsonArray arr = obj["instructions"].toArray();
 
-            if(!toRandom) {
-                p.setCycles(stoi(runtime));
-            }
-        }
-        else if (line.find("Memory:") != string::npos)
-        {
-            string memory = line.substr(line.find(":") + 2);
-            p.setMemoryReq(stoi(memory));
-        }
-        else
-        {
-            if (line.length() > 0)
-            {
-                if (line == "EXE")
-                {
-                    break;
-                }
-                p.addInstruction(line, toRandom);
-            }
-        }
+
+    p.setName(obj["Name"].toString().toStdString());
+    p.setCycles(obj["Runtime"].toInt());
+    p.setMemoryReq(obj["Memory"].toInt());
+
+
+    foreach (QJsonValue value, arr) {
+        QJsonObject obj = value.toObject();
+        p.addInstruction(obj, toRandom);
     }
+
+
     for (int i = 0; i < number; i++)
     {
         p.setPriority(rand()% 100 + 1);
         kernel::getInstance().newProcess(p);
     }
     cout << "Program: " << p.getName() << " Loaded!"<< " Processes created: " << number  << endl;
+    this->initProcessList();
 }
 
 
 
+void MainWindow::onSetLoad(int core, int load){
+    if(core == 1) {
+        ui->core1->display(load);
+    }else{
+        ui->core2->display(load);
+    }
+}
+
 void MainWindow::updateText(std::string in){
-    //QString str = QString::fromUtf8(in.c_str());
-    // ptr->append(str);
-    // ptr->verticalScrollBar()->setValue(ptr->verticalScrollBar()->maximum());
+//    QString str = QString::fromUtf8(in.c_str());
+//    ptr->append(str);
+//    ptr->verticalScrollBar()->setValue(ptr->verticalScrollBar()->maximum());
 }
 
 
@@ -95,37 +90,49 @@ void MainWindow::changeStatus(){
 
 }
 
-
-void MainWindow::updateReadyQueue(){
-
-}
-
-void MainWindow::updateWaitingQueue(){
-
-}
-
-void MainWindow::updateNewQueue(){
-
-}
-
-
-void MainWindow::updateProcessList(){
-    std::vector<Process> processes = kernel::getInstance().getListOfProcesses();
+void MainWindow::initProcessList(){
+    std::unordered_map<int, Process> processes = kernel::getInstance().getListOfProcesses();
     ui->processList->setRowCount(processes.size());
-    for(int i = 0; i < processes.size(); i++) {
-        ui->processList->setItem(i, 0, new QTableWidgetItem(QString::number(processes[i].getPid())));
-        ui->processList->setItem(i, 1, new QTableWidgetItem(QString::fromUtf8(processes[i].getName().c_str())));
-        ui->processList->setItem(i, 2, new QTableWidgetItem(processes[i].getStateString()));
+    for(std::pair<int, Process> e : processes) {
+        QTableWidgetItem * name =  new QTableWidgetItem(QString::fromUtf8(e.second.getName().c_str()));
+        name->setToolTip(e.second.toString());
+        ui->processList->setItem(e.first, 0, new QTableWidgetItem(QString::number(e.second.getPid())));
+        ui->processList->setItem(e.first, 1, name );
+        ui->processList->setItem(e.first, 2, new QTableWidgetItem(e.second.getStateString()));
     }
 }
 
+void MainWindow::updateProcessList(Process p){
 
+    if(ui->processList->rowCount() < kernel::getInstance().getListOfProcesses().size() - 1) {
+        ui->processList->setRowCount(kernel::getInstance().getListOfProcesses().size() - 1);
+    }
+
+    QTableWidgetItem * pid =  new QTableWidgetItem(QString::number(p.getPid()));
+    QTableWidgetItem * name =  new QTableWidgetItem(QString::fromUtf8(p.getName().c_str()));
+    QTableWidgetItem * state =  new QTableWidgetItem(p.getStateString());
+
+    name->setToolTip(p.toString());
+
+    ui->processList->setItem(p.getPid(), 0, pid);
+    ui->processList->setItem(p.getPid(), 1, name);
+    ui->processList->setItem(p.getPid(), 2, state);
+
+}
 
 void MainWindow::updateMemoryBar(int amount){
     this->ui->memoryUsage->setValue(this->ui->memoryUsage->value() + amount);
 
 }
 
+void MainWindow::onSetCritical(bool set){
+    if(set) {
+        ui->criticalSecFrame->setStyleSheet("background-color: green;");
+    }else{
+        ui->criticalSecFrame->setStyleSheet("background-color: red;");
+    }
+
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -133,15 +140,16 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setFixedSize(width(), height());
+    srand(time(nullptr));
     kernel::getInstance().window = this;
     qRegisterMetaType<std::string>("std::string");
+    qRegisterMetaType<Process>("Process");
     connect(this, &MainWindow::print, this, &MainWindow::updateText);
     connect(this, &MainWindow::done, this, &MainWindow::changeStatus);
     connect(this, &MainWindow::updateProcessListGUI, this, &MainWindow::updateProcessList);
-    connect(this, &MainWindow::updateNewQueueGUI, this, &MainWindow::updateNewQueue);
-    connect(this, &MainWindow::updateReadyQueueGUI, this, &MainWindow::updateReadyQueue);
-    connect(this, &MainWindow::updateWaitingQueueGUI, this, &MainWindow::updateWaitingQueue);
     connect(this, &MainWindow::updateMemoryBarGUI, this, &MainWindow::updateMemoryBar);
+    connect(this, &MainWindow::setCritical, this, &MainWindow::onSetCritical);
+    connect(this, &MainWindow::setLoad, this, &MainWindow::onSetLoad);
     ptr = ui->simulatorOut;
     ptr->setReadOnly(true);
     ui->processList->setColumnWidth(0, 15);
@@ -177,14 +185,39 @@ void MainWindow::on_loadFile_clicked()
 
 }
 
+
+void MainWindow::simulateOS(){
+
+    programfilegenerator gen = programfilegenerator();
+
+    while(true) {
+
+        if((rand() % 100) < 5) {
+            this->createProcess(gen.generate(), 1, false);
+        }
+
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(rand() % 256 + 32));
+
+    }
+
+}
+
 void MainWindow::on_startSim_clicked()
 {
     kernel::getInstance().shutDown = false;
+
     if(!this->isRunning) {
         QPalette pal;
         pal.setColor(QPalette::WindowText, Qt::green);
         ui->isRunning->setText("Running!");
         ui->isRunning->setPalette(pal);
+
+        if(ui->simulate->isChecked()) {
+
+            std::thread sim(&MainWindow::simulateOS, this);
+            sim.detach();
+        }
 
         CPU::getInstance().start(ui->time->value(), ui->timeUnit->currentText());
 

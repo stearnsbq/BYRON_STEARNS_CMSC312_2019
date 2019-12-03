@@ -1,0 +1,24 @@
+{
+	"Name": "Notepad",
+	"Runtime": 40,
+	"Memory": 400,
+
+	"instructions": [{
+			"Type": "YIELD"
+		},
+		{
+			"Type": "CRITICAL_I/O",
+			"Burst": 10
+		},
+		{
+			"Type": "CRITICAL_CALCULATE",
+			"Burst": 10
+		},
+		{
+			"Type": "CALCULATE",
+			"Burst": 10
+		}
+
+	]
+
+}

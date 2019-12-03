@@ -1,0 +1,22 @@
+{
+	"Name": "Notepad",
+	"Runtime": 40,
+	"Memory": 400,
+
+	"instructions": [
+		{
+			"Type": "SEND",
+			"Msg": "Hello!"
+		},
+		{
+			"Type": "CALCULATE",
+			"Burst": 10
+		},
+		{
+			"Type": "CALCULATE",
+			"Burst": 10
+		}
+
+	]
+
+}

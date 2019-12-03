@@ -5,38 +5,38 @@ kernel::kernel()
 {
     this->longTermTimer = 0;
     this->shutDown = false;
+    this->pidCounter = 0;
+    this->mailBox = new mailbox();
 }
-
-void kernel::schedule(){
-    if(longTermTimer <= 0) {
-        //   this->longTerm->runScheduler();
-        this->longTermTimer = 10;
-    }
-    // this->shortTerm->runScheduler();
-    this->longTermTimer--;
-}
-
 
 void kernel::updateProcessTable(Process p){
     this->processTable[p.getPid()] = p;
-    emit window->updateProcessListGUI();
+    emit window->updateProcessListGUI(p);
 }
 
-void kernel::newProcess(Process& p){
+void kernel::newProcess(Process & p){
     p.setState(NEW);
-    p.setPid(pidCounter++);
+    p.setPid(getNextPid());
     this->jobPool.push(p);
-    this->processTable.push_back(p);
-    emit window->updateProcessListGUI();
+    this->processTable.insert(std::make_pair(p.getPid(), p));
+    emit window->updateProcessListGUI(p);
 }
+
+
+
+
+int kernel::getNextPid(){
+    if(pidCounter >= 32768) {
+        pidCounter = 0;
+    }
+    return pidCounter++;
+}
+
 
 
 bool kernel::compare( Process& p1,  Process& p2){
     return p1.getPriority() < p2.getPriority();
 }
-
-
-
 
 bool kernel::isFinished(){
     return this->shutDown;
@@ -46,7 +46,6 @@ Process kernel::getNextProcessInPool(){
     std::lock_guard<std::mutex> lock{this->jobPoolMutex};
     if(!this->jobPool.empty()) {
         try {
-
             Process p = this->jobPool.top();
             this->jobPool.pop();
             return p;
@@ -61,20 +60,7 @@ bool kernel::isJobPoolEmpty(){
     return this->jobPool.empty();
 }
 
-void kernel::swapIn(Process p){
-    std::vector<page> pages = CPU::getInstance().alloc(p.getMemoryReq());
-    p.pages = pages;
-    if(!pages.empty()) {
-        //  this->shortTerm->enqueueProcess(p, READY_Q);
-    }
-}
-
-void kernel::IOPreempt(Process p){
-    // this->shortTerm->enqueueProcess(p, WAITING);
-}
-
-
-std::vector<Process> kernel::getListOfProcesses(){
+std::unordered_map<int, Process> kernel::getListOfProcesses(){
     return this->processTable;
 }
 

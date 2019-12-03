@@ -5,12 +5,14 @@
 
 ShortTermScheduler::ShortTermScheduler(ALGORITHM algoToUse, Core & parent) : parent(parent) {
     this->algorithmToUse = algoToUse;
+    this->totalProcesses = 0;
     this->dp = new Dispatcher(parent);
 }
 
 
 
 void ShortTermScheduler::runScheduler(){
+    emit kernel::getInstance().window->setLoad(parent.coreNum,totalProcesses);
     switch (this->algorithmToUse)
     {
     case ROUND_ROBIN:
@@ -29,20 +31,47 @@ void ShortTermScheduler::runScheduler(){
 }
 
 void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
+
+
     switch (q) {
     case WAITING:
         this->waitingQueue.push(p);
         break;
     case MID:
         this->midLevel.push(p);
+        this->totalProcesses++;
         break;
     case READY_Q:
         this->readyQueue.push(p);
+        this->totalProcesses++;
         break;
     case BASE:
         this->readyQueue.push(p);
+        this->totalProcesses++;
         break;
     }
+}
+
+Process ShortTermScheduler::determineProcessForMigrate(){
+    if(!this->readyQueue.empty()  ) {
+        Process toMigrate = this->readyQueue.front();
+        this->readyQueue.pop();
+        this->totalProcesses--;
+        return toMigrate;
+    }else if(!this->midLevel.empty() ) {
+        Process toMigrate = this->midLevel.front();
+        this->midLevel.pop();
+        this->totalProcesses--;
+        return toMigrate;
+    }else if (!this->baseLevel.empty()) {
+        Process toMigrate = this->baseLevel.front();
+        this->baseLevel.pop();
+        this->totalProcesses--;
+        return toMigrate;
+    }
+    emit kernel::getInstance().window->setLoad(parent.coreNum,totalProcesses);
+    return Process();
+
 }
 
 void ShortTermScheduler::feedBackQueue(){
@@ -148,6 +177,7 @@ void ShortTermScheduler::roundRobin()
             rotate.setState(EXIT);
             kernel::getInstance().updateProcessTable(  rotate);
             parent.runningProcess.setState(EXIT);
+            this->totalProcesses--;
         }
 
     }
@@ -159,33 +189,69 @@ void ShortTermScheduler::roundRobin()
 void ShortTermScheduler::processWaitingQueue()
 {
     if(!this->waitingQueue.empty()) {
-        if(this->waitingQueue.front().getCurrentBurst() > 0) {
-            //  emit kernel::getInstance().window->print("WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr());
-            //  std::cout << "WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr() << std::endl;
-            this->waitingQueue.front().decrementBurst();
-        }else{
-            Process rotate = this->waitingQueue.front();
-            this->waitingQueue.pop();
-            emit kernel::getInstance().window->print("WAITING DONE PID: " + std::to_string(rotate.getPid()));
-            // std::cout << "WAITING DONE PID: " + std::to_string(rotate.getPid()) << std::endl;
-            rotate.setState(READY);
-            rotate.incrementPC();
-            if(this->algorithmToUse == MULTILEVEL_FEEDBACK_QUEUE) {
-                switch (rotate.getLastQueue()) {
-                case 0:
-                    this->readyQueue.push(rotate);
-                    break;
-                case 1:
-                    this->midLevel.push(rotate);
-                    break;
-                case 2:
-                    this->baseLevel.push(rotate);
-                    break;
-                }
-            }else{
+
+
+        if(this->waitingQueue.front().getState() == WAITING_FOR_CHILD) {
+            std::cout << "waiting on child" << std::endl;
+            if(this->waitingQueue.front().getChild() != nullptr && this->waitingQueue.front().getChild()->getState() == EXIT) {
+                std::cout << "child exited" << std::endl;
+                Process rotate = this->waitingQueue.front();
+                this->waitingQueue.pop();
+                CPU::getInstance().free(rotate.pages);
+            }
+
+        }else if(this->waitingQueue.front().getState() == WAITING_FOR_MSG) {
+            if(!kernel::getInstance().mailBox->empty()) {
+                mailbox::message msg = kernel::getInstance().mailBox->recieveMessage();
+                emit kernel::getInstance().window->print(msg.msg);
+                std::cout << "RECIEVED MESSAGE " + msg.msg + " FROM PID: " + std::to_string(msg.originPid) << std::endl;
+                Process rotate = this->waitingQueue.front();
+                rotate.incrementPC();
+                this->waitingQueue.pop();
                 this->readyQueue.push(rotate);
             }
-            CPU::getInstance().mutexLock->unlock();
+        }else{
+
+            if(this->waitingQueue.front().getCurrentBurst() > 0) {
+
+                //  emit kernel::getInstance().window->print("WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr());
+                //  std::cout << "WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr() << std::endl;
+                this->waitingQueue.front().decrementBurst();
+
+            }else{
+
+                Process rotate = this->waitingQueue.front();
+                this->waitingQueue.pop();
+                emit kernel::getInstance().window->print("WAITING DONE PID: " + std::to_string(rotate.getPid()));
+                // std::cout << "WAITING DONE PID: " + std::to_string(rotate.getPid()) << std::endl;
+                rotate.setState(READY);
+                rotate.incrementPC();
+                if(this->algorithmToUse == MULTILEVEL_FEEDBACK_QUEUE) {
+                    switch (rotate.getLastQueue()) {
+                    case 0:
+                        this->readyQueue.push(rotate);
+                        break;
+                    case 1:
+                        this->midLevel.push(rotate);
+                        break;
+                    case 2:
+                        this->baseLevel.push(rotate);
+                        break;
+                    }
+                }else{
+                    this->readyQueue.push(rotate);
+                }
+
+                if(rotate.getInstructions().size() - 1 > rotate.getProgramCounter() && rotate.getCurrentInstruction().isCritical()) {
+                    CPU::getInstance().mutexLock->unlock();
+                    emit kernel::getInstance().window->setCritical(false);
+                }
+
+            }
         }
     }
+
+
+
+
 }

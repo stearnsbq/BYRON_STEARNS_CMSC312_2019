@@ -1,6 +1,6 @@
 #include "CPU.hpp"
 #include <csignal>
-
+#include <chrono>
 CPU::CPU() : memoryMutex()
 {
     this->memory = new mainmemory(4096000, 1024.0);
@@ -11,7 +11,6 @@ CPU::CPU() : memoryMutex()
     this->mutexLock = new mutex();
     this->core1 = new Core(1);
     this->core2 = new Core(2);
-
 }
 
 long long CPU::availableMemory(){
@@ -44,10 +43,12 @@ void CPU::run(int time, QString unit)
 {
     this->core1->start(time, unit);
     this->core2->start(time, unit);
+    std::thread balancer(&CPU::loadBalancer, this, time, unit);
+    balancer.detach();
 }
 
 void CPU::cycle(){
-    kernel::getInstance().schedule();
+
 }
 
 void CPU::setTimeQ(int time)
@@ -80,6 +81,49 @@ std::vector<page> CPU::alloc(unsigned int size){
     }
 }
 
+void CPU::migrateProcess(Process p, int coreToMigrateTo){
+    if(coreToMigrateTo == 1) {
+        this->core1->addProcess(p);
+    }else{
+        this->core2->addProcess(p);
+    }
+
+}
+
+
+void CPU::sleep(int time, QString unit){
+    if(unit == "ms") {
+        std::this_thread::sleep_for(std::chrono::milliseconds(time));
+    }else if(unit == "ns") {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(time));
+    }else{
+        std::this_thread::sleep_for(std::chrono::seconds(time));
+    }
+}
+
+
+void CPU::loadBalancer(int time, QString unit){
+    while(!kernel::getInstance().shutDown) {
+
+        while(core1->getLoad() > core2->getLoad() + 1 && (core2->getLoad() > 0)) {
+            Process toMigrate = core1->migrate();
+            if(toMigrate.getPriority() > 0) {
+                this->migrateProcess(toMigrate, 2);
+            }
+            sleep(time, unit);
+        }
+
+        while(core2->getLoad() > core1->getLoad() + 1 && (core1->getLoad() > 0)) {
+            Process toMigrate = core2->migrate();
+            if(toMigrate.getPriority() > 0) {
+                this->migrateProcess(toMigrate, 1);
+            }
+            sleep(time, unit);
+        }
+        sleep(time, unit);
+    }
+}
+
 void CPU::free(std::vector<page> pages){
     std::lock_guard<std::mutex> lock(this->memoryMutex);
     this->memory->freeMemory(pages);
@@ -101,7 +145,7 @@ void CPU::executeInstruction(unsigned int timeQ){
 
             CPU::getInstance().getRunningProcess().setState(EXIT);
 
-            kernel::getInstance().IOPreempt(rotate);
+
 
         }else if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == CRITICAL_CALC) {
 
@@ -165,7 +209,7 @@ void CPU::executeInstruction(unsigned int timeQ){
 
             CPU::getInstance().getRunningProcess().setState(EXIT);
 
-            kernel::getInstance().IOPreempt(rotate);
+
 
         }else{
 

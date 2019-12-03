@@ -2,6 +2,9 @@
 #include "ui_randomfileoptionsdialog.h"
 #include <QMessageBox>
 #include <ctime>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QDebug>
 
 randomFileOptionsDialog::randomFileOptionsDialog(QWidget *parent) :
     QDialog(parent),
@@ -23,28 +26,49 @@ void randomFileOptionsDialog::on_generate_clicked()
     std::vector<QString> names = {"Text Processor", "Web Browser", "Video Game", "Chat"};
     std::vector<QString> instrs = {"CALCULATE", "I/O", "OUT"};
     QString instr;
-    unsigned int runtime = 0;
+
+    QJsonDocument doc;
+
+    QJsonObject obj;
+    QJsonArray instructions;
+    QJsonObject instruction;
+
+
+    int runtime = 0;
 
     for(int i = 0; i < ui->numInstructions->value(); i++) {
+
         QString it = instrs.at(rand() % 2);
-        unsigned int rt = (rand() % 75 + 1);
+        int rt = (rand() % 75 + 1);
         if(it == "CALCULATE") {
             runtime += rt;
         }else if(it == "OUT") {
             it += names.at(rand()% 4);
         }
-        instr += QString("%1 %2\n").arg(it, QString::number(rt));
-    }
-    instr += "EXE";
-    QString file = QString("Name: %1\nTotal runtime: %2\nMemory: %3\n\n%4").arg(names.at(rand() % 4), QString::number(runtime), QString::number(rand() % 4096 + 1), instr);
-    ui->plainTextEdit->setPlainText(file);
-    this->fileData = file.toStdString();
 
+        instruction.insert("Type", it);
+        instruction.insert("Burst", rt);
+        instructions.append(instruction);
+        instruction = QJsonObject();
+    }
+
+    obj.insert("instructions", instructions);
+    obj.insert("Name", names.at(rand() % 4));
+    obj.insert("Runtime", runtime);
+    obj.insert("Memory", rand() % 4096 + 1);
+
+
+
+    doc.setObject(obj);
+
+
+    ui->plainTextEdit->setPlainText(doc.toJson().toStdString().c_str());
+    this->fileData = doc;
 }
 
 void randomFileOptionsDialog::on_done_clicked()
 {
-    if(fileData.length() > 0) {
+    if(!fileData.isEmpty()) {
         emit isDone(fileData, ui->numProc->value(), true);
         QMessageBox::about(this, "Success", "Program loaded! " + QString::number(ui->numProc->value()) + " Processes created !");
         this->close();

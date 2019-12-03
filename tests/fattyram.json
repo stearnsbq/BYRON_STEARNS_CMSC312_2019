@@ -1,0 +1,107 @@
+{
+    "Memory": 250000,
+    "Name": "Video Game",
+    "Runtime": 504,
+    "instructions": [
+        {
+            "Burst": 37,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 71,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 32,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 73,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 64,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 55,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 63,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 36,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 67,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 47,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 32,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 60,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 22,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 52,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 55,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 50,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 49,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 15,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 41,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 17,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 54,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 15,
+            "Type": "I/O"
+        },
+        {
+            "Burst": 60,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 72,
+            "Type": "CALCULATE"
+        },
+        {
+            "Burst": 25,
+            "Type": "I/O"
+        }
+    ]
+}

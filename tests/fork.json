@@ -1,0 +1,24 @@
+{
+	"Name": "Notepad",
+	"Runtime": 20,
+	"Memory": 400,
+
+	"instructions": [{
+			"Type": "FORK"
+		},
+		{
+			"Type": "I/O",
+			"Burst": 10
+		},
+		{
+			"Type": "CALCULATE",
+			"Burst": 10
+		},
+		{
+			"Type": "CALCULATE",
+			"Burst": 10
+		}
+
+	]
+
+}

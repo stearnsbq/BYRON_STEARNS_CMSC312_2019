@@ -33,6 +33,7 @@ SOURCES += \
     kernel.cpp \
     loadfiledialog.cpp \
     longtermscheduler.cpp \
+    mailbox.cpp \
     main.cpp \
     mainmemory.cpp \
     mainwindow.cpp \
@@ -40,8 +41,10 @@ SOURCES += \
     page.cpp \
     pagetable.cpp \
     priorityqueue.cpp \
+    programfilegenerator.cpp \
     queue.cpp \
     randomfileoptionsdialog.cpp \
+    resource.cpp \
     shorttermscheduler.cpp
 
 HEADERS += \
@@ -53,12 +56,12 @@ HEADERS += \
     dispatcher.h \
     feedbackqueue.h \
     fileoptionsdialog.h \
-    guiupdater.h \
     instruction.hpp \
     interrupt.h \
     kernel.h \
     loadfiledialog.h \
     longtermscheduler.h \
+    mailbox.h \
     main.hpp \
     mainmemory.h \
     mainwindow.h \
@@ -66,8 +69,10 @@ HEADERS += \
     page.h \
     pagetable.h \
     priorityqueue.hpp \
+    programfilegenerator.h \
     queue.hpp \
     randomfileoptionsdialog.h \
+    resource.h \
     shorttermscheduler.h
 
 FORMS += \

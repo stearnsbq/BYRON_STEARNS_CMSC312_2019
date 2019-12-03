@@ -1,0 +1,21 @@
+{
+	"Name": "Notepad",
+	"Runtime": 40,
+	"Memory": 400,
+
+	"instructions": [
+		{
+			"Type": "RECIEVE"
+		},
+		{
+			"Type": "CALCULATE",
+			"Burst": 10
+		},
+		{
+			"Type": "CALCULATE",
+			"Burst": 10
+		}
+
+	]
+
+}
