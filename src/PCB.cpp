@@ -30,7 +30,7 @@ Process::Process(Process * parent){
 
 Process::~Process()
 {
-    this->instructions.clear();
+    // this->instructions.clear();
 }
 
 

@@ -140,8 +140,8 @@
      <widget class="QLabel" name="procesLIstLabel">
       <property name="geometry">
        <rect>
-        <x>271</x>
-        <y>9</y>
+        <x>10</x>
+        <y>10</y>
         <width>56</width>
         <height>16</height>
        </rect>
@@ -151,22 +151,6 @@
       </property>
       <property name="text">
        <string>Process List</string>
-      </property>
-     </widget>
-     <widget class="QTextEdit" name="simulatorOut">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>256</width>
-        <height>461</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
       </property>
      </widget>
      <widget class="QComboBox" name="timeUnit">
@@ -206,10 +190,10 @@
      <widget class="QTableWidget" name="processList">
       <property name="geometry">
        <rect>
-        <x>270</x>
+        <x>10</x>
         <y>30</y>
-        <width>511</width>
-        <height>441</height>
+        <width>311</width>
+        <height>431</height>
        </rect>
       </property>
       <property name="sizePolicy">
@@ -458,6 +442,72 @@
       </property>
       <property name="text">
        <string>Simulate</string>
+      </property>
+     </widget>
+     <widget class="QTableView" name="tableView">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>330</y>
+        <width>250</width>
+        <height>130</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableView" name="tableView_2">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>30</y>
+        <width>250</width>
+        <height>130</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableView" name="tableView_3">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>180</y>
+        <width>250</width>
+        <height>130</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>30</y>
+        <width>201</width>
+        <height>431</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>10</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Job Pool</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>10</y>
+        <width>71</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Ready Queue</string>
       </property>
      </widget>
     </widget>

@@ -33,7 +33,6 @@
 
 using namespace std;
 
-QTextEdit *ptr;
 
 void MainWindow::createProcess(QJsonDocument programFile, int number, bool toRandom)
 {
@@ -150,8 +149,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this, &MainWindow::updateMemoryBarGUI, this, &MainWindow::updateMemoryBar);
     connect(this, &MainWindow::setCritical, this, &MainWindow::onSetCritical);
     connect(this, &MainWindow::setLoad, this, &MainWindow::onSetLoad);
-    ptr = ui->simulatorOut;
-    ptr->setReadOnly(true);
+
     ui->processList->setColumnWidth(0, 15);
     this->ui->memoryUsage->setRange(0, 4096000);
     ui->processList->verticalHeader()->setVisible(false);
@@ -180,7 +178,6 @@ void MainWindow::on_loadFile_clicked()
     this->loadfile = new loadFileDialog();
     this->loadfile->setFixedSize(this->loadfile->size());
     connect(this->loadfile, &loadFileDialog::createProcesses, this, &MainWindow::createProcess);
-    ui->simulatorOut->clear();
     loadfile->show();
 
 }
@@ -192,7 +189,7 @@ void MainWindow::simulateOS(){
 
     while(true) {
 
-        if((rand() % 100) < 5) {
+        if((rand() % 100) < 25) {
             this->createProcess(gen.generate(), 1, false);
         }
 

@@ -13,6 +13,7 @@ CPU::CPU() : memoryMutex()
     this->core2 = new Core(2);
 }
 
+
 long long CPU::availableMemory(){
     return this->memory->availableMemory();
 }
@@ -22,10 +23,6 @@ int CPU::getTimeQ()
     return this->timeQuantum;
 }
 
-CPU::~CPU()
-{
-    this->isRunning = false;
-}
 
 void CPU::setIsRunning(bool val){
     this->isRunning = val;

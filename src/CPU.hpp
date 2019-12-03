@@ -19,7 +19,12 @@ class CPU
 {
 private:
 CPU();
-~CPU();
+~CPU(){
+    delete core1;
+    delete core2;
+    delete memory;
+    delete mutexLock;
+}
 unsigned int logicalAddr;
 unsigned int nextOpenFrame;
 mainmemory *memory;

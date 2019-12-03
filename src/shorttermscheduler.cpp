@@ -31,8 +31,7 @@ void ShortTermScheduler::runScheduler(){
 }
 
 void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
-
-
+    std::lock_guard<std::mutex> lock(_migrateLock);
     switch (q) {
     case WAITING:
         this->waitingQueue.push(p);
@@ -52,19 +51,22 @@ void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
     }
 }
 
+
+
 Process ShortTermScheduler::determineProcessForMigrate(){
-    if(!this->readyQueue.empty()  ) {
-        Process toMigrate = this->readyQueue.front();
+    std::lock_guard<std::mutex> lock(_migrateLock);
+    if(!this->readyQueue.empty()) {
+        Process toMigrate = this->readyQueue.top();
         this->readyQueue.pop();
         this->totalProcesses--;
         return toMigrate;
     }else if(!this->midLevel.empty() ) {
-        Process toMigrate = this->midLevel.front();
+        Process toMigrate = this->midLevel.top();
         this->midLevel.pop();
         this->totalProcesses--;
         return toMigrate;
     }else if (!this->baseLevel.empty()) {
-        Process toMigrate = this->baseLevel.front();
+        Process toMigrate = this->baseLevel.top();
         this->baseLevel.pop();
         this->totalProcesses--;
         return toMigrate;
@@ -86,7 +88,8 @@ void ShortTermScheduler::feedBackQueue(){
 
 
 void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
-    std::queue<Process> * queueToProcess = nullptr;
+    std::lock_guard<std::mutex> lock(_migrateLock);
+    std::priority_queue<Process> * queueToProcess = nullptr;
     switch (queue) {
     case 0:
         queueToProcess = &this->readyQueue;
@@ -103,7 +106,7 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
 
         if(parent.runningProcess.getState() == EXIT && !queueToProcess->empty()) {
             this->timeQuantum = 0;
-            Process newProcess = queueToProcess->front();
+            Process newProcess = queueToProcess->top();
             queueToProcess->pop();
             newProcess.setState(RUN);
             parent.runningProcess = newProcess;
@@ -142,10 +145,11 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
 
 void ShortTermScheduler::roundRobin()
 {
+    std::lock_guard<std::mutex> lock(_migrateLock);
     if (parent.runningProcess.getState() == EXIT && !this->readyQueue.empty())
     {
         this->timeQuantum = 0;
-        Process newProcess = this->readyQueue.front();
+        Process newProcess = this->readyQueue.top();
         this->readyQueue.pop();
         newProcess.setState(RUN);
         CPU::getInstance().setRunningProcess(newProcess);
