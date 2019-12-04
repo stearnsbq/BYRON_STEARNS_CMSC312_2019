@@ -6,13 +6,13 @@
 class FeedbackQueue
 {
 public:
-    FeedbackQueue();
-    ~FeedbackQueue();
-    Process getNextProcess();
+FeedbackQueue();
+~FeedbackQueue();
+Process getNextProcess();
 private:
-    Queue topLevel;
-    Queue midLevel;
-    Queue baseLevel;
+//    Queue topLevel;
+//    Queue midLevel;
+//    Queue baseLevel;
 };
 
 #endif // FEEDBACKQUEUE_H

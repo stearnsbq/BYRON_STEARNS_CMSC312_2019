@@ -4,6 +4,7 @@
 #include "mutex.h"
 #include "dispatcher.h"
 #include <queue>
+#include <mutex>
 
 enum ALGORITHM
 {
@@ -33,9 +34,10 @@ Process determineProcessForMigrate();
 int totalProcesses;
 private:
 mutex * mutexLock;
-std::queue<Process> readyQueue;     // used both for RR (tq of 20) / Priority and the top queue for Multilevel feedback queue (RR of time quantum 8)
-std::queue<Process> midLevel;     // time quantum of 16
-std::queue<Process> baseLevel;     // time quantum of 20
+std::mutex _migrateLock;
+std::priority_queue<Process> readyQueue;     // used both for RR (tq of 20) / Priority and the top queue for Multilevel feedback queue (RR of time quantum 8)
+std::priority_queue<Process> midLevel;     // time quantum of 16
+std::priority_queue<Process> baseLevel;     // time quantum of 20
 std::queue<Process> waitingQueue;
 Core & parent;
 Dispatcher * dp;

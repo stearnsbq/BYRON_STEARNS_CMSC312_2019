@@ -1,38 +1,25 @@
 #ifndef QUEUE
 #define QUEUE
 #include "PCB.hpp"
+#include <queue>
+
+template <typename T>
 class Queue
 {
 public:
-    Queue();
-    ~Queue();
-    void enqueueProcess(Process data);
-    Process dequeueProcess();
-    void printList();
-    Process *peek();
-    bool isEmpty();
-    int size();
+
+Queue();
+~Queue();
+void push();
+void pop();
+T top();
+bool empty();
+int size();
 private:
-    class Node
-    {
-    public:
-        Process data;
-        Node();
-        Node(Process data);
-        Node *getNext();
-        Process getData();
-        void setNext(Node *next);
-        void setData(Process data);
-        ~Node();
+std::queue<T> queue;
 
-    private:
-        Node *next;
 
-    };
-    Node *head;
-    Node *tail;
-    Node tmp;
-    int count;
 };
+
 
 #endif
