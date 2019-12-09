@@ -10,12 +10,14 @@ public:
 pagetable();
 ~pagetable();
 page putPage(int pageNumber);
-page  removePage(int pageNumber);
+page removePage(int pageNumber);
+int findPageToReplace();
+std::unordered_map<int, page> pages;
 private:
 unsigned int size;
 unsigned int storedPages;
 double loadFactor;
-std::unordered_map<int, page> pages;
+
 };
 
 #endif // PAGETABLE_H

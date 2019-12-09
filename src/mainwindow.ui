@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>797</width>
+    <height>597</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,6 +19,11 @@
   <property name="windowTitle">
    <string>OS Simulator</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">MainWindow{
+background-color: rgb(177, 177, 177);
+}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -26,7 +31,12 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <widget class="QTabWidget" name="tabWidget">
+   <property name="styleSheet">
+    <string notr="true">centralwidget{
+background-color: rgb(177, 177, 177);
+}</string>
+   </property>
+   <widget class="QTabWidget" name="mainTabs">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -53,8 +63,13 @@
     <property name="whatsThis">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
+    <property name="styleSheet">
+     <string notr="true">mainTabs{
+background-color: rgb(177, 177, 177);
+}</string>
+    </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="Home">
      <property name="sizePolicy">
@@ -62,6 +77,11 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">#Home{
+background-color: rgb(177, 177, 177);
+}</string>
      </property>
      <attribute name="title">
       <string>Home</string>
@@ -86,14 +106,17 @@
        </property>
       </item>
      </widget>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="CycleTime">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>5</x>
         <y>540</y>
-        <width>49</width>
-        <height>16</height>
+        <width>71</width>
+        <height>20</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
       </property>
       <property name="text">
        <string>Cycle time</string>
@@ -120,7 +143,7 @@
        <rect>
         <x>70</x>
         <y>540</y>
-        <width>51</width>
+        <width>50</width>
         <height>20</height>
        </rect>
       </property>
@@ -130,6 +153,12 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="suffix">
+       <string/>
+      </property>
+      <property name="prefix">
+       <string/>
+      </property>
       <property name="minimum">
        <number>1</number>
       </property>
@@ -137,17 +166,20 @@
        <number>1000</number>
       </property>
      </widget>
-     <widget class="QLabel" name="procesLIstLabel">
+     <widget class="QLabel" name="processLIstLabel">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>56</width>
-        <height>16</height>
+        <width>311</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="autoFillBackground">
-       <bool>true</bool>
+       <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
       </property>
       <property name="text">
        <string>Process List</string>
@@ -192,8 +224,8 @@
        <rect>
         <x>10</x>
         <y>30</y>
-        <width>311</width>
-        <height>431</height>
+        <width>771</width>
+        <height>291</height>
        </rect>
       </property>
       <property name="sizePolicy">
@@ -201,6 +233,27 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="toolTip">
+       <string>Process List</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTableWidget
+{
+border: 1px solid black;
+background: white
+}
+
+QTableWidget::item
+{
+border: 1px solid black;
+}
+
+QHeaderView::section
+{
+border: 1px solid black;
+background: white
+}</string>
       </property>
       <attribute name="horizontalHeaderHighlightSections">
        <bool>true</bool>
@@ -227,14 +280,21 @@
        </property>
       </column>
      </widget>
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="stats">
       <property name="geometry">
        <rect>
         <x>270</x>
         <y>479</y>
-        <width>511</width>
+        <width>521</width>
         <height>91</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+#stats{
+background-color: gray;
+border: 2px solid black;
+}</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -246,10 +306,13 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>9</y>
-         <width>81</width>
+         <y>10</y>
+         <width>91</width>
          <height>21</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font-weight: bold;</string>
        </property>
        <property name="text">
         <string>Not Running.....</string>
@@ -260,12 +323,15 @@
         <rect>
          <x>10</x>
          <y>60</y>
-         <width>491</width>
+         <width>511</width>
          <height>23</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <property name="value">
-        <number>0</number>
+        <number>25</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -285,6 +351,9 @@
          <width>221</width>
          <height>16</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font-weight: bold;</string>
        </property>
        <property name="text">
         <string>Memory Usage</string>
@@ -332,7 +401,7 @@
        <property name="geometry">
         <rect>
          <x>190</x>
-         <y>20</y>
+         <y>30</y>
          <width>64</width>
          <height>23</height>
         </rect>
@@ -345,7 +414,7 @@
        <property name="geometry">
         <rect>
          <x>270</x>
-         <y>20</y>
+         <y>30</y>
          <width>64</width>
          <height>23</height>
         </rect>
@@ -370,10 +439,13 @@
        <property name="geometry">
         <rect>
          <x>190</x>
-         <y>0</y>
-         <width>71</width>
+         <y>10</y>
+         <width>64</width>
          <height>16</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font-weight: bold;</string>
        </property>
        <property name="text">
         <string>Core 1 Load</string>
@@ -386,10 +458,13 @@
        <property name="geometry">
         <rect>
          <x>270</x>
-         <y>0</y>
-         <width>71</width>
+         <y>10</y>
+         <width>64</width>
          <height>16</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font-weight: bold;</string>
        </property>
        <property name="text">
         <string>Core 2 Load</string>
@@ -435,7 +510,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>490</y>
+        <y>480</y>
         <width>161</width>
         <height>20</height>
        </rect>
@@ -444,77 +519,547 @@
        <string>Simulate</string>
       </property>
      </widget>
-     <widget class="QTableView" name="tableView">
+     <widget class="QTextEdit" name="ConsoleOutput">
       <property name="geometry">
        <rect>
-        <x>540</x>
+        <x>10</x>
         <y>330</y>
-        <width>250</width>
-        <height>130</height>
+        <width>771</width>
+        <height>91</height>
        </rect>
       </property>
-     </widget>
-     <widget class="QTableView" name="tableView_2">
-      <property name="geometry">
-       <rect>
-        <x>540</x>
-        <y>30</y>
-        <width>250</width>
-        <height>130</height>
-       </rect>
+      <property name="styleSheet">
+       <string notr="true">border: 1px solid black;
+background: white
+</string>
       </property>
      </widget>
-     <widget class="QTableView" name="tableView_3">
+     <widget class="QLineEdit" name="CommandInput">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>180</y>
-        <width>250</width>
-        <height>130</height>
+        <x>10</x>
+        <y>430</y>
+        <width>771</width>
+        <height>20</height>
        </rect>
       </property>
-     </widget>
-     <widget class="QTableWidget" name="tableWidget">
-      <property name="geometry">
-       <rect>
-        <x>330</x>
-        <y>30</y>
-        <width>201</width>
-        <height>431</height>
-       </rect>
+      <property name="placeholderText">
+       <string>Enter a command</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_3">
+    </widget>
+    <widget class="QWidget" name="Memory">
+     <property name="styleSheet">
+      <string notr="true">#Memory{
+background-color: rgb(177, 177, 177);
+}</string>
+     </property>
+     <attribute name="title">
+      <string>Memory</string>
+     </attribute>
+     <widget class="QGraphicsView" name="memoryView">
       <property name="geometry">
        <rect>
-        <x>330</x>
+        <x>10</x>
         <y>10</y>
-        <width>71</width>
-        <height>16</height>
+        <width>128</width>
+        <height>550</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QScrollBar::vertical{width:16px;}
+
+QGraphicsView{
+border: 2px solid black;
+background-color: white;
+}
+
+
+
+</string>
+      </property>
+     </widget>
+     <widget class="QFrame" name="MemoryInfo">
+      <property name="geometry">
+       <rect>
+        <x>149</x>
+        <y>10</y>
+        <width>640</width>
+        <height>551</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+#MemoryInfo{
+background-color: white;
+border: 2px solid black;
+}
+</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <widget class="QFrame" name="pageInfo">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>40</y>
+         <width>256</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">#pageInfo{
+border: 2px solid black;
+}</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLabel" name="pageSizeLabel">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>231</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>Page Size:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>40</y>
+          <width>231</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>Page Count: </string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>10</y>
+         <width>256</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>PAGE INFO</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+      <widget class="QFrame" name="frameInfo">
+       <property name="geometry">
+        <rect>
+         <x>343</x>
+         <y>40</y>
+         <width>256</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">#frameInfo{
+border: 2px solid black;
+}</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <widget class="QLabel" name="pageSizeLabel_2">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>231</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>Used Frames:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_5">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>40</y>
+          <width>231</width>
+          <height>30</height>
+         </rect>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>Free Frames: </string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignJustify|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QLabel" name="label_6">
+       <property name="geometry">
+        <rect>
+         <x>343</x>
+         <y>10</y>
+         <width>256</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>FRAME INFO</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="Scheduler">
+     <property name="cursor">
+      <cursorShape>OpenHandCursor</cursorShape>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="accessibleName">
+      <string/>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">#Scheduler{
+background-color: rgb(177, 177, 177);
+}</string>
+     </property>
+     <attribute name="title">
+      <string>Scheduler</string>
+     </attribute>
+     <widget class="QLabel" name="jobPool">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>30</y>
+        <width>200</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
       </property>
       <property name="text">
        <string>Job Pool</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_4">
+     <widget class="QTableWidget" name="tableWidget">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>10</y>
-        <width>71</width>
-        <height>16</height>
+        <x>160</x>
+        <y>50</y>
+        <width>200</width>
+        <height>431</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTableWidget
+{
+border: 1px solid black;
+background: white
+}
+
+QTableWidget::item
+{
+border: 1px solid black;
+}
+
+QHeaderView::section
+{
+border: 1px solid black;
+background: white
+}</string>
+      </property>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>10</number>
+      </attribute>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>99</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>PID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>NAME</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QLabel" name="BaseLevel">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>330</y>
+        <width>250</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
+      </property>
+      <property name="text">
+       <string>Base Level Queue</string>
+      </property>
+     </widget>
+     <widget class="QTableWidget" name="readyQueue">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>50</y>
+        <width>250</width>
+        <height>130</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Ready Queue</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTableWidget
+{
+border: 1px solid black;
+background: white
+}
+
+QTableWidget::item
+{
+border: 1px solid black;
+}
+
+QHeaderView::section
+{
+border: 1px solid black;
+background: white
+}</string>
+      </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderCascadingSectionResizes">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>10</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>12</number>
+      </attribute>
+      <attribute name="verticalHeaderHighlightSections">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>PID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>NAME</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+      </column>
+     </widget>
+     <widget class="QLabel" name="MidLevel">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>180</y>
+        <width>250</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
+      </property>
+      <property name="text">
+       <string>Mid Level Queue</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="readyQueue_2">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>30</y>
+        <width>250</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
       </property>
       <property name="text">
        <string>Ready Queue</string>
       </property>
      </widget>
+     <widget class="QTableWidget" name="baseQueue">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>350</y>
+        <width>250</width>
+        <height>130</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Base Level Queue</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTableWidget
+{
+border: 1px solid black;
+background: white
+}
+
+QTableWidget::item
+{
+border: 1px solid black;
+}
+
+QHeaderView::section
+{
+border: 1px solid black;
+background: white
+}</string>
+      </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>PID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>NAME</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="midQueue">
+      <property name="geometry">
+       <rect>
+        <x>370</x>
+        <y>200</y>
+        <width>250</width>
+        <height>130</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Mid Level Queue</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTableWidget
+{
+border: 1px solid black;
+background: white
+}
+
+QTableWidget::item
+{
+border: 1px solid black;
+}
+
+QHeaderView::section
+{
+border: 1px solid black;
+background: white
+}</string>
+      </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>PID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>NAME</string>
+       </property>
+      </column>
+     </widget>
     </widget>
-    <widget class="QWidget" name="Memory">
+    <widget class="QWidget" name="InfoTab">
+     <property name="styleSheet">
+      <string notr="true">#InfoTab{
+background-color: rgb(177, 177, 177);
+}</string>
+     </property>
      <attribute name="title">
-      <string>Page</string>
+      <string>Info</string>
      </attribute>
+     <widget class="QWidget" name="webTest" native="true">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>771</width>
+        <height>551</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: white;
+</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

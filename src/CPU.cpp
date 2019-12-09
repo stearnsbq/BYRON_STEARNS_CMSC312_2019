@@ -4,28 +4,14 @@
 CPU::CPU() : memoryMutex()
 {
     this->memory = new mainmemory(4096000, 1024.0);
-    this->isRunning = true;
     this->logicalAddr = 0x40000;
-    this->timeQuantum = 0;
     this->runningProcess.setState(EXIT);
     this->mutexLock = new mutex();
-    this->core1 = new Core(1);
-    this->core2 = new Core(2);
 }
 
 
 long long CPU::availableMemory(){
     return this->memory->availableMemory();
-}
-
-int CPU::getTimeQ()
-{
-    return this->timeQuantum;
-}
-
-
-void CPU::setIsRunning(bool val){
-    this->isRunning = val;
 }
 
 Process& CPU::getRunningProcess(){
@@ -36,55 +22,47 @@ void CPU::setRunningProcess(Process p){
     this->runningProcess = p;
 }
 
-void CPU::run(int time, QString unit)
+void CPU::run(int time, QString unit, ALGORITHM algoToUse)
 {
+    this->core1 = new Core(1, algoToUse);
+    this->core2 = new Core(2, algoToUse);
+
     this->core1->start(time, unit);
     this->core2->start(time, unit);
+
     std::thread balancer(&CPU::loadBalancer, this, time, unit);
     balancer.detach();
 }
 
-void CPU::cycle(){
 
-}
 
-void CPU::setTimeQ(int time)
-{
-    this->timeQuantum = time;
-}
-
-void CPU::start(int time, QString unit)
+void CPU::start(int time, QString unit, ALGORITHM algo)
 {
     this->runningProcess.setState(EXIT);
-    this->run(time, unit);
+    this->run(time, unit, algo);
 }
 
 unsigned int CPU::getNextLogicalAddr(){
     return this->logicalAddr += 0x400;
 }
 
-unsigned int CPU::getNextOpenFrame(){
+int CPU::getNextOpenFrame(){
     return this->memory->getNextFrame();
+}
+
+void CPU::setPagesDirty(std::vector<page> pages){
+    this->memory->setPagesDirty(pages);
 }
 
 std::vector<page> CPU::alloc(unsigned int size){
     std::lock_guard<std::mutex> lock(this->memoryMutex);
-    if(size >= this->availableMemory()) {
-        std::vector<page> empty;
-        return empty;
-    }else{
-        emit kernel::getInstance().window->updateMemoryBarGUI(size);
-        return this->memory->allocateMemory(size);
-    }
+
+    return this->memory->allocateMemory(size);
+
 }
 
-void CPU::migrateProcess(Process p, int coreToMigrateTo){
-    if(coreToMigrateTo == 1) {
-        this->core1->addProcess(p);
-    }else{
-        this->core2->addProcess(p);
-    }
-
+void CPU::migrateProcess(Process p, Core * coreToMigrateTo){
+    coreToMigrateTo->addProcess(p);
 }
 
 
@@ -105,7 +83,7 @@ void CPU::loadBalancer(int time, QString unit){
         while(core1->getLoad() > core2->getLoad() + 1 && (core2->getLoad() > 0)) {
             Process toMigrate = core1->migrate();
             if(toMigrate.getPriority() > 0) {
-                this->migrateProcess(toMigrate, 2);
+                this->migrateProcess(toMigrate, core2);
             }
             sleep(time, unit);
         }
@@ -113,7 +91,7 @@ void CPU::loadBalancer(int time, QString unit){
         while(core2->getLoad() > core1->getLoad() + 1 && (core1->getLoad() > 0)) {
             Process toMigrate = core2->migrate();
             if(toMigrate.getPriority() > 0) {
-                this->migrateProcess(toMigrate, 1);
+                this->migrateProcess(toMigrate, core1);
             }
             sleep(time, unit);
         }
@@ -126,96 +104,4 @@ void CPU::free(std::vector<page> pages){
     this->memory->freeMemory(pages);
 }
 
-void CPU::executeInstruction(unsigned int timeQ){
-    if(this->getRunningProcess().getState() != EXIT) {
-        if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == OUT) {
-
-            emit kernel::getInstance().window->print(CPU::getInstance().getRunningProcess().getCurrentInstruction().getOut());
-            // refactor this
-        }else if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == IO) {
-
-            Process rotate = CPU::getInstance().getRunningProcess();
-
-            rotate.setState(WAIT);
-
-            kernel::getInstance().updateProcessTable(rotate);
-
-            CPU::getInstance().getRunningProcess().setState(EXIT);
-
-
-
-        }else if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == CRITICAL_CALC) {
-
-            std::string str = "PID: " + std::to_string(CPU::getInstance().getRunningProcess().getPid()) + " ENTERED CRITICAL SECTION";
-
-            emit kernel::getInstance().window->print(str);
-
-            if(mutexLock->lock() != 0) {
-
-                std::string str = "Process tried to enter critical second however it timed out trying again....";
-
-                emit kernel::getInstance().window->print(str);
-
-            }else{
-
-                unsigned int timeOut = 0;
-                while(CPU::getInstance().getRunningProcess().getCurrentBurst() > 0) {
-
-                    // std::string str = CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr() + " burst #" + std::to_string(CPU::getInstance().getRunningProcess().getCurrentBurst());
-
-                    //  emit kernel::getInstance().window->print(str);
-
-                    CPU::getInstance().getRunningProcess().decrementBurst();
-
-                    if(unit == "ms") {
-                        std::this_thread::sleep_for(std::chrono::milliseconds(clockTime));
-                    }else if(unit == "ns") {
-                        std::this_thread::sleep_for(std::chrono::nanoseconds(clockTime));
-                    }else{
-                        std::this_thread::sleep_for(std::chrono::seconds(clockTime));
-                    }
-
-                    if(timeOut >= timeQ * 3) {
-                        emit kernel::getInstance().window->print("critical section timeout");
-                        break;
-                    }
-                    timeOut++;
-                }
-
-                mutexLock->unlock();
-            }
-        } else if(CPU::getInstance().getRunningProcess().getCurrentInstructionType() == CRITICAL_IO) {
-
-            std::string str = "PID: " + std::to_string(CPU::getInstance().getRunningProcess().getPid()) + " ENTERED CRITICAL SECTION";
-
-            emit kernel::getInstance().window->print(str);
-
-            if(mutexLock->lock() != 0) {
-
-                std::string str = "Process tried to enter critical second however it timed out trying again....";
-
-                emit kernel::getInstance().window->print(str);
-
-            }
-
-            Process rotate = CPU::getInstance().getRunningProcess();
-
-            rotate.setState(WAIT);
-
-            kernel::getInstance().updateProcessTable(rotate);
-
-            CPU::getInstance().getRunningProcess().setState(EXIT);
-
-
-
-        }else{
-
-            std::string str = "RUNNING!! PID: " + std::to_string(CPU::getInstance().getRunningProcess().getPid()) + " " + CPU::getInstance().getRunningProcess().getCurrentInstruction().getInstr() + " burst #" + std::to_string(CPU::getInstance().getRunningProcess().getCurrentBurst());
-            // emit kernel::getInstance().window->print(str);
-            std::cout << str << std::endl;
-            CPU::getInstance().getRunningProcess().decrementBurst();
-        }
-    }
-
-}
 

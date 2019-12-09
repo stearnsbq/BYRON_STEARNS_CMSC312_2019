@@ -11,7 +11,7 @@ mainmemory::mainmemory(unsigned int totalMemory, double pageSize)
     this->totalFrames = frameCount;
     this->frames.reserve(frameCount);
     this->nextFrame = frameCount-1;
-    for(unsigned int i = frameCount-1; i > 0; i--) {
+    for(int i = frameCount-1; i >= 0; i--) {
         this->frames.push_back({i, true});
         this->emptyFrames.push({i, true});
     }
@@ -21,14 +21,15 @@ mainmemory::mainmemory(unsigned int totalMemory, double pageSize)
 
 std::vector<page> mainmemory::allocateMemory(size_t size){
 
-
     std::vector <page> pages;
     unsigned int amountOfPages = std::ceil((double)size/this->pageSize);
     this->usedFrames += amountOfPages;
     for(int i = 0; i < amountOfPages; i++) {
         unsigned int pageNumber = CPU::getInstance().getNextLogicalAddr() / this->pageSize;
         pages.push_back(this->pageTable->putPage(pageNumber));
+        emit kernel::getInstance().window->updateMemoryBarGUI(this->pageSize);
     }
+
     return pages;
 }
 
@@ -38,26 +39,40 @@ unsigned int mainmemory::availableMemory(){
 }
 
 
+void mainmemory::setPagesDirty(std::vector<page>& pages){
+    for(auto it = pages.begin(); it != pages.end(); it++) {
+        if(it->getFrameNumber() >= 0) {
+            this->pageTable->pages.at(it->getPageNumber()).setDirty(!this->pageTable->pages.at(it->getPageNumber()).isDirty());
+        }else{
+            // page fault
+            std::replace(pages.begin(), pages.end(), *it, this->pageTable->putPage(it->getPageNumber()));
+
+        }
+    }
+}
+
+
 void mainmemory::freeMemory(std::vector<page> pages){
-
-
     for(int i = 0; i < pages.size(); i++) {
         frame &tmp = this->frames.at(pages[i].getFrameNumber());
         this->pageTable->removePage(pages[i].getPageNumber());
         emit kernel::getInstance().window->updateMemoryBarGUI(-this->pageSize);
         tmp.free = true;
         this->emptyFrames.push(tmp);
+        kernel::getInstance().window->setMemoryGraphic(pages[i].getFrameNumber(), false);
     }
 
 }
 
-unsigned int mainmemory::getNextFrame(){
+int mainmemory::getNextFrame(){
+    if(this->emptyFrames.empty()) {
+        return -1;
+    }else{
+        frame newFrame = this->emptyFrames.top();
+        this->emptyFrames.pop();
+        return newFrame.num;
+    }
 
-
-
-    frame newFrame = this->emptyFrames.top();
-    this->emptyFrames.pop();
-    return newFrame.num;
 }
 
 bool comparePages(page * p1, page * p2)
@@ -65,21 +80,6 @@ bool comparePages(page * p1, page * p2)
     return (p1->getPageNumber() < p2->getPageNumber());
 }
 
-page * mainmemory::tlbSearch(int pageNum, int l = 0, int h = 0){   // basic binary search of tlb
-    if(l < h) {
-        return nullptr; // miss
-    }else{
-        std::sort(this->TLB.begin(), this->TLB.end(), comparePages);
-        unsigned int mid = (l + h) / 2;
-        if(pageNum == this->TLB.at(mid)->getPageNumber()) {
-            return this->TLB.at(mid); // hit
-        }else if(pageNum < this->TLB.at(mid)->getPageNumber()) {
-            return tlbSearch(pageNum, l, mid-1);
-        }else{
-            return tlbSearch(pageNum, mid+1, h);
-        }
-    }
 
-}
 
 

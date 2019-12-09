@@ -2,12 +2,13 @@
 #include "kernel.h"
 #include "mutex.h"
 
-Core::Core(int coreNumber)
+Core::Core(int coreNumber, ALGORITHM algoToUse)
 {
     this->coreNum = coreNumber;
-    this->shortTerm = new ShortTermScheduler(MULTILEVEL_FEEDBACK_QUEUE, *this);
+    this->shortTerm = new ShortTermScheduler(algoToUse, *this);
     this->longTerm = new LongTermScheduler(shortTerm);
     this->ltTimer = 10;
+    this->shortTermAlgorithm = algoToUse;
     this->runningProcess.setState(EXIT);
 }
 
@@ -59,8 +60,8 @@ void Core::run(int time, QString unit){
         ltTimer++;
         sleep();
     }
-    kernel::getInstance().window->done();
 
+    kernel::getInstance().window->done();
 }
 
 
@@ -94,13 +95,8 @@ void Core::criticalSection(){
 
         emit kernel::getInstance().window->print(str);
 
-        if(CPU::getInstance().mutexLock->lock() != 0) {
+        if(CPU::getInstance().mutexLock->lock() == 0) {
 
-            std::string str = "Process tried to enter critical second however it timed out trying again....";
-
-            emit kernel::getInstance().window->print(str);
-
-        }else{
 
             unsigned int timeOut = 0;
             emit kernel::getInstance().window->setCritical(true);
@@ -218,7 +214,7 @@ void Core::fork(){
 void Core::executeOperation(){
 
     if(runningProcess.getState() != EXIT) {
-
+        CPU::getInstance().setPagesDirty(runningProcess.pages);
         if(runningProcess.getCurrentBurst() > 0) {
 
             switch (runningProcess.getCurrentInstructionType()) {
@@ -247,15 +243,10 @@ void Core::executeOperation(){
             case RECIEVE:
                 recieve();
                 break;
-
-
             }
 
         }else if(runningProcess.getInstructions().size() - 1 > runningProcess.getProgramCounter()) {
 
-            //   std::string out = "PID: " + std::to_string(runningProcess.getPid()) + " PC " + std::to_string(runningProcess.getProgramCounter()) + " instr: " + runningProcess.getCurrentInstruction().getInstr();
-            //   std::cout << out << std::endl;
-            //   emit kernel::getInstance().window->print(out);
             runningProcess.incrementPC();
 
         }else{
@@ -276,6 +267,7 @@ void Core::executeOperation(){
                 runningProcess.setChild(nullptr);
                 runningProcess.setParent(nullptr);
                 this->shortTerm->totalProcesses--;
+                CPU::getInstance().setPagesDirty(runningProcess.pages);
                 emit kernel::getInstance().window->setLoad(coreNum, this->shortTerm->totalProcesses);
             }
 

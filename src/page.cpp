@@ -20,6 +20,11 @@ page::page(){
 
 }
 
+
+bool page::operator==(const page & p){
+    return this->pageNumber == p.pageNumber;
+}
+
 page::~page(){
 
 }
@@ -46,4 +51,12 @@ void page::setFrameNumber(int number){
 
 void page::setInMemory(bool is){
     this->inMemory = is;
+}
+
+bool page::isDirty(){
+    return this->dirty;
+}
+
+void page::setDirty(bool d){
+    this->dirty = d;
 }

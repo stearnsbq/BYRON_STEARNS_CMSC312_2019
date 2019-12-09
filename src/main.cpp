@@ -11,7 +11,6 @@
 #include <locale>
 #include <QApplication>
 #include <QObject>
-#include "PCB.hpp"
 #include <vld.h>
 
 
