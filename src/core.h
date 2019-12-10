@@ -35,6 +35,7 @@ ShortTermScheduler * shortTerm;
 LongTermScheduler * longTerm;
 
 mutex mutexLock;
+
 int time;
 QString unit;
 short ltTimer;

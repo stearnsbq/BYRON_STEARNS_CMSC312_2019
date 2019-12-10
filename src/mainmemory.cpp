@@ -24,7 +24,7 @@ std::vector<page> mainmemory::allocateMemory(size_t size){
     std::vector <page> pages;
     unsigned int amountOfPages = std::ceil((double)size/this->pageSize);
     this->usedFrames += amountOfPages;
-    for(int i = 0; i < amountOfPages; i++) {
+    for(unsigned int i = 0; i < amountOfPages; i++) {
         unsigned int pageNumber = CPU::getInstance().getNextLogicalAddr() / this->pageSize;
         pages.push_back(this->pageTable->putPage(pageNumber));
         emit kernel::getInstance().window->updateMemoryBarGUI(this->pageSize);

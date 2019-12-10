@@ -21,16 +21,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     CPU.cpp \
-    Exceptions.cpp \
     PCB.cpp \
-    contextswitchinterrupt.cpp \
     core.cpp \
-    cpu_thread.cpp \
-    dispatcher.cpp \
-    feedbackqueue.cpp \
     fileoptionsdialog.cpp \
     instruction.cpp \
-    interrupt.cpp \
     kernel.cpp \
     loadfiledialog.cpp \
     longtermscheduler.cpp \
@@ -41,9 +35,7 @@ SOURCES += \
     mutex.cpp \
     page.cpp \
     pagetable.cpp \
-    priorityqueue.cpp \
     programfilegenerator.cpp \
-    queue.cpp \
     randomfileoptionsdialog.cpp \
     resource.cpp \
     shorttermscheduler.cpp
@@ -51,14 +43,9 @@ SOURCES += \
 HEADERS += \
     CPU.hpp \
     PCB.hpp \
-    contextswitchinterrupt.h \
     core.h \
-    cpu_thread.h \
-    dispatcher.h \
-    feedbackqueue.h \
     fileoptionsdialog.h \
     instruction.hpp \
-    interrupt.h \
     kernel.h \
     loadfiledialog.h \
     longtermscheduler.h \
@@ -69,7 +56,6 @@ HEADERS += \
     mutex.h \
     page.h \
     pagetable.h \
-    priorityqueue.hpp \
     programfilegenerator.h \
     queue.hpp \
     randomfileoptionsdialog.h \

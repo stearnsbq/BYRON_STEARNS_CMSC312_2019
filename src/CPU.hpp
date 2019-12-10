@@ -39,8 +39,6 @@ void loadBalancer(int time, QString unit);
 void sleep(int time, QString unit);
 Core * core1;
 Core * core2;
-Core * core3;
-Core * core4;
 
 public:
 
@@ -66,6 +64,7 @@ int getNextOpenFrame();
 std::vector<page> alloc(unsigned int size);
 void free(std::vector<page> pages);
 std::mutex memoryMutex;
+std::mutex critSection;
 };
 
 #endif

@@ -47,6 +47,7 @@ void updateWaitingQueue();
 void updateMemoryBar(int amount);
 void onSetCritical(bool set);
 void onSetLoad(int core, int load);
+void printText(std::string in);
 signals:
 void setMemoryGraphic(int frameNumber, bool beingUsed);
 void print(std::string in);
@@ -58,8 +59,8 @@ void setLoad(int core, int load);
 private slots:
 void on_loadFile_clicked();
 void on_startSim_clicked();
-void on_timeUnit_activated(const QString &arg1);
 void on_stop_clicked();
+void on_CommandInput_returnPressed();
 };
 
 #endif // MAINWINDOW_H

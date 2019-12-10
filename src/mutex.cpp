@@ -9,6 +9,7 @@ mutex::mutex()
 // basic spinning mutex lock that times out after 30 seconds
 
 int mutex::lock(){
+
     if(!this->isLocked) {
         this->isLocked = true;
     }else{

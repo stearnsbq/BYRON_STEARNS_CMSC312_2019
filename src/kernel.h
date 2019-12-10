@@ -4,7 +4,6 @@
 #include <vector>
 #include <mutex>
 #include <queue>
-#include "priorityqueue.hpp"
 #include <string>
 #include <unordered_map>
 #include <mailbox.h>

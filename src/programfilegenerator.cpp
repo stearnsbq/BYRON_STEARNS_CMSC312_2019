@@ -24,18 +24,17 @@ QJsonDocument programfilegenerator::generate(int count){
 
 
     int runtime = 0;
-    int c = (rand() % 50) + 1;
     int critical = 0;
-    for(int i = 0; i < c; i++) {
+    for(int i = 0; i < count; i++) {
         QString it;
 
         if(critical == 0) {
-            QString it = instrs.at(rand() % 6);
+            it = instrs.at(rand() % 6);
             if(it.contains("CRITICAL")) {
                 critical++;
             }
         }else{
-            QString it = instrs.at(rand() % 4);
+            it = instrs.at(rand() % 4);
         }
 
 
@@ -44,7 +43,7 @@ QJsonDocument programfilegenerator::generate(int count){
         if(it == "CALCULATE" || it == "CRITICAL_CALCULATE") {
             runtime += rt;
         }else if(it == "OUT") {
-            it += names.at(rand()% 4);
+            instruction.insert("Out", names.at(rand()% 4) );
         }
 
         instruction.insert("Type", it);

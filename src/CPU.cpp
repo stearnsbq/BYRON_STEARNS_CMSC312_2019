@@ -1,7 +1,7 @@
 #include "CPU.hpp"
 #include <csignal>
 #include <chrono>
-CPU::CPU() : memoryMutex()
+CPU::CPU() : memoryMutex(), critSection()
 {
     this->memory = new mainmemory(4096000, 1024.0);
     this->logicalAddr = 0x40000;

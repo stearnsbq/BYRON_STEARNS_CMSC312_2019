@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDebug>
+#include <programfilegenerator.h>
 
 randomFileOptionsDialog::randomFileOptionsDialog(QWidget *parent) :
     QDialog(parent),
@@ -23,47 +24,14 @@ randomFileOptionsDialog::~randomFileOptionsDialog()
 
 void randomFileOptionsDialog::on_generate_clicked()
 {
-    std::vector<QString> names = {"Text Processor", "Web Browser", "Video Game", "Chat"};
-    std::vector<QString> instrs = {"CALCULATE", "I/O", "OUT"};
-    QString instr;
 
-    QJsonDocument doc;
+    programfilegenerator gen = programfilegenerator();
 
-    QJsonObject obj;
-    QJsonArray instructions;
-    QJsonObject instruction;
-
-
-    int runtime = 0;
-
-    for(int i = 0; i < ui->numInstructions->value(); i++) {
-
-        QString it = instrs.at(rand() % 2);
-        int rt = (rand() % 75 + 1);
-        if(it == "CALCULATE") {
-            runtime += rt;
-        }else if(it == "OUT") {
-            it += names.at(rand()% 4);
-        }
-
-        instruction.insert("Type", it);
-        instruction.insert("Burst", rt);
-        instructions.append(instruction);
-        instruction = QJsonObject();
-    }
-
-    obj.insert("instructions", instructions);
-    obj.insert("Name", names.at(rand() % 4));
-    obj.insert("Runtime", runtime);
-    obj.insert("Memory", rand() % 4096 + 1);
-
-
-
-    doc.setObject(obj);
-
+    QJsonDocument doc = gen.generate(ui->numInstructions->value());
 
     ui->plainTextEdit->setPlainText(doc.toJson().toStdString().c_str());
     this->fileData = doc;
+
 }
 
 void randomFileOptionsDialog::on_done_clicked()

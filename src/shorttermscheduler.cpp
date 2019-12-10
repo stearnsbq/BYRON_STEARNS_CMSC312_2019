@@ -6,7 +6,6 @@
 ShortTermScheduler::ShortTermScheduler(ALGORITHM algoToUse, Core & parent) : parent(parent) {
     this->algorithmToUse = algoToUse;
     this->totalProcesses = 0;
-    this->dp = new Dispatcher(parent);
 }
 
 
@@ -23,8 +22,6 @@ void ShortTermScheduler::runScheduler(){
         break;
     case MULTILEVEL_FEEDBACK_QUEUE:
         this->feedBackQueue();
-        break;
-    default:
         break;
     }
     this->processWaitingQueue();
@@ -50,7 +47,6 @@ void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
         break;
     }
 }
-
 
 
 Process ShortTermScheduler::determineProcessForMigrate(){
@@ -145,22 +141,28 @@ void ShortTermScheduler::roundRobin()
     std::lock_guard<std::mutex> lock(_migrateLock);
     if (parent.runningProcess.getState() == EXIT && !this->readyQueue.empty())
     {
+
         this->timeQuantum = 0;
         Process newProcess = this->readyQueue.top();
         this->readyQueue.pop();
+
         newProcess.setState(RUN);
         parent.runningProcess = newProcess;
         kernel::getInstance().updateProcessTable(newProcess);
+
     }
 
     if (this->timeQuantum >= 20)
     {
+
         Process rotate = parent.runningProcess;
         parent.runningProcess.setState(EXIT);
+
         rotate.setState(READY);
         this->readyQueue.push(rotate);
         kernel::getInstance().updateProcessTable(rotate);
         this->timeQuantum = 0;
+
     }
 
     this->timeQuantum++;
@@ -169,28 +171,45 @@ void ShortTermScheduler::roundRobin()
 
 void ShortTermScheduler::processWaitingQueue()
 {
+    std::lock_guard<std::mutex> lock(_migrateLock);
     if(!this->waitingQueue.empty()) {
 
 
         if(this->waitingQueue.front().getState() == WAITING_FOR_CHILD) {
-            std::cout << "waiting on child" << std::endl;
+
+            emit kernel::getInstance().window->print("waiting on child");
+
             if(this->waitingQueue.front().getChild() != nullptr && this->waitingQueue.front().getChild()->getState() == EXIT) {
-                std::cout << "child exited" << std::endl;
+
+                emit kernel::getInstance().window->print("child exited");
+
                 Process rotate = this->waitingQueue.front();
+
                 this->waitingQueue.pop();
+
                 CPU::getInstance().free(rotate.pages);
+
             }
 
         }else if(this->waitingQueue.front().getState() == WAITING_FOR_MSG) {
+
             if(!kernel::getInstance().mailBox->empty()) {
+
                 mailbox::message msg = kernel::getInstance().mailBox->recieveMessage();
+
                 emit kernel::getInstance().window->print(msg.msg);
+
                 std::cout << "RECIEVED MESSAGE " + msg.msg + " FROM PID: " + std::to_string(msg.originPid) << std::endl;
+
                 Process rotate = this->waitingQueue.front();
+
                 rotate.incrementPC();
+
                 this->waitingQueue.pop();
+
                 this->readyQueue.push(rotate);
             }
+
         }else{
 
             if(this->waitingQueue.front().getCurrentBurst() > 0) {
@@ -223,7 +242,7 @@ void ShortTermScheduler::processWaitingQueue()
                 }
 
                 if(rotate.getInstructions().size() - 1 > rotate.getProgramCounter() && rotate.getCurrentInstruction().isCritical()) {
-                    CPU::getInstance().mutexLock->unlock();
+
                     emit kernel::getInstance().window->setCritical(false);
                 }
 

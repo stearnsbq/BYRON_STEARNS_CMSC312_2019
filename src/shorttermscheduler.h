@@ -2,7 +2,6 @@
 #define SHORTTERMSCHEDULER_H
 #include "queue.hpp"
 #include "mutex.h"
-#include "dispatcher.h"
 #include <queue>
 #include <mutex>
 

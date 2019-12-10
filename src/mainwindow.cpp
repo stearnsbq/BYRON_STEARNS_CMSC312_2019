@@ -140,8 +140,8 @@ void MainWindow::initUI(){
     qRegisterMetaType<std::string>("std::string");
     qRegisterMetaType<Process>("Process");
 
-    //connect(this, &MainWindow::print, this, &MainWindow::updateText);
     connect(this, &MainWindow::done, this, &MainWindow::changeStatus);
+    connect(this, &MainWindow::print, this, &MainWindow::printText);
     connect(this, &MainWindow::updateProcessListGUI, this, &MainWindow::updateProcessList);
     connect(this, &MainWindow::updateMemoryBarGUI, this, &MainWindow::updateMemoryBar);
     connect(this, &MainWindow::setCritical, this, &MainWindow::onSetCritical);
@@ -167,31 +167,18 @@ void MainWindow::initUI(){
     ui->memoryView->setScene(scene);
 
     for(double y = 0; y < 100000; y+=25) {
-        QGraphicsRectItem * rect = scene->addRect(0,y,ui->memoryView->size().width()-20,25);
+        QGraphicsRectItem * rect = scene->addRect(0,y,ui->memoryView->size().width()-23,25);
         rect->setBrush(QBrush(Qt::green));
         memory.push_back(rect);
     }
-
-    QWebEngineView * test = new QWebEngineView(ui->webTest);
-    test->resize(ui->webTest->width(), ui->webTest->height());
-    test->load(QUrl("./index.html"));
-    test->show();
-
 }
-
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-
     this->initUI();
-
-
-
-
-
 }
 
 MainWindow::~MainWindow()
@@ -200,13 +187,21 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::save(){
 
+
+void MainWindow::printText(std::string std){
+    ui->ConsoleOutput->append(QString::fromStdString(std));
 }
 
 
 
 
+
+
+
+void MainWindow::save(){
+
+}
 
 void MainWindow::on_loadFile_clicked()
 {
@@ -262,15 +257,63 @@ void MainWindow::on_startSim_clicked()
 }
 
 
-
-
-void MainWindow::on_timeUnit_activated(const QString &arg1)
-{
-
-}
-
 void MainWindow::on_stop_clicked()
 {
     this->isRunning = false;
     kernel::getInstance().shutDown = true;
+}
+
+void MainWindow::on_CommandInput_returnPressed()
+{
+    QString cmd = ui->CommandInput->text().toLower();
+    ui->CommandInput->clear();
+    QStringList tokens = cmd.split(" ");
+
+
+    for(auto it = tokens.begin(); it != tokens.end(); it++) {
+
+        if(*it == "help") {
+            ui->ConsoleOutput->append("Help ---\nhelp - displays commands you can use\nadd <*.json file> <Process Count> creates new process(es)\ninfo - displays info about the simulator\nclear - clears the output");
+        }else if(*it == "clear") {
+            ui->ConsoleOutput->clear();
+        }else if(*it == "add") {
+
+            if(it != tokens.end() && ++it != tokens.end()) {
+                QString file = *it;
+
+                if(!file.endsWith("json")) {
+                    ui->ConsoleOutput->append("File invalid");
+                    return;
+                }
+                bool isValid;
+                int count = (++it)->toInt(&isValid);
+
+                if(!isValid) {
+                    ui->ConsoleOutput->append("Process count invalid");
+                    return;
+                }
+
+                QFile f(file);
+                f.open(QFile::ReadOnly);
+                QJsonDocument doc = QJsonDocument::fromJson(f.readAll());
+
+                this->createProcess(doc, count, true);
+                ui->ConsoleOutput->append("Program loaded: " + QString::number(count)  + " Process(es) created!");
+            }else{
+                ui->ConsoleOutput->append("Command use invalid: add <*.json file> <Process Count>");
+                break;
+            }
+
+        }else if(*it == "info") {
+
+            // TODO: implement this
+
+        }else{
+            ui->ConsoleOutput->append("Command not found use help to see commands you can use");
+            break;
+        }
+    }
+
+
+
 }

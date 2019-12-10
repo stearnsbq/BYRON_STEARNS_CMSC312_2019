@@ -205,10 +205,6 @@ void Process::setPC(int pc)
     this->pc = pc;
 }
 
-void Process::operator++()
-{
-    this->pc++;
-}
 
 PROCESS_STATE Process::getState()
 {

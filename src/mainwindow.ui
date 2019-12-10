@@ -69,7 +69,7 @@ background-color: rgb(177, 177, 177);
 }</string>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="Home">
      <property name="sizePolicy">
@@ -533,6 +533,9 @@ border: 2px solid black;
 background: white
 </string>
       </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
      </widget>
      <widget class="QLineEdit" name="CommandInput">
       <property name="geometry">
@@ -582,10 +585,10 @@ background-color: white;
      <widget class="QFrame" name="MemoryInfo">
       <property name="geometry">
        <rect>
-        <x>149</x>
-        <y>10</y>
-        <width>640</width>
-        <height>551</height>
+        <x>280</x>
+        <y>100</y>
+        <width>341</width>
+        <height>341</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -680,8 +683,8 @@ border: 2px solid black;
       <widget class="QFrame" name="frameInfo">
        <property name="geometry">
         <rect>
-         <x>343</x>
-         <y>40</y>
+         <x>40</x>
+         <y>220</y>
          <width>256</width>
          <height>81</height>
         </rect>
@@ -739,8 +742,8 @@ border: 2px solid black;
       <widget class="QLabel" name="label_6">
        <property name="geometry">
         <rect>
-         <x>343</x>
-         <y>10</y>
+         <x>40</x>
+         <y>180</y>
          <width>256</width>
          <height>31</height>
         </rect>
@@ -1035,30 +1038,6 @@ background: white
         <string>NAME</string>
        </property>
       </column>
-     </widget>
-    </widget>
-    <widget class="QWidget" name="InfoTab">
-     <property name="styleSheet">
-      <string notr="true">#InfoTab{
-background-color: rgb(177, 177, 177);
-}</string>
-     </property>
-     <attribute name="title">
-      <string>Info</string>
-     </attribute>
-     <widget class="QWidget" name="webTest" native="true">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>771</width>
-        <height>551</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: white;
-</string>
-      </property>
      </widget>
     </widget>
    </widget>
