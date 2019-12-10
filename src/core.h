@@ -8,7 +8,7 @@
 class Core
 {
 public:
-Core(int coreNumber);
+Core(int coreNumber, ALGORITHM algoToUse = MULTILEVEL_FEEDBACK_QUEUE);
 ~Core();
 void start(int time, QString unit);
 Process migrate();
@@ -16,6 +16,7 @@ void addProcess(Process p);
 Process runningProcess;
 int getLoad();
 int coreNum;
+ALGORITHM shortTermAlgorithm;
 private:
 
 void run(int time, QString unit);
@@ -34,6 +35,7 @@ ShortTermScheduler * shortTerm;
 LongTermScheduler * longTerm;
 
 mutex mutexLock;
+
 int time;
 QString unit;
 short ltTimer;

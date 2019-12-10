@@ -10,14 +10,22 @@ LongTermScheduler::LongTermScheduler(ShortTermScheduler * sched)
 }
 
 void LongTermScheduler::runScheduler(){
+
     if(CPU::getInstance().availableMemory() > 0 && !kernel::getInstance().isJobPoolEmpty()) {
+
         Process p = kernel::getInstance().getNextProcessInPool();
+
         if(p.getPriority() >= 0) {
-            kernel::getInstance().updateProcessTable( p);
+            p.setState(READY);
+            kernel::getInstance().updateProcessTable(p);
             p.pages = CPU::getInstance().alloc(p.getMemoryReq());
+
+
             this->scheduler->enqueueProcess(p, READY_Q);
         }
+
     }
+
 }
 
 

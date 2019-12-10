@@ -2,6 +2,7 @@
 #define MUTEX_H
 #include <chrono>
 #include <ctime>
+#include <mutex>
 
 class mutex
 {
@@ -11,6 +12,7 @@ int lock();
 void unlock();
 private:
 bool isLocked;
+std::mutex _mut;
 };
 
 #endif // MUTEX_H

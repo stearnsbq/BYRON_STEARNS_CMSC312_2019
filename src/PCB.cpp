@@ -34,14 +34,6 @@ Process::~Process()
 }
 
 
-bool operator<(Process const&p1, Process const&p2){
-    return p1.priority < p2.priority;
-}
-
-bool operator>(Process const&p1, Process const&p2){
-    return p1.priority < p2.priority;
-}
-
 
 Instruction Process::getCurrentInstruction()
 {
@@ -55,6 +47,10 @@ TYPE Process::getCurrentInstructionType(){
 unsigned int Process::getPid()
 {
     return this->pid;
+}
+
+bool Process::operator<( Process const& p2) const {
+    return this->priority < p2.priority;
 }
 
 
@@ -209,10 +205,6 @@ void Process::setPC(int pc)
     this->pc = pc;
 }
 
-void Process::operator++()
-{
-    this->pc++;
-}
 
 PROCESS_STATE Process::getState()
 {

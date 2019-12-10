@@ -38,9 +38,8 @@ int lastQueue;
 public:
 Process();
 Process(Process * parent);
-friend bool operator<(Process const&p1, Process const&p2);
-friend bool operator>(Process const&p1, Process const&p2);
 ~Process();
+bool operator<( Process const& p2) const;
 std::vector <page> pages;
 Instruction getCurrentInstruction();
 void decrementBurst();

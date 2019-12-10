@@ -14,11 +14,12 @@ public:
 mainmemory(unsigned int totalMemory, double pageSize);
 std::vector<page> allocateMemory(size_t size);
 void freeMemory(std::vector<page> pages);
-unsigned int getNextFrame();
+int getNextFrame();
 unsigned int availableMemory();
+void setPagesDirty(std::vector<page>& pages);
 private:
 typedef struct {
-    unsigned int num;
+    int num;
     bool free;
 }frame;
 unsigned nextFrame;
@@ -30,7 +31,6 @@ double pageSize;
 std::stack<frame> emptyFrames;
 std::vector<frame> frames;
 std::vector<page *> TLB;
-page * tlbSearch(int pageNum, int l, int h );
 std::mutex _mutex;
 
 };

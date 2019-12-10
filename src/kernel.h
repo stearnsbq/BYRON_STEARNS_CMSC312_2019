@@ -4,7 +4,6 @@
 #include <vector>
 #include <mutex>
 #include <queue>
-#include "priorityqueue.hpp"
 #include <string>
 #include <unordered_map>
 #include <mailbox.h>
@@ -51,7 +50,7 @@ int pidCounter = 0;
 unsigned int pageSize; // size of each page
 unsigned int longTermTimer; // time before long term runs
 std::unordered_map<int, Process> processTable;
-std::priority_queue<Process, std::vector<Process > > jobPool;
+std::priority_queue<Process, std::vector<Process> > jobPool;
 std::mutex jobPoolMutex;
 std::mutex processTableMutex;
 

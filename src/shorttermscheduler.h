@@ -2,15 +2,15 @@
 #define SHORTTERMSCHEDULER_H
 #include "queue.hpp"
 #include "mutex.h"
-#include "dispatcher.h"
 #include <queue>
 #include <mutex>
 
 enum ALGORITHM
 {
+    MULTILEVEL_FEEDBACK_QUEUE,
     ROUND_ROBIN,
     PRIORITY_SCHEDULING,
-    MULTILEVEL_FEEDBACK_QUEUE,
+
 };
 
 
@@ -35,9 +35,9 @@ int totalProcesses;
 private:
 mutex * mutexLock;
 std::mutex _migrateLock;
-std::priority_queue<Process> readyQueue;     // used both for RR (tq of 20) / Priority and the top queue for Multilevel feedback queue (RR of time quantum 8)
-std::priority_queue<Process> midLevel;     // time quantum of 16
-std::priority_queue<Process> baseLevel;     // time quantum of 20
+std::priority_queue<Process, std::vector<Process> > readyQueue;     // used both for RR (tq of 20) / Priority and the top queue for Multilevel feedback queue (RR of time quantum 8)
+std::priority_queue<Process, std::vector<Process> > midLevel;     // time quantum of 16
+std::priority_queue<Process, std::vector<Process> > baseLevel;     // time quantum of 20
 std::queue<Process> waitingQueue;
 Core & parent;
 Dispatcher * dp;

@@ -30,13 +30,11 @@ unsigned int nextOpenFrame;
 mainmemory *memory;
 int clockTime;
 QString unit;
-bool isRunning;
 int timeQuantum;
 std::thread clock_thread;
-void cycle();
-void run(int time, QString unit);
+void run(int time, QString unit, ALGORITHM algoToUse);
 Process runningProcess;
-void migrateProcess(Process p, int coreToMigrateTo);
+void migrateProcess(Process p, Core * coreToMigrateTo);
 void loadBalancer(int time, QString unit);
 void sleep(int time, QString unit);
 Core * core1;
@@ -51,23 +49,22 @@ static CPU& getInstance(){     // make this singleton because I only ever need o
     return instance;
 
 }
+
+void setPagesDirty(std::vector<page> pages);
 mutex * mutexLock;
 CPU(CPU const&) = delete;     // prevents possible insts
 void operator=(CPU const&) = delete;
-void setTimeQ(int time);
-void start(int time, QString unit);
-int getTimeQ();
-void setIsRunning(bool val);
+void start(int time, QString unit, ALGORITHM algo);
 mainmemory * getMemory();
 long long availableMemory();
 Process& getRunningProcess();
 void setRunningProcess(Process p);
-void executeInstruction(unsigned int timeQ);
 unsigned int getNextLogicalAddr();
-unsigned int getNextOpenFrame();
+int getNextOpenFrame();
 std::vector<page> alloc(unsigned int size);
 void free(std::vector<page> pages);
 std::mutex memoryMutex;
+std::mutex critSection;
 };
 
 #endif

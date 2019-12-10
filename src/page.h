@@ -16,6 +16,7 @@ void setFrameNumber(int number);
 void setInMemory(bool is);
 void setDirty(bool d);
 bool isDirty();
+bool operator==(page const& p);
 private:
 int pageNumber;
 int frameNumber;

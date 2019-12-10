@@ -6,7 +6,6 @@
 ShortTermScheduler::ShortTermScheduler(ALGORITHM algoToUse, Core & parent) : parent(parent) {
     this->algorithmToUse = algoToUse;
     this->totalProcesses = 0;
-    this->dp = new Dispatcher(parent);
 }
 
 
@@ -23,8 +22,6 @@ void ShortTermScheduler::runScheduler(){
         break;
     case MULTILEVEL_FEEDBACK_QUEUE:
         this->feedBackQueue();
-        break;
-    default:
         break;
     }
     this->processWaitingQueue();
@@ -45,12 +42,11 @@ void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
         this->totalProcesses++;
         break;
     case BASE:
-        this->readyQueue.push(p);
+        this->baseLevel.push(p);
         this->totalProcesses++;
         break;
     }
 }
-
 
 
 Process ShortTermScheduler::determineProcessForMigrate(){
@@ -73,7 +69,6 @@ Process ShortTermScheduler::determineProcessForMigrate(){
     }
     emit kernel::getInstance().window->setLoad(parent.coreNum,totalProcesses);
     return Process();
-
 }
 
 void ShortTermScheduler::feedBackQueue(){
@@ -89,7 +84,7 @@ void ShortTermScheduler::feedBackQueue(){
 
 void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
     std::lock_guard<std::mutex> lock(_migrateLock);
-    std::priority_queue<Process> * queueToProcess = nullptr;
+    std::priority_queue<Process, std::vector<Process> > * queueToProcess = nullptr;
     switch (queue) {
     case 0:
         queueToProcess = &this->readyQueue;
@@ -101,6 +96,7 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
         queueToProcess = &this->baseLevel;
         break;
     }
+
 
     if(queueToProcess != nullptr) {
 
@@ -121,15 +117,12 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
             kernel::getInstance().updateProcessTable(  rotate);
             switch (queue) {
             case 0:
-                emit kernel::getInstance().window->print("PID " + std::to_string(rotate.getPid()) +  " demoting from q1 -> q2");
                 this->midLevel.push(rotate);
                 break;
             case 1:
-                emit kernel::getInstance().window->print(  "PID " + std::to_string(rotate.getPid()) +" demoting from q2 -> q3");
                 this->baseLevel.push(rotate);
                 break;
             case 2:
-                emit kernel::getInstance().window->print(  "PID " + std::to_string(rotate.getPid()) +" preempt to back");
                 this->baseLevel.push(rotate);
                 break;
             }
@@ -148,41 +141,27 @@ void ShortTermScheduler::roundRobin()
     std::lock_guard<std::mutex> lock(_migrateLock);
     if (parent.runningProcess.getState() == EXIT && !this->readyQueue.empty())
     {
+
         this->timeQuantum = 0;
         Process newProcess = this->readyQueue.top();
         this->readyQueue.pop();
+
         newProcess.setState(RUN);
-        CPU::getInstance().setRunningProcess(newProcess);
-        kernel::getInstance().updateProcessTable(  newProcess);
+        parent.runningProcess = newProcess;
+        kernel::getInstance().updateProcessTable(newProcess);
+
     }
 
-    if (this->timeQuantum >= 20) // ran out of time for this process preempt it out
+    if (this->timeQuantum >= 20)
     {
+
         Process rotate = parent.runningProcess;
         parent.runningProcess.setState(EXIT);
+
         rotate.setState(READY);
         this->readyQueue.push(rotate);
-        emit kernel::getInstance().window->print("preempt");
-        kernel::getInstance().updateProcessTable(  rotate);
+        kernel::getInstance().updateProcessTable(rotate);
         this->timeQuantum = 0;
-    }else{
-        if (parent.runningProcess.getCurrentBurst() > 0) // if instruction is not done run it
-        {
-            CPU::getInstance().executeInstruction(20);
-        }
-        else if (parent.runningProcess.getInstructions().size() - 1 > parent.runningProcess.getProgramCounter())// if instruction is done increment PC
-        {
-            std::string out = "PC " + std::to_string(parent.runningProcess.getProgramCounter()) + " instr: " + parent.runningProcess.getCurrentInstruction().getInstr();
-            std::cout << out << std::endl;
-            emit kernel::getInstance().window->print(out);
-            parent.runningProcess.incrementPC();
-        }else{ // process is done exit
-            Process rotate = parent.runningProcess;
-            rotate.setState(EXIT);
-            kernel::getInstance().updateProcessTable(  rotate);
-            parent.runningProcess.setState(EXIT);
-            this->totalProcesses--;
-        }
 
     }
 
@@ -192,44 +171,59 @@ void ShortTermScheduler::roundRobin()
 
 void ShortTermScheduler::processWaitingQueue()
 {
+    std::lock_guard<std::mutex> lock(_migrateLock);
     if(!this->waitingQueue.empty()) {
 
 
         if(this->waitingQueue.front().getState() == WAITING_FOR_CHILD) {
-            std::cout << "waiting on child" << std::endl;
+
+            emit kernel::getInstance().window->print("waiting on child");
+
             if(this->waitingQueue.front().getChild() != nullptr && this->waitingQueue.front().getChild()->getState() == EXIT) {
-                std::cout << "child exited" << std::endl;
+
+                emit kernel::getInstance().window->print("child exited");
+
                 Process rotate = this->waitingQueue.front();
+
                 this->waitingQueue.pop();
+
                 CPU::getInstance().free(rotate.pages);
+
             }
 
         }else if(this->waitingQueue.front().getState() == WAITING_FOR_MSG) {
+
             if(!kernel::getInstance().mailBox->empty()) {
+
                 mailbox::message msg = kernel::getInstance().mailBox->recieveMessage();
+
                 emit kernel::getInstance().window->print(msg.msg);
+
                 std::cout << "RECIEVED MESSAGE " + msg.msg + " FROM PID: " + std::to_string(msg.originPid) << std::endl;
+
                 Process rotate = this->waitingQueue.front();
+
                 rotate.incrementPC();
+
                 this->waitingQueue.pop();
+
                 this->readyQueue.push(rotate);
             }
+
         }else{
 
             if(this->waitingQueue.front().getCurrentBurst() > 0) {
 
-                //  emit kernel::getInstance().window->print("WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr());
-                //  std::cout << "WAITING BURST: " + std::to_string(this->waitingQueue->peek()->getCurrentBurst()) + " PC: " + std::to_string(this->waitingQueue->peek()->getPid()) + " IO: " + this->waitingQueue->peek()->getCurrentInstruction().getInstr() << std::endl;
                 this->waitingQueue.front().decrementBurst();
 
             }else{
 
                 Process rotate = this->waitingQueue.front();
                 this->waitingQueue.pop();
-                emit kernel::getInstance().window->print("WAITING DONE PID: " + std::to_string(rotate.getPid()));
-                // std::cout << "WAITING DONE PID: " + std::to_string(rotate.getPid()) << std::endl;
+
                 rotate.setState(READY);
                 rotate.incrementPC();
+
                 if(this->algorithmToUse == MULTILEVEL_FEEDBACK_QUEUE) {
                     switch (rotate.getLastQueue()) {
                     case 0:
@@ -242,12 +236,13 @@ void ShortTermScheduler::processWaitingQueue()
                         this->baseLevel.push(rotate);
                         break;
                     }
+
                 }else{
                     this->readyQueue.push(rotate);
                 }
 
                 if(rotate.getInstructions().size() - 1 > rotate.getProgramCounter() && rotate.getCurrentInstruction().isCritical()) {
-                    CPU::getInstance().mutexLock->unlock();
+
                     emit kernel::getInstance().window->setCritical(false);
                 }
 
