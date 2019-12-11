@@ -68,8 +68,20 @@ background-color: rgb(177, 177, 177);
 background-color: rgb(177, 177, 177);
 }</string>
     </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
+    </property>
     <property name="currentIndex">
      <number>1</number>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>16</width>
+      <height>16</height>
+     </size>
+    </property>
+    <property name="tabBarAutoHide">
+     <bool>false</bool>
     </property>
     <widget class="QWidget" name="Home">
      <property name="sizePolicy">
@@ -240,7 +252,7 @@ background-color: rgb(177, 177, 177);
       <property name="styleSheet">
        <string notr="true">QTableWidget
 {
-border: 1px solid black;
+border: 2px solid black;
 background: white
 }
 
@@ -529,7 +541,7 @@ border: 2px solid black;
        </rect>
       </property>
       <property name="styleSheet">
-       <string notr="true">border: 1px solid black;
+       <string notr="true">border: 2px solid black;
 background: white
 </string>
       </property>
@@ -555,8 +567,14 @@ background: white
      <property name="styleSheet">
       <string notr="true">#Memory{
 background-color: rgb(177, 177, 177);
-}</string>
+}
+
+</string>
      </property>
+     <attribute name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/img/resources/ram.png</normaloff>:/img/resources/ram.png</iconset>
+     </attribute>
      <attribute name="title">
       <string>Memory</string>
      </attribute>
@@ -596,6 +614,7 @@ background-color: white;
 #MemoryInfo{
 background-color: white;
 border: 2px solid black;
+font-weight: bold;
 }
 </string>
       </property>
@@ -638,7 +657,7 @@ border: 2px solid black;
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Page Size:</string>
+         <string>Page Size: 1024kb</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -657,7 +676,7 @@ border: 2px solid black;
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Page Count: </string>
+         <string>Page Count: 4000</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -672,6 +691,9 @@ border: 2px solid black;
          <width>256</width>
          <height>31</height>
         </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font-weight: bold;</string>
        </property>
        <property name="text">
         <string>PAGE INFO</string>
@@ -700,7 +722,7 @@ border: 2px solid black;
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
        </property>
-       <widget class="QLabel" name="pageSizeLabel_2">
+       <widget class="QLabel" name="usedFrames">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -719,7 +741,7 @@ border: 2px solid black;
          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
         </property>
        </widget>
-       <widget class="QLabel" name="label_5">
+       <widget class="QLabel" name="freeFrames">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -732,7 +754,7 @@ border: 2px solid black;
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Free Frames: </string>
+         <string>Free Frames:</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignJustify|Qt::AlignVCenter</set>
@@ -748,6 +770,9 @@ border: 2px solid black;
          <height>31</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-weight: bold;</string>
+       </property>
        <property name="text">
         <string>FRAME INFO</string>
        </property>
@@ -756,10 +781,26 @@ border: 2px solid black;
        </property>
       </widget>
      </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>10</y>
+        <width>81</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
+      </property>
+      <property name="text">
+       <string>FRAMES</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="Scheduler">
      <property name="cursor">
-      <cursorShape>OpenHandCursor</cursorShape>
+      <cursorShape>ArrowCursor</cursorShape>
      </property>
      <property name="acceptDrops">
       <bool>false</bool>
@@ -772,29 +813,17 @@ border: 2px solid black;
 background-color: rgb(177, 177, 177);
 }</string>
      </property>
+     <attribute name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/img/resources/Scheduler.png</normaloff>:/img/resources/Scheduler.png</iconset>
+     </attribute>
      <attribute name="title">
       <string>Scheduler</string>
      </attribute>
-     <widget class="QLabel" name="jobPool">
+     <widget class="QTableWidget" name="jobPoolList">
       <property name="geometry">
        <rect>
-        <x>160</x>
-        <y>30</y>
-        <width>200</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font-weight: bold;</string>
-      </property>
-      <property name="text">
-       <string>Job Pool</string>
-      </property>
-     </widget>
-     <widget class="QTableWidget" name="tableWidget">
-      <property name="geometry">
-       <rect>
-        <x>160</x>
+        <x>30</x>
         <y>50</y>
         <width>200</width>
         <height>431</height>
@@ -819,10 +848,16 @@ background: white
 }</string>
       </property>
       <attribute name="horizontalHeaderMinimumSectionSize">
-       <number>10</number>
+       <number>39</number>
       </attribute>
       <attribute name="horizontalHeaderDefaultSectionSize">
        <number>99</number>
+      </attribute>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>20</number>
       </attribute>
       <column>
        <property name="text">
@@ -838,9 +873,9 @@ background: white
      <widget class="QLabel" name="BaseLevel">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>240</x>
         <y>330</y>
-        <width>250</width>
+        <width>511</width>
         <height>21</height>
        </rect>
       </property>
@@ -850,11 +885,14 @@ background: white
       <property name="text">
        <string>Base Level Queue</string>
       </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
      <widget class="QTableWidget" name="readyQueue">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>240</x>
         <y>50</y>
         <width>250</width>
         <height>130</height>
@@ -888,10 +926,10 @@ background: white
        <bool>false</bool>
       </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
-       <number>10</number>
+       <number>20</number>
       </attribute>
       <attribute name="verticalHeaderDefaultSectionSize">
-       <number>12</number>
+       <number>30</number>
       </attribute>
       <attribute name="verticalHeaderHighlightSections">
        <bool>true</bool>
@@ -922,9 +960,9 @@ background: white
      <widget class="QLabel" name="MidLevel">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>240</x>
         <y>180</y>
-        <width>250</width>
+        <width>511</width>
         <height>21</height>
        </rect>
       </property>
@@ -934,13 +972,16 @@ background: white
       <property name="text">
        <string>Mid Level Queue</string>
       </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
      <widget class="QLabel" name="readyQueue_2">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>240</x>
         <y>30</y>
-        <width>250</width>
+        <width>511</width>
         <height>21</height>
        </rect>
       </property>
@@ -950,11 +991,14 @@ background: white
       <property name="text">
        <string>Ready Queue</string>
       </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
      <widget class="QTableWidget" name="baseQueue">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>240</x>
         <y>350</y>
         <width>250</width>
         <height>130</height>
@@ -984,6 +1028,9 @@ background: white
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>true</bool>
       </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>20</number>
+      </attribute>
       <column>
        <property name="text">
         <string>PID</string>
@@ -998,7 +1045,7 @@ background: white
      <widget class="QTableWidget" name="midQueue">
       <property name="geometry">
        <rect>
-        <x>370</x>
+        <x>240</x>
         <y>200</y>
         <width>250</width>
         <height>130</height>
@@ -1028,6 +1075,9 @@ background: white
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>true</bool>
       </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>20</number>
+      </attribute>
       <column>
        <property name="text">
         <string>PID</string>
@@ -1039,10 +1089,265 @@ background: white
        </property>
       </column>
      </widget>
+     <widget class="QTableWidget" name="readyQueue_core2">
+      <property name="geometry">
+       <rect>
+        <x>505</x>
+        <y>50</y>
+        <width>250</width>
+        <height>130</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Ready Queue</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTableWidget
+{
+border: 1px solid black;
+background: white
+}
+
+QTableWidget::item
+{
+border: 1px solid black;
+}
+
+QHeaderView::section
+{
+border: 1px solid black;
+background: white
+}</string>
+      </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderCascadingSectionResizes">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>20</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>30</number>
+      </attribute>
+      <attribute name="verticalHeaderHighlightSections">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+       <bool>false</bool>
+      </attribute>
+      <attribute name="verticalHeaderStretchLastSection">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>PID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>NAME</string>
+       </property>
+       <property name="font">
+        <font>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="midQueue_core2">
+      <property name="geometry">
+       <rect>
+        <x>505</x>
+        <y>200</y>
+        <width>250</width>
+        <height>130</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Mid Level Queue</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTableWidget
+{
+border: 1px solid black;
+background: white
+}
+
+QTableWidget::item
+{
+border: 1px solid black;
+}
+
+QHeaderView::section
+{
+border: 1px solid black;
+background: white
+}</string>
+      </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>20</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>PID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>NAME</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QTableWidget" name="baseQueue_core2">
+      <property name="geometry">
+       <rect>
+        <x>505</x>
+        <y>350</y>
+        <width>250</width>
+        <height>130</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Base Level Queue</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QTableWidget
+{
+border: 1px solid black;
+background: white
+}
+
+QTableWidget::item
+{
+border: 1px solid black;
+}
+
+QHeaderView::section
+{
+border: 1px solid black;
+background: white
+}</string>
+      </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>20</number>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>PID</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>NAME</string>
+       </property>
+      </column>
+     </widget>
+     <widget class="QFrame" name="frame">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>30</y>
+        <width>751</width>
+        <height>461</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color:white;
+border: 2px solid black;</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="jobPool">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>30</y>
+        <width>200</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
+      </property>
+      <property name="text">
+       <string>Job Pool</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CORE1">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>30</y>
+        <width>251</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
+      </property>
+      <property name="text">
+       <string>CORE 1</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="CORE2">
+      <property name="geometry">
+       <rect>
+        <x>505</x>
+        <y>30</y>
+        <width>251</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;</string>
+      </property>
+      <property name="text">
+       <string>CORE 2</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <zorder>frame</zorder>
+     <zorder>jobPoolList</zorder>
+     <zorder>BaseLevel</zorder>
+     <zorder>readyQueue</zorder>
+     <zorder>MidLevel</zorder>
+     <zorder>readyQueue_2</zorder>
+     <zorder>baseQueue</zorder>
+     <zorder>midQueue</zorder>
+     <zorder>readyQueue_core2</zorder>
+     <zorder>midQueue_core2</zorder>
+     <zorder>baseQueue_core2</zorder>
+     <zorder>jobPool</zorder>
+     <zorder>CORE1</zorder>
+     <zorder>CORE2</zorder>
     </widget>
    </widget>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

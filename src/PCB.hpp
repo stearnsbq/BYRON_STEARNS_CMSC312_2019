@@ -22,7 +22,7 @@ typedef enum PROCESS_STATE
 class Process
 {
 private:
-unsigned int pid;
+int pid;
 std::string name;
 std::vector<Instruction> instructions;
 Process * parent;
@@ -52,7 +52,7 @@ QString getStateString();
 TYPE getCurrentInstructionType();
 void addInstruction(QJsonObject instr,  bool toRandom);
 std::vector<Instruction> getInstructions();
-unsigned int getPid();
+int getPid();
 void setName(std::string name);
 std::string getName();
 void setPid(int pid);

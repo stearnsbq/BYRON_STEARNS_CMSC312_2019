@@ -6,7 +6,7 @@ Core::Core(int coreNumber, ALGORITHM algoToUse)
 {
     this->coreNum = coreNumber;
     this->shortTerm = new ShortTermScheduler(algoToUse, *this);
-    this->longTerm = new LongTermScheduler(shortTerm);
+    this->longTerm = new LongTermScheduler(shortTerm, coreNumber);
     this->ltTimer = 10;
     this->shortTermAlgorithm = algoToUse;
     this->runningProcess.setState(EXIT);
@@ -14,7 +14,8 @@ Core::Core(int coreNumber, ALGORITHM algoToUse)
 
 
 Core::~Core(){
-
+    delete this->shortTerm;
+    delete this->longTerm;
 }
 
 int Core::getLoad(){
@@ -83,56 +84,36 @@ void Core::iO(){
     runningProcess.setState(EXIT);
 
     this->shortTerm->enqueueProcess(rotate, WAITING);
+    emit kernel::getInstance().window->updateSchedulerUI(rotate, "remove", rotate.getLastQueue(), coreNum);
 }
 
 void Core::criticalSection(){
 
 
+    CPU::getInstance().critSection.lock();
+    std::string str = "PID: " + std::to_string(runningProcess.getPid()) + " ENTERED CRITICAL SECTION";
+    emit kernel::getInstance().window->print(str);
 
-    if(runningProcess.getCurrentInstructionType() == CRITICAL_CALC) {
-        CPU::getInstance().critSection.lock();
-        std::string str = "PID: " + std::to_string(runningProcess.getPid()) + " ENTERED CRITICAL SECTION";
-        emit kernel::getInstance().window->print(str);
+    emit kernel::getInstance().window->setCritical(true);
 
-        emit kernel::getInstance().window->setCritical(true);
-
-        while(runningProcess.getCurrentBurst() > 0) {
-
-            runningProcess.decrementBurst();
-
-            sleep();
-
-        }
-
-        runningProcess.incrementPC();
-        emit kernel::getInstance().window->setCritical(false);
-        CPU::getInstance().critSection.unlock();
-
-    } else if(runningProcess.getCurrentInstructionType() == CRITICAL_IO) {
-
-        CPU::getInstance().critSection.lock();
-
-        std::string str = "PID: " + std::to_string(runningProcess.getPid()) + " ENTERED CRITICAL SECTION";
-        emit kernel::getInstance().window->print(str);
-
-        emit kernel::getInstance().window->setCritical(true);
-
+    if(runningProcess.getCurrentInstructionType() == CRITICAL_IO) {
         runningProcess.setState(WAIT);
 
         kernel::getInstance().updateProcessTable(runningProcess);
-
-        while(runningProcess.getCurrentBurst() > 0) {
-
-            runningProcess.decrementBurst();
-
-            sleep();
-
-        }
-
-        runningProcess.incrementPC();
-        emit kernel::getInstance().window->setCritical(false);
-        CPU::getInstance().critSection.unlock();
     }
+
+    while(runningProcess.getCurrentBurst() > 0) {
+
+        runningProcess.decrementBurst();
+
+        sleep();
+
+    }
+
+    runningProcess.incrementPC();
+    emit kernel::getInstance().window->setCritical(false);
+    CPU::getInstance().critSection.unlock();
+
 }
 
 
@@ -149,9 +130,10 @@ void Core::yield(){
 
     kernel::getInstance().updateProcessTable(yield);
 
-    runningProcess.setState(EXIT);
+    runningProcess.setState( EXIT);
 
     this->shortTerm->enqueueProcess(yield, READY_Q);
+    emit kernel::getInstance().window->updateSchedulerUI(yield, "", yield.getLastQueue(), coreNum);
 }
 
 void Core::out(){
@@ -246,6 +228,7 @@ void Core::executeOperation(){
                 kernel::getInstance().updateProcessTable(rotate);
                 runningProcess.setState(EXIT);
                 this->shortTerm->enqueueProcess(rotate, WAITING);
+
             }else{
                 Process rotate = runningProcess;
                 rotate.setState(EXIT);
@@ -256,7 +239,9 @@ void Core::executeOperation(){
                 runningProcess.setParent(nullptr);
                 this->shortTerm->totalProcesses--;
                 CPU::getInstance().setPagesDirty(runningProcess.pages);
+                emit kernel::getInstance().window->updateSchedulerUI(runningProcess, "remove", runningProcess.getLastQueue(), coreNum);
                 emit kernel::getInstance().window->setLoad(coreNum, this->shortTerm->totalProcesses);
+
             }
 
         }

@@ -44,7 +44,7 @@ TYPE Process::getCurrentInstructionType(){
     return this->instructions.at(this->pc).getType();
 }
 
-unsigned int Process::getPid()
+int Process::getPid()
 {
     return this->pid;
 }

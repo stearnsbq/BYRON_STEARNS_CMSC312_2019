@@ -15,9 +15,9 @@ mainmemory::mainmemory(unsigned int totalMemory, double pageSize)
         this->frames.push_back({i, true});
         this->emptyFrames.push({i, true});
     }
+    emit kernel::getInstance().window->setFreeFrameCount(4000);
+    emit kernel::getInstance().window->setUsedFrameCount(0);
 }
-
-
 
 std::vector<page> mainmemory::allocateMemory(size_t size){
 
@@ -44,22 +44,23 @@ void mainmemory::setPagesDirty(std::vector<page>& pages){
         if(it->getFrameNumber() >= 0) {
             this->pageTable->pages.at(it->getPageNumber()).setDirty(!this->pageTable->pages.at(it->getPageNumber()).isDirty());
         }else{
-            // page fault
             std::replace(pages.begin(), pages.end(), *it, this->pageTable->putPage(it->getPageNumber()));
-
         }
     }
 }
 
 
 void mainmemory::freeMemory(std::vector<page> pages){
-    for(int i = 0; i < pages.size(); i++) {
+    for(unsigned int i = 0; i < pages.size(); i++) {
         frame &tmp = this->frames.at(pages[i].getFrameNumber());
         this->pageTable->removePage(pages[i].getPageNumber());
         emit kernel::getInstance().window->updateMemoryBarGUI(-this->pageSize);
         tmp.free = true;
         this->emptyFrames.push(tmp);
+        usedFrames--;
         kernel::getInstance().window->setMemoryGraphic(pages[i].getFrameNumber(), false);
+        emit kernel::getInstance().window->setFreeFrameCount(this->emptyFrames.size());
+        emit kernel::getInstance().window->setUsedFrameCount(totalFrames - this->emptyFrames.size());
     }
 
 }
@@ -70,6 +71,9 @@ int mainmemory::getNextFrame(){
     }else{
         frame newFrame = this->emptyFrames.top();
         this->emptyFrames.pop();
+        usedFrames++;
+        emit kernel::getInstance().window->setFreeFrameCount(this->emptyFrames.size());
+        emit kernel::getInstance().window->setUsedFrameCount(totalFrames - this->emptyFrames.size());
         return newFrame.num;
     }
 

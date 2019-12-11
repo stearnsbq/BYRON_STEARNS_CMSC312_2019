@@ -11,14 +11,21 @@
 #include <locale>
 #include <QApplication>
 #include <QObject>
-#include <vld.h>
+#include <QSplashScreen>
 
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QPixmap img(":/img/resources/osSim.png");
+    QSplashScreen load(img);
+
+    load.show();
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+
     MainWindow simulatorUI;
     simulatorUI.show();
-
+    load.finish(&simulatorUI);
     return a.exec();
 }

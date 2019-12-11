@@ -25,6 +25,7 @@ void kernel::newProcess(Process & p){
     this->jobPool.push(p);
     this->processTable.insert(std::make_pair(p.getPid(), p));
     emit window->updateProcessListGUI(p);
+    kernel::getInstance().window->updateSchedulerUI(p, "jobpool");
 
 }
 
@@ -55,7 +56,7 @@ bool kernel::isFinished(){
 
 Process kernel::getNextProcessInPool(){
 
-    std::lock_guard<std::mutex> lock{this->jobPoolMutex};
+    std::lock_guard<std::mutex> lock(this->jobPoolMutex);
 
     if(!this->jobPool.empty()) {
 
