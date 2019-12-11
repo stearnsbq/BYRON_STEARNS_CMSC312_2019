@@ -1,10 +1,10 @@
-QT += core gui webengine webenginewidgets
-
+QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
-CONFIG += console
+
+RC_ICONS = ossim.ico
 
 INCLUDEPATH += "C:/Program Files (x86)/Visual Leak Detector/include/"
 LIBS      += -L"C:/Program Files (x86)/Visual Leak Detector/lib/Win32"
@@ -73,8 +73,6 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES += \
-    ../tests/bobby.txt \
-    ../tests/chrome.txt \
-    ../tests/notepad.txt \
-    ../tests/skyrim.txt
+
+RESOURCES += \
+    resources.qrc

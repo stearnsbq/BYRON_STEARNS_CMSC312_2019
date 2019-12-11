@@ -30,8 +30,6 @@
 #include <QJsonObject>
 #include <programfilegenerator.h>
 #include <QMetaType>
-#include <QtWebEngine/qtwebengineglobal.h>
-#include <QWebEngineView>
 
 
 
@@ -131,6 +129,117 @@ void MainWindow::updateMemoryGraphic(int frameNumber, bool beingUsed){
     this->memory[frameNumber]->setBrush(beingUsed ? Qt::red : Qt::green);
 }
 
+
+
+
+
+void MainWindow::onUpdateSchedulerUI(Process p, std::string widget, int q, int core){
+
+    QTableWidgetItem * pid =  new QTableWidgetItem(QString::number(p.getPid()));
+    QTableWidgetItem * name =  new QTableWidgetItem(QString::fromUtf8(p.getName().c_str()));
+
+    name->setToolTip(p.toString());
+
+    if(widget == "jobpool") {
+
+
+        ui->jobPoolList->setItem(p.getPid(), 0, pid);
+        ui->jobPoolList->setItem(p.getPid(), 1, name);
+
+
+    }else if ((widget == "readyqueue" || q == 0) && p.getState() == READY) {
+
+        if(core == 1) {
+            ui->readyQueue->setItem(p.getPid(), 0, pid);
+            ui->readyQueue->setItem(p.getPid(), 1, name);
+        }else{
+            ui->readyQueue_core2->setItem(p.getPid(), 0, pid);
+            ui->readyQueue_core2->setItem(p.getPid(), 1, name);
+        }
+
+    }else if ((widget == "midqueue" || q == 1) && p.getState() == READY) {
+
+        if(core == 1) {
+            ui->midQueue->setItem(p.getPid(), 0, pid);
+            ui->midQueue->setItem(p.getPid(), 1, name);
+        }else{
+            ui->midQueue_core2->setItem(p.getPid(), 0, pid);
+            ui->midQueue_core2->setItem(p.getPid(), 1, name);
+        }
+
+
+    }else if ((widget == "basequeue" || q == 2) && p.getState() == READY) {
+
+        if(core == 1) {
+            ui->baseQueue->setItem(p.getPid(), 0, pid);
+            ui->baseQueue->setItem(p.getPid(), 1, name);
+        }else {
+            ui->baseQueue_core2->setItem(p.getPid(), 0, pid);
+            ui->baseQueue_core2->setItem(p.getPid(), 1, name);
+        }
+
+
+
+    }else if (widget == "remove") {
+        switch (q) {
+
+        case 0:
+
+            if(core == 1) {
+                ui->readyQueue->setItem(p.getPid(), 0, nullptr);
+                ui->readyQueue->setItem(p.getPid(), 1, nullptr);
+            }else{
+                ui->readyQueue_core2->setItem(p.getPid(), 0, nullptr);
+                ui->readyQueue_core2->setItem(p.getPid(), 1, nullptr);
+            }
+
+            break;
+
+        case 1:
+
+            if(core == 1) {
+                ui->midQueue->setItem(p.getPid(), 0, nullptr);
+                ui->midQueue->setItem(p.getPid(), 1, nullptr);
+            }else{
+                ui->midQueue_core2->setItem(p.getPid(), 0, nullptr);
+                ui->midQueue_core2->setItem(p.getPid(), 1, nullptr);
+            }
+            break;
+
+        case 2:
+
+
+            if(core == 1) {
+                ui->baseQueue->setItem(p.getPid(), 0, nullptr);
+                ui->baseQueue->setItem(p.getPid(), 1, nullptr);
+            }else {
+                ui->baseQueue_core2->setItem(p.getPid(), 0, nullptr);
+                ui->baseQueue_core2->setItem(p.getPid(), 1, nullptr);
+            }
+
+            break;
+
+        case -1:
+
+            ui->jobPoolList->setItem(p.getPid(), 0, nullptr);
+            ui->jobPoolList->setItem(p.getPid(), 1, nullptr);
+            break;
+
+        }
+
+    }
+
+
+
+
+
+}
+
+
+
+
+
+
 void MainWindow::initUI(){
 
     ui->setupUi(this);
@@ -140,6 +249,10 @@ void MainWindow::initUI(){
     qRegisterMetaType<std::string>("std::string");
     qRegisterMetaType<Process>("Process");
 
+
+    connect(this, &MainWindow::updateSchedulerUI, this, &MainWindow::onUpdateSchedulerUI);
+    connect(this, &MainWindow::setFreeFrameCount, this, &MainWindow::onSetFreeFrameCount);
+    connect(this, &MainWindow::setUsedFrameCount, this, &MainWindow::onSetUsedFrameCount);
     connect(this, &MainWindow::done, this, &MainWindow::changeStatus);
     connect(this, &MainWindow::print, this, &MainWindow::printText);
     connect(this, &MainWindow::updateProcessListGUI, this, &MainWindow::updateProcessList);
@@ -150,10 +263,32 @@ void MainWindow::initUI(){
     ui->algorithm->setItemData(0, qVariantFromValue(MULTILEVEL_FEEDBACK_QUEUE));
     ui->algorithm->setItemData(1, qVariantFromValue(ROUND_ROBIN));
 
+    ui->jobPoolList->setColumnWidth(0, 15);
+    ui->baseQueue->setColumnWidth(0, 15);
+    ui->readyQueue->setColumnWidth(0, 15);
+    ui->midQueue->setColumnWidth(0, 15);
+    ui->baseQueue_core2->setColumnWidth(0, 15);
+    ui->readyQueue_core2->setColumnWidth(0, 15);
+    ui->midQueue_core2->setColumnWidth(0, 15);
     ui->processList->setColumnWidth(0, 15);
     ui->processList->setRowCount(32768);
+    ui->midQueue->setRowCount(32768);
+    ui->readyQueue->setRowCount(32768);
+    ui->jobPoolList->setRowCount(32768);
+    ui->baseQueue->setRowCount(32768);
+    ui->midQueue_core2->setRowCount(32768);
+    ui->readyQueue_core2->setRowCount(32768);
+    ui->baseQueue_core2->setRowCount(32768);
+
     this->ui->memoryUsage->setRange(0, 4096000);
     ui->processList->verticalHeader()->setVisible(false);
+    ui->jobPoolList->verticalHeader()->setVisible(false);
+    ui->readyQueue->verticalHeader()->setVisible(false);
+    ui->midQueue->verticalHeader()->setVisible(false);
+    ui->baseQueue->verticalHeader()->setVisible(false);
+    ui->readyQueue_core2->verticalHeader()->setVisible(false);
+    ui->midQueue_core2->verticalHeader()->setVisible(false);
+    ui->baseQueue_core2->verticalHeader()->setVisible(false);
 
 
     QPalette pal;
@@ -184,6 +319,15 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+
+void MainWindow::onSetFreeFrameCount(int count){
+    ui->freeFrames->setText("Free Frames: " + QString::number(count));
+}
+
+void MainWindow::onSetUsedFrameCount(int count){
+    ui->usedFrames->setText("Used Frames: " + QString::number(count));
 }
 
 

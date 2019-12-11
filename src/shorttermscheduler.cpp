@@ -17,9 +17,6 @@ void ShortTermScheduler::runScheduler(){
     case ROUND_ROBIN:
         this->roundRobin();
         break;
-    case PRIORITY_SCHEDULING:
-        //this->priority();
-        break;
     case MULTILEVEL_FEEDBACK_QUEUE:
         this->feedBackQueue();
         break;
@@ -35,14 +32,17 @@ void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
         break;
     case MID:
         this->midLevel.push(p);
+        kernel::getInstance().window->updateSchedulerUI(p, "midqueue");
         this->totalProcesses++;
         break;
     case READY_Q:
         this->readyQueue.push(p);
+        kernel::getInstance().window->updateSchedulerUI(p, "readyqueue");
         this->totalProcesses++;
         break;
     case BASE:
         this->baseLevel.push(p);
+        kernel::getInstance().window->updateSchedulerUI(p, "basequeue");
         this->totalProcesses++;
         break;
     }
@@ -51,23 +51,28 @@ void ShortTermScheduler::enqueueProcess(Process p, QUEUE_TYPE q){
 
 Process ShortTermScheduler::determineProcessForMigrate(){
     std::lock_guard<std::mutex> lock(_migrateLock);
+
     if(!this->readyQueue.empty()) {
         Process toMigrate = this->readyQueue.top();
         this->readyQueue.pop();
         this->totalProcesses--;
+        emit kernel::getInstance().window->updateSchedulerUI(toMigrate, "remove", 0, parent.coreNum);
         return toMigrate;
     }else if(!this->midLevel.empty() ) {
         Process toMigrate = this->midLevel.top();
         this->midLevel.pop();
         this->totalProcesses--;
+        emit kernel::getInstance().window->updateSchedulerUI(toMigrate, "remove", 1, parent.coreNum);
         return toMigrate;
     }else if (!this->baseLevel.empty()) {
         Process toMigrate = this->baseLevel.top();
         this->baseLevel.pop();
         this->totalProcesses--;
+        emit kernel::getInstance().window->updateSchedulerUI(toMigrate, "remove", 2, parent.coreNum);
         return toMigrate;
     }
     emit kernel::getInstance().window->setLoad(parent.coreNum,totalProcesses);
+
     return Process();
 }
 
@@ -106,15 +111,18 @@ void ShortTermScheduler::roundRobinProcess(int queue, int timeQ){
             queueToProcess->pop();
             newProcess.setState(RUN);
             parent.runningProcess = newProcess;
-            kernel::getInstance().updateProcessTable(  newProcess);
+            kernel::getInstance().updateProcessTable(newProcess);
+            emit kernel::getInstance().window->updateSchedulerUI(parent.runningProcess, "remove", parent.runningProcess.getLastQueue(), parent.coreNum);
         }
 
         if(this->timeQuantum >= timeQ) {
-            parent.runningProcess.setLastQueue(queue >= 2 ? 2 : queue +1);
+            parent.runningProcess.setLastQueue(queue >= 2 ? 2 : queue + 1);
             Process rotate = parent.runningProcess;
             rotate.setState(READY);
             parent.runningProcess.setState(EXIT);
-            kernel::getInstance().updateProcessTable(  rotate);
+            kernel::getInstance().updateProcessTable(rotate);
+            emit kernel::getInstance().window->updateSchedulerUI(rotate, "", rotate.getLastQueue(), parent.coreNum);
+            emit kernel::getInstance().window->updateSchedulerUI(parent.runningProcess, "remove", queue, parent.coreNum);
             switch (queue) {
             case 0:
                 this->midLevel.push(rotate);
@@ -149,7 +157,7 @@ void ShortTermScheduler::roundRobin()
         newProcess.setState(RUN);
         parent.runningProcess = newProcess;
         kernel::getInstance().updateProcessTable(newProcess);
-
+        emit kernel::getInstance().window->updateSchedulerUI(newProcess, "remove", 0, parent.coreNum);
     }
 
     if (this->timeQuantum >= 20)
@@ -161,6 +169,8 @@ void ShortTermScheduler::roundRobin()
         rotate.setState(READY);
         this->readyQueue.push(rotate);
         kernel::getInstance().updateProcessTable(rotate);
+        emit kernel::getInstance().window->updateSchedulerUI(rotate, "readyqueue", parent.coreNum);
+        emit kernel::getInstance().window->updateSchedulerUI(parent.runningProcess, "", parent.runningProcess.getLastQueue(),parent.coreNum);
         this->timeQuantum = 0;
 
     }

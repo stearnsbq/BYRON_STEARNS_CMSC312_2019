@@ -10,12 +10,13 @@ class ShortTermScheduler;
 class LongTermScheduler
 {
 public:
-LongTermScheduler(ShortTermScheduler * scheduler);
+LongTermScheduler(ShortTermScheduler * scheduler, int coreNum);
 ~LongTermScheduler();
 void enqueueProcess(Process p);
 void runScheduler();
 private:
 ShortTermScheduler * scheduler;
+int coreNum;
 
 
 };

@@ -28,7 +28,6 @@ page pagetable::putPage(int pageNumber){
     }
 
 
-
     newPage.setInMemory(true);
     this->pages.insert(std::make_pair(pageNumber,  newPage));
     this->storedPages++;

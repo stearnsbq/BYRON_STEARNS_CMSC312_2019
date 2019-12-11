@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>resources/osSim.png</file>
+        <file>resources/Scheduler.png</file>
+        <file>resources/ram.png</file>
+    </qresource>
+</RCC>
