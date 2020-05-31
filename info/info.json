@@ -1,0 +1,5 @@
+{
+  "description": "A Operating System simulator developed as part of the CMSC 312. This program simulates a computer with two cores each having their own long term and short term scheduler to simulate context switch and proper process management. The program also implements a basic paging system for memory management and handles page faults and swapping. ",
+  "accomplishments": [ "Implement a Operating System simulator that simulates process management, memory management, and multi core / thread processing", "Implement a multi level short term scheduler for two cores", "Implement a basic UI that shows the current status of the simulator" ],
+  "technologies": ["C++", "Qt", "Multi-Threading", "Process Management", "Paging"]
+}

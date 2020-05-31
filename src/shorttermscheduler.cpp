@@ -9,6 +9,11 @@ ShortTermScheduler::ShortTermScheduler(ALGORITHM algoToUse, Core & parent) : par
 }
 
 
+ShortTermScheduler::~ShortTermScheduler(){
+
+}
+
+
 
 void ShortTermScheduler::runScheduler(){
     emit kernel::getInstance().window->setLoad(parent.coreNum,totalProcesses);

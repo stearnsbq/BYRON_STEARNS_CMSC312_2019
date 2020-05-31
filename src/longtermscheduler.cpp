@@ -9,6 +9,9 @@ LongTermScheduler::LongTermScheduler(ShortTermScheduler * sched, int coreNum)
     this->scheduler = sched;
     this->coreNum = coreNum;
 }
+LongTermScheduler::~LongTermScheduler(){
+
+}
 
 void LongTermScheduler::runScheduler(){
 
