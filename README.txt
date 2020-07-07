@@ -17,3 +17,4 @@ Starting the simulation
  - load a file with whatever many processes
  - select a optional cycle time (default is 1 milisecond)
  - then hit start, output from the simulator will be in the text area above the input options
+ 
